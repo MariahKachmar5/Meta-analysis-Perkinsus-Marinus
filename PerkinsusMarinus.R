@@ -165,7 +165,7 @@ library(ggspatial)
 
 
 worldMap <- ne_countries(scale = "medium", returnclass = "sf")
-plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -74), ylim = c(36, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
+plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
 plot
 
 plot<-plot+theme(panel.background = element_rect(fill = "white")) 
@@ -181,10 +181,9 @@ Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
 Perkinsus$Long <- as.numeric(Perkinsus$Long)
 
 
-plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat))
+plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))
 plot
 
-class(Perkinsus$Lat)
-class(Perkinsus$Long)
+names(Perkinsus)
 
 
