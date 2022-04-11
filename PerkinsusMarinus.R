@@ -151,7 +151,26 @@ library("sf")
 library("leaflet")
 
 
-Perkinsus_st <- st_read(Perkinsus)
-view(Perkinsus_st)
+library(ggplot2)
+library(ggmap)
+library(maps)
+library(mapdata)
 
-plot(Perkinsus_st$Prevalence)
+
+## plotting chesapeake bay - found online ##
+## URL : https://rpubs.com/narinderps1991/ChesapeakeBay ##
+library("rnaturalearth")
+library("rnaturalearthdata")
+library(ggspatial)
+
+
+worldMap <- ne_countries(scale = "medium", returnclass = "sf")
+plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-77.5, -75), ylim = c(37.5, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
+plot
+
+plot<-plot+theme(panel.background = element_rect(fill = "white"))
+plot + annotate(geom = "text",x = -76.1,y = 37.8,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic") 
++annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm")) 
++theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
+
+
