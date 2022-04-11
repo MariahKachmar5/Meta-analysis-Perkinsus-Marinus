@@ -165,12 +165,26 @@ library(ggspatial)
 
 
 worldMap <- ne_countries(scale = "medium", returnclass = "sf")
-plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-77.5, -75), ylim = c(37.5, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
+plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -74), ylim = c(36, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
 plot
 
-plot<-plot+theme(panel.background = element_rect(fill = "white"))
-plot + annotate(geom = "text",x = -76.1,y = 37.8,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic") 
-+annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm")) 
-+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
+plot<-plot+theme(panel.background = element_rect(fill = "white")) 
+
+plot <-plot+annotate(geom = "text",x = -76.1,y = 37.5,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic")
+plot
+plot<-plot +annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm")) 
+plot  
+plot<- plot+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
+plot
+
+Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
+Perkinsus$Long <- as.numeric(Perkinsus$Long)
+
+
+plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat))
+plot
+
+class(Perkinsus$Lat)
+class(Perkinsus$Long)
 
 
