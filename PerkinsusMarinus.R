@@ -163,7 +163,7 @@ library("rnaturalearth")
 library("rnaturalearthdata")
 library(ggspatial)
 
-
+### Perkinsus Sites ###
 worldMap <- ne_countries(scale = "medium", returnclass = "sf")
 plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
 plot
@@ -184,6 +184,26 @@ Perkinsus$Long <- as.numeric(Perkinsus$Long)
 plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))
 plot
 
-names(Perkinsus)
+
+### Environmental Sites ####
+worldMap <- ne_countries(scale = "medium", returnclass = "sf")
+plot2<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
+plot
+
+plot2<-plot2+theme(panel.background = element_rect(fill = "white")) 
+
+plot2 <-plot2+annotate(geom = "text",x = -76.1,y = 37.5,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic")
+plot2
+plot2<-plot2 +annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm")) 
+plot2  
+plot2<- plot2+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
+plot2
+
+Master$Lat <- as.numeric(Master$Lat)
+Master$Long <- as.numeric(Master$Long)
 
 
+plot2 <- plot2+geom_point(data = Master,aes(Long, Lat, color = MonitoringLocation))
+plot2
+
+names(Master)
