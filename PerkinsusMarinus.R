@@ -99,6 +99,7 @@ Master$Month
 Master_1 <- Master
 Master_1["Month"] <- Master$Month
 Master_1
+View(Master_1)
 
 ## resubset data with new month column ###
 
@@ -111,6 +112,7 @@ Master_SALINITY
 
 Master_WTEMP <- Master[Master_1$Parameter == "WTEMP",]
 Master_WTEMP
+View(Master_WTEMP)
 
 
 #### open perkinsus data ###
@@ -141,10 +143,7 @@ P_plot
 
 
 ### mapping ###
-install.packages("tmap")
-install.packages("tmaptools")
-install.packages("sf")
-install.packages("leaflet")
+
 library("tmap")
 library("tmaptools")
 library("sf")
@@ -206,4 +205,167 @@ Master$Long <- as.numeric(Master$Long)
 plot2 <- plot2+geom_point(data = Master,aes(Long, Lat, color = MonitoringLocation))
 plot2
 
-names(Master)
+
+
+#### plot WTEMP vs prevalence ##
+library(ggplot2)
+library(dplyr)
+names(Master_WTEMP)
+
+
+  
+## temperature by month & year 1984-2019 ##
+Temp_plot <-ggplot(data = Master_WTEMP, aes(Month, MeasureValue, color = factor(Year))) +
+   labs(title = "Monthly Temperature in the Chesapeake Bay 1984-2019",
+                      y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                                             "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
+ 
+Temp_plot 
+
+
+
+## Salinity by month & year 1984-2019 ##
+Sal_plot <-ggplot(data = Master_SALINITY, aes(Month, MeasureValue, color = factor(Year))) +
+  geom_point() + labs(title = "Monthly Salinity in the Chesapeake Bay 1984-2019",
+                      y= "Salinity (ppt)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                                             "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
+
+
+Sal_plot
+
+## pH by month & year 1984-2019 ##
+pH_plot <-ggplot(data = Master_PH, aes(Month, MeasureValue, color = factor(Year))) +
+  geom_point() + labs(title = "Monthly Salinity in the Chesapeake Bay 1984-2019",
+                      y= "pH") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                                        "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
+
+pH_plot
+
+
+##Subseting Environmental data by year ##
+
+Year1984 <- Master[Master_1$Year == "1984",]
+Year1984
+
+Year1985 <- Master[Master_1$Year == "1985",]
+Year1985
+
+Year1986 <- Master[Master_1$Year == "1986",]
+Year1986
+
+Year1987 <- Master[Master_1$Year == "1987",]
+Year1987
+
+Year1988 <- Master[Master_1$Year == "1988",]
+Year1988
+
+Year1989 <- Master[Master_1$Year == "1989",]
+Year1989
+
+Year1990 <- Master[Master_1$Year == "1990",]
+Year1990
+
+Year1991 <- Master[Master_1$Year == "1991",]
+Year1991
+
+Year1992 <- Master[Master_1$Year == "1992",]
+Year1992
+
+Year1993 <- Master[Master_1$Year == "1993",]
+Year1993
+
+Year1994 <- Master[Master_1$Year == "1994",]
+Year1994
+
+Year1995 <- Master[Master_1$Year == "1995",]
+Year1995
+
+Year1996 <- Master[Master_1$Year == "1996",]
+Year1996
+
+Year1997 <- Master[Master_1$Year == "1997",]
+Year1997
+
+Year1998 <- Master[Master_1$Year == "1998",]
+Year1998
+
+Year1999 <- Master[Master_1$Year == "1990",]
+Year1999
+
+Year2000 <- Master[Master_1$Year == "2000",]
+Year2000
+
+Year2001 <- Master[Master_1$Year == "2001",]
+Year2001
+
+Year2002 <- Master[Master_1$Year == "2002",]
+Year2002
+
+Year2003 <- Master[Master_1$Year == "2003",]
+Year2003
+
+Year2004 <- Master[Master_1$Year == "2004",]
+Year2004
+
+Year2005 <- Master[Master_1$Year == "2005",]
+Year2005
+
+Year2006 <- Master[Master_1$Year == "2006",]
+Year2006
+
+Year2007 <- Master[Master_1$Year == "2007",]
+Year2007
+
+Year2008 <- Master[Master_1$Year == "2008",]
+Year2008
+
+Year2009 <- Master[Master_1$Year == "2009",]
+Year2009
+
+Year2010 <- Master[Master_1$Year == "2010",]
+Year2010
+
+Year2011 <- Master[Master_1$Year == "2011",]
+Year2011
+
+Year2012 <- Master[Master_1$Year == "2012",]
+Year2012
+
+Year2013 <- Master[Master_1$Year == "2013",]
+Year2013
+
+Year2014 <- Master[Master_1$Year == "2014",]
+Year2014
+
+Year2015 <- Master[Master_1$Year == "2015",]
+Year2015
+
+Year2016 <- Master[Master_1$Year == "2016",]
+Year2016
+
+Year2017 <- Master[Master_1$Year == "2017",]
+Year2017
+
+Year2018 <- Master[Master_1$Year == "2018",]
+Year2018
+
+Year2019 <- Master[Master_1$Year == "2019",]
+Year2019
+
+##Subseting Perkinsus data by year ##
+
+View(Perkinsus)
+names(Perkinsus)
+
+P_1990 <- Master[Perkinsus$Year == "1990", ]
+P_1990
+
+
+
+## Parameters by month & year  ##
+p_plot <-ggplot(data = Year2017, aes(Month, MeasureValue, color= Parameter)) + geom_smooth()+
+  labs(title = "Average Monthly Environmental data in the Chesapeake Bay 2017",
+       y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+
+p_plot  
