@@ -84,7 +84,7 @@ strDates
 Master$SampleDate <- strDates
 Master$SampleDate
 
-Master
+View(Master)
 
 ### Creating Month factor ###
 Master$Month <- format(strDates, format ="%m")
@@ -178,7 +178,7 @@ plot
 
 Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
 Perkinsus$Long <- as.numeric(Perkinsus$Long)
-
+View(Perkinsus)
 
 plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))
 plot
@@ -352,20 +352,46 @@ Year2018
 Year2019 <- Master[Master_1$Year == "2019",]
 Year2019
 
-##Subseting Perkinsus data by year ##
+##Subseting Perkinsus data by year - doesnt work? ##
 
 View(Perkinsus)
 names(Perkinsus)
 
-P_1990 <- Master[Perkinsus$Year == "1990", ]
-P_1990
+P_1991 <- Master[Perkinsus$Year == "1991", ]
+P_1991
+
+View(Master_1)
+
+##Subseting Temperature data by year ##
+
+Temp2017 <- Master[Master_1$Year == "2017"|Master_1$Parameter == "WTEMP",]
+Temp2017
+View(Temp2017)
 
 
-
-## Parameters by month & year  ##
-p_plot <-ggplot(data = Year2017, aes(Month, MeasureValue, color= Parameter)) + geom_smooth()+
+## Parameters by month & year - need to imput specific year  ##
+x_plot <-ggplot(data = Year2017, aes(Month, MeasureValue, color= Parameter)) + geom_smooth()+
   labs(title = "Average Monthly Environmental data in the Chesapeake Bay 2017",
        y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
                                                               "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
 
-p_plot  
+x_plot  
+
+
+### Graph temperature by month & year all sites- need to imput specific subsetted year ###
+Temp_plot <-ggplot(data = Temp2017, aes(Month, MeasureValue)) + geom_smooth()+
+  labs(title = "Average Monthly Temperature in the Chesapeake Bay 2017",
+       y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+
+Temp_plot  
+
+
+### Graph temperature by month & year all sites- need to imput specific subsetted year ###
+Temp2_plot <-ggplot(data = Temp2017, aes(Month, MeasureValue)) + geom_point(alpha= 2, aes(color = MonitoringLocation)) +
+  labs(title = "Monthly Temperature in the Chesapeake Bay 2017 by monitoring location",
+       y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+
+Temp2_plot 
+
