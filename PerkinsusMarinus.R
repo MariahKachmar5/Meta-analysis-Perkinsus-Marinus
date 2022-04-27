@@ -130,8 +130,8 @@ PM_plot <- ggplot(PM,
   labs( title = "Annual Perkinsus Marinus Prevalence in MD",
         x = "Year",
         y = "Prevalence %"
-  ) 
-PM_plot 
+  )
+PM_plot
 
 P_plot <- ggplot(PM,
                  aes(x = Year, y = Prevalence, color = MonitoringStation)) +
@@ -167,20 +167,20 @@ worldMap <- ne_countries(scale = "medium", returnclass = "sf")
 plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
 plot
 
-plot<-plot+theme(panel.background = element_rect(fill = "white")) 
+plot<-plot+theme(panel.background = element_rect(fill = "white"))
 
 plot <-plot+annotate(geom = "text",x = -76.1,y = 37.5,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic")
 plot
-plot<-plot +annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm")) 
-plot  
+plot<-plot +annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm"))
+plot
 plot<- plot+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
 plot
 
-Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
-Perkinsus$Long <- as.numeric(Perkinsus$Long)
-View(Perkinsus)
+PM$Lat <- as.numeric(PM$Lat)
+PM$Long <- as.numeric(PM$Long)
+View(PM)
 
-plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))
+plot <- plot+geom_point(data = PM,aes(Long, Lat, color = Site ))
 plot
 
 
@@ -189,12 +189,12 @@ worldMap <- ne_countries(scale = "medium", returnclass = "sf")
 plot2<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
 plot
 
-plot2<-plot2+theme(panel.background = element_rect(fill = "white")) 
+plot2<-plot2+theme(panel.background = element_rect(fill = "white"))
 
 plot2 <-plot2+annotate(geom = "text",x = -76.1,y = 37.5,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic")
 plot2
-plot2<-plot2 +annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm")) 
-plot2  
+plot2<-plot2 +annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm"))
+plot2
 plot2<- plot2+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
 plot2
 
@@ -213,14 +213,14 @@ library(dplyr)
 names(Master_WTEMP)
 
 
-  
+
 ## temperature by month & year 1984-2019 ##
 Temp_plot <-ggplot(data = Master_WTEMP, aes(Month, MeasureValue, color = factor(Year))) +
    labs(title = "Monthly Temperature in the Chesapeake Bay 1984-2019",
                       y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
                                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
- 
-Temp_plot 
+
+Temp_plot
 
 
 
@@ -373,25 +373,25 @@ View(Temp2017)
 x_plot <-ggplot(data = Year2017, aes(Month, MeasureValue, color= Parameter)) + geom_smooth()+
   labs(title = "Average Monthly Environmental data in the Chesapeake Bay 2017",
        y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
-                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
 
-x_plot  
+x_plot
 
 
 ### Graph temperature by month & year all sites- need to imput specific subsetted year ###
 Temp_plot <-ggplot(data = Temp2017, aes(Month, MeasureValue)) + geom_smooth()+
   labs(title = "Average Monthly Temperature in the Chesapeake Bay 2017",
        y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
-                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
 
-Temp_plot  
+Temp_plot
 
 
 ### Graph temperature by month & year all sites- need to imput specific subsetted year ###
 Temp2_plot <-ggplot(data = Temp2017, aes(Month, MeasureValue)) + geom_point(alpha= 2, aes(color = MonitoringLocation)) +
   labs(title = "Monthly Temperature in the Chesapeake Bay 2017 by monitoring location",
        y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
-                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
 
-Temp2_plot 
+Temp2_plot
 
