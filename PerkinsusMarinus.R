@@ -104,13 +104,13 @@ View(Master_1)
 ## resubset data with new month column ###
 
 names(Master_1)
-Master_PH <- Master[Master_1$Parameter == "PH",]
+Master_PH <- Master_1[Master_1$Parameter == "PH",]
 Master_PH
 
-Master_SALINITY <- Master[Master_1$Parameter == "SALINITY",]
+Master_SALINITY <- Master_1[Master_1$Parameter == "SALINITY",]
 Master_SALINITY
 
-Master_WTEMP <- Master[Master_1$Parameter == "WTEMP",]
+Master_WTEMP <- Master_1[Master_1$Parameter == "WTEMP",]
 Master_WTEMP
 View(Master_WTEMP)
 
@@ -176,11 +176,11 @@ plot
 plot<- plot+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
 plot
 
-Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
-Perkinsus$Long <- as.numeric(Perkinsus$Long)
-View(Perkinsus)
+PM$Lat <- as.numeric(PM$Lat)
+PM$Long <- as.numeric(PM$Long)
+View(PM)
 
-plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))
+plot <- plot+geom_point(data = PM,aes(Long, Lat, color = Site ))
 plot
 
 
@@ -215,7 +215,7 @@ names(Master_WTEMP)
 
   
 ## temperature by month & year 1984-2019 ##
-Temp_plot <-ggplot(data = Master_WTEMP, aes(Month, MeasureValue, color = factor(Year))) +
+Temp_plot <-ggplot(data = Master_WTEMP, aes(Month, MeasureValue, color = factor(Year))) + geom_smooth() +
    labs(title = "Monthly Temperature in the Chesapeake Bay 1984-2019",
                       y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
                                                                              "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec"))
@@ -244,127 +244,124 @@ pH_plot
 
 ##Subseting Environmental data by year ##
 
-Year1984 <- Master[Master_1$Year == "1984",]
+Year1984 <- Master_1[Master_1$Year == "1984",]
 Year1984
 
-Year1985 <- Master[Master_1$Year == "1985",]
+Year1985 <- Master_1[Master_1$Year == "1985",]
 Year1985
 
-Year1986 <- Master[Master_1$Year == "1986",]
+Year1986 <- Master_1[Master_1$Year == "1986",]
 Year1986
 
-Year1987 <- Master[Master_1$Year == "1987",]
+Year1987 <- Master_1[Master_1$Year == "1987",]
 Year1987
 
-Year1988 <- Master[Master_1$Year == "1988",]
+Year1988 <- Master_1[Master_1$Year == "1988",]
 Year1988
 
-Year1989 <- Master[Master_1$Year == "1989",]
+Year1989 <- Master_1[Master_1$Year == "1989",]
 Year1989
 
-Year1990 <- Master[Master_1$Year == "1990",]
+Year1990 <- Master_1[Master_1$Year == "1990",]
 Year1990
 
-Year1991 <- Master[Master_1$Year == "1991",]
+Year1991 <- Master_1[Master_1$Year == "1991",]
 Year1991
 
-Year1992 <- Master[Master_1$Year == "1992",]
+Year1992 <- Master_1[Master_1$Year == "1992",]
 Year1992
 
-Year1993 <- Master[Master_1$Year == "1993",]
+Year1993 <- Master_1[Master_1$Year == "1993",]
 Year1993
 
-Year1994 <- Master[Master_1$Year == "1994",]
+Year1994 <- Master_1[Master_1$Year == "1994",]
 Year1994
 
-Year1995 <- Master[Master_1$Year == "1995",]
+Year1995 <- Master_1[Master_1$Year == "1995",]
 Year1995
 
-Year1996 <- Master[Master_1$Year == "1996",]
+Year1996 <- Master_1[Master_1$Year == "1996",]
 Year1996
 
-Year1997 <- Master[Master_1$Year == "1997",]
+Year1997 <- Master_1[Master_1$Year == "1997",]
 Year1997
 
-Year1998 <- Master[Master_1$Year == "1998",]
+Year1998 <- Master_1[Master_1$Year == "1998",]
 Year1998
 
-Year1999 <- Master[Master_1$Year == "1990",]
+Year1999 <- Master_1[Master_1$Year == "1990",]
 Year1999
 
-Year2000 <- Master[Master_1$Year == "2000",]
+Year2000 <- Master_1[Master_1$Year == "2000",]
 Year2000
 
-Year2001 <- Master[Master_1$Year == "2001",]
+Year2001 <- Master_1[Master_1$Year == "2001",]
 Year2001
 
-Year2002 <- Master[Master_1$Year == "2002",]
+Year2002 <- Master_1[Master_1$Year == "2002",]
 Year2002
 
-Year2003 <- Master[Master_1$Year == "2003",]
+Year2003 <- Master_1[Master_1$Year == "2003",]
 Year2003
 
-Year2004 <- Master[Master_1$Year == "2004",]
+Year2004 <- Master_1[Master_1$Year == "2004",]
 Year2004
 
-Year2005 <- Master[Master_1$Year == "2005",]
+Year2005 <- Master_1[Master_1$Year == "2005",]
 Year2005
 
-Year2006 <- Master[Master_1$Year == "2006",]
+Year2006 <- Master_1[Master_1$Year == "2006",]
 Year2006
 
-Year2007 <- Master[Master_1$Year == "2007",]
+Year2007 <- Master_1[Master_1$Year == "2007",]
 Year2007
 
-Year2008 <- Master[Master_1$Year == "2008",]
+Year2008 <- Master_1[Master_1$Year == "2008",]
 Year2008
 
-Year2009 <- Master[Master_1$Year == "2009",]
+Year2009 <- Master_1[Master_1$Year == "2009",]
 Year2009
 
-Year2010 <- Master[Master_1$Year == "2010",]
+Year2010 <- Master_1[Master_1$Year == "2010",]
 Year2010
 
-Year2011 <- Master[Master_1$Year == "2011",]
+Year2011 <- Master_1[Master_1$Year == "2011",]
 Year2011
 
-Year2012 <- Master[Master_1$Year == "2012",]
+Year2012 <- Master_1[Master_1$Year == "2012",]
 Year2012
 
-Year2013 <- Master[Master_1$Year == "2013",]
+Year2013 <- Master_1[Master_1$Year == "2013",]
 Year2013
 
-Year2014 <- Master[Master_1$Year == "2014",]
+Year2014 <- Master_1[Master_1$Year == "2014",]
 Year2014
 
-Year2015 <- Master[Master_1$Year == "2015",]
+Year2015 <- Master_1[Master_1$Year == "2015",]
 Year2015
 
-Year2016 <- Master[Master_1$Year == "2016",]
+Year2016 <- Master_1[Master_1$Year == "2016",]
 Year2016
 
-Year2017 <- Master[Master_1$Year == "2017",]
+Year2017 <- Master_1[Master_1$Year == "2017",]
 Year2017
 
-Year2018 <- Master[Master_1$Year == "2018",]
+Year2018 <- Master_1[Master_1$Year == "2018",]
 Year2018
 
-Year2019 <- Master[Master_1$Year == "2019",]
+Year2019 <- Master_1[Master_1$Year == "2019",]
 Year2019
 
 ##Subseting Perkinsus data by year - doesnt work? ##
 
-View(Perkinsus)
-names(Perkinsus)
-
-P_1991 <- Master[Perkinsus$Year == "1991", ]
+P_1991 <- PM[PM$Year == "1991", ]
 P_1991
 
-View(Master_1)
+
 
 ##Subseting Temperature data by year ##
 
-Temp2017 <- Master[Master_1$Year == "2017"|Master_1$Parameter == "WTEMP",]
+Temp2017 <- Master_1[Master_1$Year == "2017"|Master_1$Parameter == "WTEMP",]
 Temp2017
 View(Temp2017)
 
@@ -394,4 +391,59 @@ Temp2_plot <-ggplot(data = Temp2017, aes(Month, MeasureValue)) + geom_point(alph
                                                               "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
 
 Temp2_plot 
+
+
+## GRID perkinsus all sites seperately ##
+perk_plot <- ggplot(Perkinsus, aes(Year, Prevalence)) + geom_smooth() +  facet_wrap("Site")+
+  labs(title="Average yearly Perkinsus Marinus Prevalence Chesapeake Bay", y="Prevalence (%)")
+perk_plot
+
+### GRID Temp data all sites separately by month/all years - can substitute specific year ##
+Temp3_plot <- ggplot(data = Master_WTEMP, aes(Month, MeasureValue)) + geom_smooth() + facet_wrap("MonitoringLocation")+
+  labs(title= "Average monthly temperature all sites Chesapeake Bay", y= "Temperature (deg C)") + scale_x_discrete(limit = c("1"="Jan", "2"="Feb","3"="Mar","4"="Apr","5"="May","6"="Jun",
+                                                                                                                               "7"="Jul","8"="Aug","9"="Sep","10"="Oct","11"="Nov","12"="Dec")) 
+Temp3_plot
+
+
+######## 4/28/22 ##########################################
+
+## yearly means of all sites MD Chesapeake Bay ###
+library(lubridate)
+library(dplyr)
+
+PM_means<-PM %>%
+  group_by(Year) %>%
+  summarize(Prevalence = mean(Prevalence))
+PM_means
+
+### Plotting Annual Mean P. Marinus Prev % in MD Chesapeake Bay ###
+PM_plot2 <- ggplot(PM_means, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "Annual mean P. marinus Prevalence in MD Chesapeake", y = "Prevalence (%)") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+PM_plot2
+
+
+## yearly means temperature all sites MD ###
+wtemp_means<-Master_WTEMP %>%
+  group_by(Year) %>%
+  summarize(MeanTemperature = mean(MeasureValue))
+wtemp_means
+
+## removing 1984-1989 (unneeded years)###
+wtemp_means<-wtemp_means[-c(1,2,3,4,5,6),]
+wtemp_means
+
+## plotting Annual mean temperature in MD Chesapeake Bay ###
+WTEMP_plot2 <- ggplot(wtemp_means, aes(Year, MeanTemperature)) + 
+  labs(title= "Annual mean Temperature in MD Chesapeake", y = "Temperature (deg C") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth( col= "red")
+WTEMP_plot2
+
+
+
+
+PM_WTEMP<- ggplot() + geom_point(PM_means, aes(Year, Prevalence), fill = "grey") + 
+  geom_point(wtemp_means,aes(Year, MeanTemperature), fill = "red")
+PM_WTEMP
+
 
