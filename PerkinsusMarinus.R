@@ -118,7 +118,7 @@ View(Master_WTEMP)
 #### open perkinsus data ###
 
 Perkinsus <- read_excel("~/Documents/UMBC/Meta-Analysis/Perkinsus MD Data.xlsx",)
-Perkinsus
+View(Perkinsus)
 
 PM <-na.omit(Perkinsus)
 View(PM)
@@ -436,14 +436,114 @@ wtemp_means
 ## plotting Annual mean temperature in MD Chesapeake Bay ###
 WTEMP_plot2 <- ggplot(wtemp_means, aes(Year, MeanTemperature)) + 
   labs(title= "Annual mean Temperature in MD Chesapeake", y = "Temperature (deg C") +
-  theme(axis.text.x = element_text(angle= 45)) + geom_smooth( col= "red")
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(se = FALSE,col= "red")
 WTEMP_plot2
 
 
 
+## plotting Annual mean salinity in MD Chesapeake Bay ### 
+## yearly means all sites MD ###
+salinity_means<-Master_SALINITY %>%
+  group_by(Year) %>%
+  summarize(MeanSalinity = mean(MeasureValue))
+salinity_means
 
-PM_WTEMP<- ggplot() + geom_point(PM_means, aes(Year, Prevalence), fill = "grey") + 
-  geom_point(wtemp_means,aes(Year, MeanTemperature), fill = "red")
-PM_WTEMP
+## removing 1984-1989 (unneeded years)###
+salinity_means<-salinity_means[-c(1,2,3,4,5,6),]
+salinity_means
+
+SAL_plot2 <- ggplot(salinity_means, aes(Year, MeanSalinity)) + 
+  labs(title= "Annual mean Salinity in MD Chesapeake", y = "Salinity (ppt)") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(se = FALSE,col= "red")
+SAL_plot2
 
 
+## plotting annual mean pH in MD Chesapeake Bay ###
+## yearly means all sites MD ###
+ph_means<-Master_PH %>%
+  group_by(Year) %>%
+  summarize(Meanph = mean(MeasureValue))
+ph_means
+
+## removing 1984-1989 (unneeded years)###
+ph_means<-ph_means[-c(1,2,3,4,5,6),]
+ph_means
+
+PH_plot2 <- ggplot(ph_means, aes(Year, Meanph)) + 
+  labs(title= "Annual mean pH in MD Chesapeake", y = "pH") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(se = FALSE,col= "red")
+PH_plot2
+
+
+### reading Perkinsus VA  data ###
+
+PerkinsusVA <- read.csv("~/Documents/UMBC/Meta-Analysis/Perkinsus VA data.csv",)
+PerkinsusVA
+
+names(PerkinsusVA)
+
+
+PerkinsusVA$Year <-as.factor(PerkinsusVA$Year)
+PerkinsusVA$Month<-as.factor(PerkinsusVA$Month)
+PerkinsusVA$Region<-as.factor(PerkinsusVA$Region)
+PerkinsusVA$State<-as.factor(PerkinsusVA$State)
+PerkinsusVA$Site<-as.factor(PerkinsusVA$Site)
+PerkinsusVA$Prevalence<-as.numeric(PerkinsusVA$Prevalence)
+PerkinsusVA$Collected<-as.factor(PerkinsusVA$Collected)
+PerkinsusVA$Mean.I.Heavy<-as.factor(PerkinsusVA$Mean.I.Heavy)
+PerkinsusVA$Mean.I.Moderate<-as.factor(PerkinsusVA$Mean.I.Moderate)
+PerkinsusVA$Mean.I.Light<-as.factor(PerkinsusVA$Mean.I.Light)
+PerkinsusVA$Mean.I.Rare<-as.factor(PerkinsusVA$Mean.I.Rare)
+
+Prevalence<- subset(PerkinsusVA, select = -c(Mean.I.Heavy,Mean.I.Moderate,Mean.I.Light,Mean.I.Rare))
+
+Prevalence
+
+PVA<-na.omit(Prevalence)
+PVA
+
+PVA$Prevalence<-as.numeric(PVA$Prevalence)
+View(PVA)
+
+PV_means <-PVA %>%
+  group_by(Year) %>%
+  summarize(Prevalence = mean(Prevalence))
+PV_means
+
+### Plotting Annual Mean P. Marinus Prev % in VA  Chesapeake Bay ###
+PV_plot <- ggplot(PV_means, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "Annual mean P. marinus Prevalence in VA Chesapeake", y = "Prevalence (%)") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+PV_plot
+
+
+#### MD & VA Chesapeake ######
+
+
+Prev_ALL <- read.csv("~/Documents/UMBC/Meta-Analysis/Perkinsus Prev Chesapeake 1990-2021.csv",)
+Prev_ALL
+
+names(Prev_ALL)
+
+Prev_ALL$Month<-as.factor(Prev_ALL$Month)
+View(Prev_ALL)
+
+Prev_ALL<-subset(Prev_ALL, select = -c(Month))
+Prev_ALL
+
+PrevALL<-na.omit(Prev_ALL)
+PrevALL
+
+PrevALL$Prevalence<-as.numeric(PrevALL$Prevalence)
+View(PrevALL)
+
+P_means <-PrevALL %>%
+  group_by(Year) %>%
+  summarize(Prevalence = mean(Prevalence))
+View(P_means)
+
+### Plotting Annual Mean P. Marinus Prev % in MD Chesapeake Bay ###
+P_plot <- ggplot(P_means, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "Annual mean P. marinus Prevalence in Chesapeake Bay", y = "Prevalence (%)") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+P_plot
