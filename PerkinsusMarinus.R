@@ -436,8 +436,21 @@ wtemp_means
 ## plotting Annual mean temperature in MD Chesapeake Bay ###
 WTEMP_plot2 <- ggplot(wtemp_means, aes(Year, MeanTemperature)) + 
   labs(title= "Annual mean Temperature in MD Chesapeake", y = "Temperature (deg C") +
-  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(se = FALSE,col= "red")
+  theme(axis.text.x = element_text(angle= 45)) +  geom_smooth( se=FALSE, col = "red")
 WTEMP_plot2
+
+
+### yearly means by site temperature ####
+Tsite_means<- Master_WTEMP %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(MeanTemperature = mean(MeasureValue))
+Tsite_means
+
+
+Tsite_plot<- ggplot(Tsite_means, aes(Year, MeanTemperature, color = MonitoringLocation)) + 
+  labs(title= "Annual mean Temperature by site in MD Chesapeake", y = "Temperature (deg C") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(se=FALSE)
+Tsite_plot
 
 
 
@@ -534,6 +547,7 @@ Prev_ALL
 PrevALL<-na.omit(Prev_ALL)
 PrevALL
 
+
 PrevALL$Prevalence<-as.numeric(PrevALL$Prevalence)
 View(PrevALL)
 
@@ -542,8 +556,20 @@ P_means <-PrevALL %>%
   summarize(Prevalence = mean(Prevalence))
 View(P_means)
 
+
 ### Plotting Annual Mean P. Marinus Prev % in MD Chesapeake Bay ###
 P_plot <- ggplot(P_means, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
   labs(title= "Annual mean P. marinus Prevalence in Chesapeake Bay", y = "Prevalence (%)") +
   theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+
 P_plot
+
+#### 5/2/22 - Overlaying graphs ####
+library(patchwork)
+library(hrbrthemes)
+library(tidyr)
+
+ ### MD Grid ### 
+WTEMP_plot2 + PM_plot2 + SAL_plot2 + PH_plot2
+
+
