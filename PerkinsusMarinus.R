@@ -352,12 +352,38 @@ Year2018
 Year2019 <- Master_1[Master_1$Year == "2019",]
 Year2019
 
-##Subseting Perkinsus data by year - doesnt work? ##
+##Subseting Perkinsus data by year ##
 
+P_1990 <- PM[PM$Year == "1990", ]
 P_1991 <- PM[PM$Year == "1991", ]
-P_1991
-
-
+P_1992 <- PM[PM$Year == "1992", ]
+P_1993 <- PM[PM$Year == "1993", ]
+P_1994 <- PM[PM$Year == "1994", ]
+P_1995 <- PM[PM$Year == "1995", ]
+P_1996 <- PM[PM$Year == "1996", ]
+P_1997 <- PM[PM$Year == "1997", ]
+P_1998 <- PM[PM$Year == "1998", ]
+P_1999 <- PM[PM$Year == "1999", ]
+P_2000 <- PM[PM$Year == "2000", ]
+P_2001 <- PM[PM$Year == "2001", ]
+P_2002 <- PM[PM$Year == "2002", ]
+P_2003 <- PM[PM$Year == "2003", ]
+P_2004 <- PM[PM$Year == "2004", ]
+P_2005 <- PM[PM$Year == "2005", ]
+P_2006 <- PM[PM$Year == "2006", ]
+P_2007 <- PM[PM$Year == "2007", ]
+P_2008 <- PM[PM$Year == "2008", ]
+P_2009 <- PM[PM$Year == "2009", ]
+P_2010 <- PM[PM$Year == "2010", ]
+P_2011 <- PM[PM$Year == "2011", ]
+P_2012 <- PM[PM$Year == "2012", ]
+P_2013 <- PM[PM$Year == "2013", ]
+P_2014 <- PM[PM$Year == "2014", ]
+P_2015<- PM[PM$Year == "2015", ]
+P_2016 <- PM[PM$Year == "2016", ]
+P_2017 <- PM[PM$Year == "2017", ]
+P_2018 <- PM[PM$Year == "2018", ]
+P_2019 <- PM[PM$Year == "2019", ]
 
 ##Subseting Temperature data by year ##
 
@@ -571,5 +597,19 @@ library(tidyr)
 
  ### MD Grid ### 
 WTEMP_plot2 + PM_plot2 + SAL_plot2 + PH_plot2
+
+#### MD prevalence by year and site ###
+
+Pmeans <-P_1990 %>%
+  group_by(Site) %>%
+  summarize(Prevalence = mean(Prevalence))
+View(Pmeans)
+
+
+P1990_plot <- ggplot(P_1990, aes(Site, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= " Mean P. marinus Prevalence MD by site 1990", y = "Prevalence (%)") +
+  theme(axis.text.x = element_text(angle= 90)) 
+P1990_plot
+
 
 
