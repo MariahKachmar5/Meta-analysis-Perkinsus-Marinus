@@ -117,7 +117,7 @@ View(Master_WTEMP)
 
 #### open perkinsus data ###
 
-Perkinsus <- read_excel("~/Documents/UMBC/Meta-Analysis/Perkinsus MD Data.xlsx",)
+Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/Perkinsus MD Data V2_Sheet1.csv",)
 View(Perkinsus)
 
 PM <-na.omit(Perkinsus)
@@ -176,8 +176,8 @@ plot
 plot<- plot+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
 plot
 
-PM$Lat <- as.numeric(PM$Lat)
-PM$Long <- as.numeric(PM$Long)
+Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
+Perkinsus$Long <- as.numeric(Perkinsus$Long)
 View(PM)
 
 plot <- plot+geom_point(data = PM,aes(Long, Lat, color = Site ))
@@ -437,7 +437,7 @@ Temp3_plot
 library(lubridate)
 library(dplyr)
 
-PM_means<-PM %>%
+PM_means<-Perkinsus %>%
   group_by(Year) %>%
   summarize(Prevalence = mean(Prevalence))
 PM_means
@@ -613,3 +613,120 @@ P1990_plot
 
 
 
+######## 5/5/22 #######
+
+### GIS map Perkinsus sites MD ###
+
+options(repr.plot.width=20, repr.plot.height=15)
+
+library(ggmap)
+library(maps)
+library(mapdata)
+library(maptools)
+library(dplyr)
+library(rgdal)
+library(geosphere)
+library(plotrix)
+library(ggrepel)
+library(sf)
+
+map_new <- st_read("~/Documents/UMBC/Meta-Analysis/ChesapeakeBay/Chesapeake_Bay_Shoreline_High_Resolution/", "Chesapeake_Bay_Shoreline_High_Resolution")
+map_new
+
+options(sf_max.plot=1)
+plot(map_new, axes=TRUE)
+
+map<-fortify(map_new)
+
+Site_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))+theme(legend.position="none")
+Site_area
+
+
+##### 5/9/22 #########
+
+#### monthly/yearly comparisons ####
+
+### subset monthly Temperature ###
+
+JulyTemp <- Master_WTEMP[Master_WTEMP$Month == "7",]
+View(JulyTemp)
+
+AugTemp <- Master_WTEMP[Master_WTEMP$Month == "8",]
+View(AugTemp)
+
+SeptTemp <- Master_WTEMP[Master_WTEMP$Month == "9",]
+View(SeptTemp)
+
+OctTemp <- Master_WTEMP[Master_WTEMP$Month == "10",]
+View(OctTemp)
+
+NovTemp <- Master_WTEMP[Master_WTEMP$Month == "11",]
+View(NovTemp)
+
+### Graphing #### 
+
+JulyTemp_plot <- ggplot(JulyTemp, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "July Temperature MD Chespeake Bay All Sites")+ theme(legend.position = "none")
+JulyTemp_plot
+
+AugTemp_plot <- ggplot(AugTemp, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "August Temperature MD Chespeake Bay All Sites") +theme(legend.position = "none")
+AugTemp_plot
+
+SeptTemp_plot <- ggplot(SeptTemp, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "Sept Temperature MD Chespeake Bay All Sites")+ theme(legend.position = "none")
+SeptTemp_plot
+
+OctTemp_plot <- ggplot(OctTemp, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "October Temperature MD Chespeake Bay All Sites") +theme(legend.position = "none")
+OctTemp_plot
+
+NovTemp_plot <- ggplot(NovTemp, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "November Temperature MD Chespeake Bay All Sites") +theme(legend.position = "none")
+NovTemp_plot
+
+JulyTemp_plot + AugTemp_plot + SeptTemp_plot + OctTemp_plot + NovTemp_plot 
+
+
+### subset monthly pH ###
+
+Julyph <- Master_PH[Master_PH$Month == "7",]
+View(JulySal)
+
+Augph <- Master_PH[Master_PH$Month == "8",]
+View(AugSal)
+
+Septph <- Master_PH[Master_PH$Month == "9",]
+View(SeptSal)
+
+Octph <- Master_PH[Master_PH$Month == "10",]
+View(OctSal)
+
+Novph <- Master_PH[Master_PH$Month == "11",]
+View(NovSal)
+
+### Graphing #### 
+
+Julyph_plot <- ggplot(Julyph, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "July pH MD Chespeake Bay All Sites")+ theme(legend.position = "none")
+JulySal_plot
+
+Augph_plot <- ggplot(Augph, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "August pH MD Chespeake Bay All Sites") +theme(legend.position = "none")
+Augph_plot
+
+Septph_plot <- ggplot(Septph, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "Sept pH MD Chespeake Bay All Sites")+ theme(legend.position = "none")
+Septph_plot
+
+Octph_plot <- ggplot(Octph, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "October pH MD Chespeake Bay All Sites") +theme(legend.position = "none")
+Octph_plot
+
+Novph_plot <- ggplot(Novph, aes(Year, MeasureValue, color = MonitoringLocation))+
+  geom_smooth(se=FALSE) + labs(title = "November pH MD Chespeake Bay All Sites") +theme(legend.position = "none")
+Novph_plot
+
+Julyph_plot + Augph_plot + Septph_plot + Octph_plot + Novph_plot 
+
+Salinity
