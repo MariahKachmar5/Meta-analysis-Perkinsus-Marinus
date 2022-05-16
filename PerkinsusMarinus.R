@@ -729,4 +729,231 @@ Novph_plot
 
 Julyph_plot + Augph_plot + Septph_plot + Octph_plot + Novph_plot 
 
-Salinity
+########## 5/10/22 #################
+names(Master_WTEMP)
+
+T_means <-Master_WTEMP %>%
+  group_by(Month, Year) %>%
+  summarize(MeasureValue = mean(MeasureValue))
+View(T_means)
+
+Temp_means_plot <- ggplot(T_means, aes(Year, MeasureValue, color = factor(Month))) + geom_smooth(se= FALSE) +
+  labs(title= "Mean Monthly Temperature MD Chesapeake Bay", y = "Temperature (deg C)") 
+  
+Temp_means_plot
+
+
+S_means <-Master_SALINITY %>%
+  group_by(Month, Year) %>%
+  summarize(MeasureValue = mean(MeasureValue))
+View(S_means)
+
+S_means_plot <- ggplot(S_means, aes(Year, MeasureValue, color = factor(Month))) + geom_smooth(se= FALSE) +
+  labs(title= "Mean Monthly Salinity MD Chesapeake Bay", y = "PPT")
+S_means_plot
+
+
+######### 5/16/22 ################################################
+
+######### SEASONS ###############
+
+#### TEMPERATURE ######
+
+Springtemp <- Master_WTEMP[Master_WTEMP$Month == "3" | Master_WTEMP$Month== "4"|
+                             Master_WTEMP$Month == "5",]
+View(Springtemp)
+
+Summertemp  <- Master_WTEMP[Master_WTEMP$Month == "6" | Master_WTEMP$Month== "7"|
+                                         Master_WTEMP$Month == "8",]
+View(Summertemp)
+
+Falltemp <-Master_WTEMP[Master_WTEMP$Month == "9" | Master_WTEMP$Month== "10"|
+                          Master_WTEMP$Month == "11",]
+View(Falltemp)
+
+Wintertemp<-Master_WTEMP[Master_WTEMP$Month == "12" | Master_WTEMP$Month== "1"|
+                           Master_WTEMP$Month == "2",]
+View(Wintertemp)
+
+#### Spring graph - annual means by and site ####
+
+STmeans <-Springtemp %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(Temperature = mean(MeasureValue))
+View(STmeans)
+
+Spring_means_plot <- ggplot(STmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Spring mean temperature by site MD Chesapeake Bay")+theme(legend.position = "none")
+Spring_means_plot
+
+
+##### Fall graph - annual temp means by site ######
+
+FTmeans <-Falltemp %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(Temperature = mean(MeasureValue))
+View(FTmeans)
+
+Fall_means_plot <- ggplot(FTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Fall mean temperature by site MD Chesapeake Bay")+theme(legend.position = "none")
+Fall_means_plot
+
+
+##### Summer graph - annual temp means by site ####
+
+SMTmeans <-Summertemp %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(Temperature = mean(MeasureValue))
+View(SMTmeans)
+
+Summer_means_plot <- ggplot(SMTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Summer mean temperature by site MD Chesapeake Bay") +theme(legend.position = "none")
+Summer_means_plot
+
+#### winter graph - annual temperature means by site #####
+
+WTmeans <-Wintertemp %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(Temperature = mean(MeasureValue))
+View(WTmeans)
+
+Winter_means_plot <- ggplot(WTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Winter mean temperature by site MD Chesapeake Bay") + theme(legend.position = "none")
+Winter_means_plot
+
+Spring_means_plot+Summer_means_plot+Fall_means_plot+Winter_means_plot + theme(legend.position = "right")
+
+
+
+##### SALINITY ######
+View(Master_SALINITY)
+Springsal <- Master_SALINITY[Master_SALINITY$Month == "3" | Master_SALINITY$Month== "4"|
+                             Master_SALINITY$Month == "5",]
+
+
+Summersal  <- Master_SALINITY[Master_SALINITY$Month == "6" | Master_SALINITY$Month== "7"|
+                                Master_SALINITY$Month == "8",]
+
+
+Fallsal <-Master_SALINITY[Master_SALINITY$Month == "9" | Master_SALINITY$Month== "10"|
+                            Master_SALINITY$Month == "11",]
+
+
+Wintersal<-Master_SALINITY[Master_SALINITY$Month == "12" | Master_SALINITY$Month== "1"|
+                             Master_SALINITY$Month == "2",]
+
+
+#### Spring graph - annual means by and site ####
+
+SSmeans <-Springsal %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(PPT = mean(MeasureValue))
+View(SSmeans)
+
+Spring_means_plot2 <- ggplot(SSmeans, aes(Year,PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Spring mean Salinity by site MD Chesapeake Bay")+theme(legend.position = "none")
+Spring_means_plot2
+
+
+##### Fall graph - annual salinity means by site ######
+
+FSmeans <-Fallsal %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(PPT = mean(MeasureValue))
+View(Fsmeans)
+
+Fall_means_plot2 <- ggplot(FSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Fall mean Salinity by site MD Chesapeake Bay")+theme(legend.position = "none")
+Fall_means_plot2
+
+
+##### Summer graph - annual salinity means by site ####
+
+SMSmeans <-Summersal %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(PPT = mean(MeasureValue))
+View(SMTmeans)
+
+Summer_means_plot2 <- ggplot(SMSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Summer mean Salinity by site MD Chesapeake Bay") +theme(legend.position = "none")
+Summer_means_plot2
+
+#### winter graph - annual salinity means by site #####
+
+WSmeans <-Wintersal %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(PPT = mean(MeasureValue))
+View(WSmeans)
+
+Winter_means_plot2 <- ggplot(WSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Winter mean Salinity by site MD Chesapeake Bay") + theme(legend.position = "none")
+Winter_means_plot2
+
+Spring_means_plot2+Summer_means_plot2+Fall_means_plot2+Winter_means_plot2 + theme(legend.position = "right")
+
+
+##### pH ######
+View(Master_PH)
+Springph <- Master_PH[Master_PH$Month == "3" | Master_PH$Month== "4"|
+                        Master_PH$Month == "5",]
+
+
+Summerph  <- Master_PH[Master_PH$Month == "6" | Master_PH$Month== "7"|
+                         Master_PH$Month == "8",]
+
+
+Fallph <-Master_PH[Master_PH$Month == "9" | Master_PH$Month== "10"|
+                     Master_PH$Month == "11",]
+
+
+Winterph<-Master_PH[Master_PH$Month == "12" | Master_PH$Month== "1"|
+                      Master_PH$Month == "2",]
+
+
+#### Spring graph - annual means by and site ####
+
+Sphmeans <-Springph %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(pH = mean(MeasureValue))
+View(SSmeans)
+
+Spring_means_plot3 <- ggplot(Sphmeans, aes(Year,pH, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Spring mean pH by site MD Chesapeake Bay")+theme(legend.position = "none")
+Spring_means_plot3
+
+
+##### Fall graph - annual  means by site ######
+
+Fphmeans <-Fallph %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(pH = mean(MeasureValue))
+View(Fsmeans)
+
+Fall_means_plot3 <- ggplot(Fphmeans, aes(Year, pH, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Fall mean pH by site MD Chesapeake Bay")+theme(legend.position = "none")
+Fall_means_plot3
+
+
+##### Summer graph - annual salinity means by site ####
+
+Sphmeans <-Summerpj %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(pH = mean(MeasureValue))
+View(SMTmeans)
+
+Summer_means_plot3 <- ggplot(Sphmeans, aes(Year, pH, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Summer mean pH by site MD Chesapeake Bay") +theme(legend.position = "none")
+Summer_means_plot3
+
+#### winter graph - annual salinity means by site #####
+
+Wphmeans <-Winterph %>%
+  group_by(MonitoringLocation, Year) %>%
+  summarize(pH = mean(MeasureValue))
+View(WSmeans)
+
+Winter_means_plot3 <- ggplot(Wphmeans, aes(Year, pH, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
+  labs(title= "Winter mean pH by site MD Chesapeake Bay") + theme(legend.position = "none")
+Winter_means_plot3
+
+Spring_means_plot3+Summer_means_plot3+Fall_means_plot3+Winter_means_plot3 + theme(legend.position = "right")
