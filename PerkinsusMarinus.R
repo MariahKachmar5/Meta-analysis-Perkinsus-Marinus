@@ -142,6 +142,7 @@ P_plot <- ggplot(PM,
 P_plot
 
 
+
 ### mapping ###
 
 library("tmap")
@@ -438,9 +439,9 @@ library(lubridate)
 library(dplyr)
 
 PM_means<-Perkinsus %>%
-  group_by(Year) %>%
+  group_by(Lat, Long) %>%
   summarize(Prevalence = mean(Prevalence))
-PM_means
+View(PM_means)
 
 ### Plotting Annual Mean P. Marinus Prev % in MD Chesapeake Bay ###
 PM_plot2 <- ggplot(PM_means, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
@@ -640,6 +641,8 @@ map<-fortify(map_new)
 
 Site_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))+theme(legend.position="none")
 Site_area
+
+
 
 
 ##### 5/9/22 #########
@@ -957,3 +960,137 @@ Winter_means_plot3 <- ggplot(Wphmeans, aes(Year, pH, color = factor(MonitoringLo
 Winter_means_plot3
 
 Spring_means_plot3+Summer_means_plot3+Fall_means_plot3+Winter_means_plot3 + theme(legend.position = "right")
+
+
+####### 5/23/22 #############################
+
+######## Scatter plot Temperature by month and year (all sites combined) #####
+meansT <-Master_WTEMP %>%
+  group_by( Month, Year, MonitoringLocation) %>%
+  summarize(Temperature = mean(MeasureValue))
+meansT
+
+scattertemp1 <- ggplot(meansT, aes(Month, Temperature, color = Year)) + geom_point() 
+scattertemp1
+
+scattertemp2 <- ggplot(meansT, aes(Year, Temperature, color = Month)) + geom_point()
+scattertemp2
+
+######## Scatter plot Salinity by month and year (all sites combined) #####
+meansS <-Master_SALINITY %>%
+  group_by( Month, Year) %>%
+  summarize(Salinity = mean(MeasureValue))
+meansS
+
+scattersal1 <- ggplot(meansS, aes(Month, Salinity, color = Year)) + geom_point() + geom_smooth()
+scattersal1
+
+scattersal2 <- ggplot(meansS, aes(Year, Salinity, color = Month)) + geom_point() + geom_smooth()
+scattersal2
+
+######## Scatter plot pH by month and year (all sites combined) #####
+meansph <-Master_PH %>%
+  group_by( Month, Year) %>%
+  summarize(pH = mean(MeasureValue))
+meansph
+
+scatterph1 <- ggplot(meansph, aes(Month, pH, color = Year)) + geom_point() + geom_smooth()
+scatterph1
+
+scatterph2 <- ggplot(meansph, aes(Year, pH, color = Month)) + geom_point() + geom_smooth()
+scatterph2
+
+
+scattertemp1 + scattersal1 + scatterph1 + 
+  labs(title= "Mean Env Parameters Chesapeake by Month and year for each site")+
+  theme(plot.title = element_text(hjust = .8))
+
+
+#### subsetting out means of sites for each environmental parameter ###
+
+View(meansT)
+TempCB4.2C <- meansT[meansT$MonitoringLocation == "CB4.2C",]
+TempCB4.2C
+
+TempCB4.4 <- meansT[meansT$MonitoringLocation == "CB4.4",]
+TempCB4.4
+
+TempCB5.1 <- meansT[meansT$MonitoringLocation == "CB5.1",]
+TempCB5.1
+
+TempCB5.2 <- meansT[meansT$MonitoringLocation == "CB5.2",]
+TempCB5.2
+
+TempEE2.1 <- meansT[meansT$MonitoringLocation == "EE2.1",]
+TempEE2.1
+
+TempEE3.1 <- meansT[meansT$MonitoringLocation == "EE3.1",]
+TempEE3.1
+
+TempET5.2 <- meansT[meansT$MonitoringLocation == "ET5.2",]
+TempET5.2
+
+TempLE1.1 <- meansT[meansT$MonitoringLocation == "LE1.1",]
+TempLE1.1
+
+TempCB3.2 <- meansT[meansT$MonitoringLocation == "CB3.2",]
+TempCB3.2
+
+TempCB3.3W<- meansT[meansT$MonitoringLocation == "CB3.3W",]
+TempCB3.3W
+
+TempCB4.2C <- meansT[meansT$MonitoringLocation == "CB4.2C",]
+TempCB4.2C
+
+
+
+### graphing by site ###
+
+siteplot1 <- ggplot(TempCB5.2, aes(Month, Temperature, color = Year)) + geom_point() + 
+  labs(title = "Mean temperature site CB5.2")
+siteplot1
+
+
+
+##### perkinsus MD by latitude ####
+library(ggplot2)
+library(dplyr)
+View(Perkinsus)
+
+PM<- na.omit(Perkinsus)
+
+Pmeans <-PM %>%
+  group_by(Year, Lat) %>%
+  summarize(Prevalence = mean(Prevalence))
+Pmeans
+View(Pmeans)
+
+plot <- ggplot(Pmeans, aes(Lat, Year, color= Prevalence)) + geom_point()+
+  scale_colour_gradientn(colours= rainbow(5)) + labs(title = " Perkinsus means by year and latitude ")
+plot
+
+
+
+####### geospatial map 5/31/22#####
+
+### prevalence % ###
+Site_area2 <-ggplot() + geom_sf(data = map)+
+  theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
+  geom_point(data = Perkinsus,aes(Long, Lat, color = Prevalence ))+theme(legend.position="none")
+Site_area2
+
+library(scatterpie)
+
+Perkinsus$Long <- as.numeric(Perkinsus$Long)
+Perkinsus$Prevalence <-as.numeric(Perkinsus$Prevalence)
+
+prevalence_map <-ggplot(data = worldMap) +geom_sf(fill="light grey") +
+  coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+
+  xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay Prevalence All Years")+
+  theme(panel.background = element_rect(fill = "white"))+
+  annotate(geom = "text",x = -76.1,y = 37.5,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic")+
+  annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm"))+
+  theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
+prevalence_map + geom_scatterpie(data = Perkinsus, aes(Long, Lat,group= Region), r= radius) 
+
+View(Perkinsus)
