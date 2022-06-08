@@ -36,7 +36,7 @@ PV_means <-PVA %>%
               prevalence_sd = sd(Prevalence))
 PV_means
 
-### Plotting Annual Mean P. Marinus Prev % in VA  Chesapeake Bay ###
+### Plotting Annual Mean P. Marinus Prev % in VA Chesapeake Bay ###
 
 PV_plotSD <- ggplot(PV_means, aes(Year, prevalence_mean)) + geom_col(color= "grey", fill= "grey") +
     geom_errorbar(aes(ymin = prevalence_mean - prevalence_sd, ymax = prevalence_mean + prevalence_sd), width=.2) +
@@ -72,10 +72,39 @@ PMD_means <- PMD %>%
               prevalenceSD = sd(Prevalence))
 PMD_means
 
-### Plotting Annual Mean P. Marinus Prev % in VA  Chesapeake Bay ###
+### Plotting Annual Mean P. Marinus Prev % in MD Chesapeake Bay ###
 
 PMD_plotSD <- ggplot(PMD_means, aes(Year, PrevalenceMean)) + geom_col(color= "grey", fill= "grey") +
     geom_errorbar(aes(ymin = PrevalenceMean - prevalenceSD, ymax = PrevalenceMean + prevalenceSD), width=.2) +
     labs(title= "Annual mean P. marinus Prevalence in MD Chesapeake", y = "Prevalence (%)") +
     theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
 PMD_plotSD
+
+########## MD & VA Chesapeake ##########
+Prev_ALL <- read.csv("Perkinsus Prev Chesapeake 1990-2021.csv")
+View(Prev_ALL)
+names(Prev_ALL)
+
+Prev_ALL$Year <-as.factor(Prev_ALL$Year)
+Prev_ALL$State<-as.factor(Prev_ALL$State)
+Prev_ALL$Region<-as.factor(Prev_ALL$Region)
+Prev_ALL$Site<-as.factor(Prev_ALL$Site)
+Prev_ALL$Prevalence<-as.numeric(Prev_ALL$Prevalence)
+Prev_ALL$Collected<-as.numeric(Prev_ALL$Collected)
+Prev_ALL$Month <- as.factor(Prev_ALL$Month)
+Prev_ALL<-subset(Prev_ALL, select = -c(Month))
+PrevALL<-na.omit(Prev_ALL)
+
+P_meansAll <- PrevALL %>%
+    group_by(Year) %>%
+    summarise(Prev.Mean = mean(Prevalence),
+              Prev.sd = sd(Prevalence))
+P_meansAll
+
+### Plotting Annual Mean P. Marinus Prev % with data from both MD and VA Chesapeake Bay ###
+
+P_All_plotSD <- ggplot(P_meansAll, aes(Year, Prev.Mean)) + geom_col(color= "grey", fill= "grey") +
+    geom_errorbar(aes(ymin = Prev.Mean - Prev.sd, ymax = Prev.Mean + Prev.sd), width=.2) +
+    labs(title= "Annual mean P. marinus Prevalence in Chesapeake Bay (MD and VA)", y = "Prevalence (%)") +
+    theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+P_All_plotSD
