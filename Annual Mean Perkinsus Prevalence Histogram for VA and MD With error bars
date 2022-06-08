@@ -1,0 +1,79 @@
+setwd("~/Downloads/GradSchool/Meta-Analysis")
+
+library(ggplot2)
+
+########## VA Only ########## 
+PerkinsusVA <- read.csv("Perkinsus VA data.csv")
+PerkinsusVA
+names(PerkinsusVA)
+
+PerkinsusVA$Year <-as.factor(PerkinsusVA$Year)
+PerkinsusVA$Month<-as.factor(PerkinsusVA$Month)
+PerkinsusVA$Region<-as.factor(PerkinsusVA$Region)
+PerkinsusVA$State<-as.factor(PerkinsusVA$State)
+PerkinsusVA$Site<-as.factor(PerkinsusVA$Site)
+PerkinsusVA$Prevalence<-as.numeric(PerkinsusVA$Prevalence)
+PerkinsusVA$Collected<-as.factor(PerkinsusVA$Collected)
+PerkinsusVA$Mean.I.Heavy<-as.factor(PerkinsusVA$Mean.I.Heavy)
+PerkinsusVA$Mean.I.Moderate<-as.factor(PerkinsusVA$Mean.I.Moderate)
+PerkinsusVA$Mean.I.Light<-as.factor(PerkinsusVA$Mean.I.Light)
+PerkinsusVA$Mean.I.Rare<-as.factor(PerkinsusVA$Mean.I.Rare)
+
+PrevalenceVA<- subset(PerkinsusVA, select = -c(Mean.I.Heavy,Mean.I.Moderate,Mean.I.Light,Mean.I.Rare))
+PrevalenceVA
+
+PVA<-na.omit(PrevalenceVA)
+PVA
+
+PVA$Prevalence<-as.numeric(PVA$Prevalence)
+View(PVA)
+
+PV_means <-PVA %>%
+    group_by(Year) %>%
+    summarize(prevalence_mean = mean(Prevalence),
+              prevalence_sd = sd(Prevalence))
+PV_means
+
+### Plotting Annual Mean P. Marinus Prev % in VA  Chesapeake Bay ###
+
+PV_plotSD <- ggplot(PV_means, aes(Year, prevalence_mean)) + geom_col(color= "grey", fill= "grey") +
+    geom_errorbar(aes(ymin = prevalence_mean - prevalence_sd, ymax = prevalence_mean + prevalence_sd), width=.2) +
+    labs(title= "Annual mean P. marinus Prevalence in VA Chesapeake", y = "Prevalence (%)") +
+    theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+PV_plotSD
+
+########## MD Only ########## 
+PerkinsusMD <- read.csv("Perkinsus MD Data V2_Sheet1.csv")
+PerkinsusMD
+names(PerkinsusMD)
+
+PerkinsusMD$Year <-as.factor(PerkinsusMD$Year)
+PerkinsusMD$Region<-as.factor(PerkinsusMD$Region)
+PerkinsusMD$Site<-as.factor(PerkinsusMD$Site)
+PerkinsusMD$Prevalence<-as.numeric(PerkinsusMD$Prevalence)
+PerkinsusMD$Lat<-as.factor(PerkinsusMD$Lat)
+PerkinsusMD$Long<-as.factor(PerkinsusMD$Long)
+PerkinsusMD$MonitoringStation<-as.factor(PerkinsusMD$MonitoringStation)
+
+PrevalenceMD<- subset(PerkinsusMD, select = -c(Lat, Long, MeanIntensity))
+PrevalenceMD
+
+PMD<-na.omit(PrevalenceMD)
+PMD
+
+PMD$Prevalence<-as.numeric(PMD$Prevalence)
+View(PMD)
+
+PMD_means <- PMD %>%
+    group_by(Year) %>%
+    summarize(PrevalenceMean = mean(Prevalence),
+              prevalenceSD = sd(Prevalence))
+PMD_means
+
+### Plotting Annual Mean P. Marinus Prev % in VA  Chesapeake Bay ###
+
+PMD_plotSD <- ggplot(PMD_means, aes(Year, PrevalenceMean)) + geom_col(color= "grey", fill= "grey") +
+    geom_errorbar(aes(ymin = PrevalenceMean - prevalenceSD, ymax = PrevalenceMean + prevalenceSD), width=.2) +
+    labs(title= "Annual mean P. marinus Prevalence in MD Chesapeake", y = "Prevalence (%)") +
+    theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
+PMD_plotSD
