@@ -65,13 +65,22 @@ SALINITY
 WTEMP <-Env1[Env1$Parameter == "WTEMP",]
 View(WTEMP)
 
-### Yearly means for environmental parameters by site ###
+### Yearly means for environmental parameters by site and time ###
 
 library(dplyr)
-Emeans <-Env1 %>%
+Yearmeans <-Env1 %>%
   group_by(Year, Parameter, MonitoringLocation, Latitude, Longitude) %>%
   summarize(Value = mean(MeasureValue))
-View(Emeans)
+View(Yearmeans)
+
+MonthlyMeans<-Env1 %>%
+  group_by(Month, Year, Parameter, Site, Lat, Long) %>%
+  summarize(Value = mean(MeasureValue))
+View(MonthlyMeans)
+
+### Merging data sheets using Monthly/yearly means  #### 
+Master<- merge(Perkinsus, MonthlyMeans, by =c("Site","Year","Month", "Lat","Long"), all = TRUE)
+View(Master)
 
 
 ##### NOTES ######
@@ -79,7 +88,8 @@ View(Emeans)
 ## random variables - sites/lat&long
 
 
-lmer(Prevalence ~ Parameter*Year + MonitoringLocation, data = Emeans)
+lmer(Prevalence ~ Parameter*Year + Site, data = Master)
 
-#Q: how to create model with separate sheets? Should I combine them? 
+##Error in lme4::lFormula(formula = Prevalence ~ Parameter * Year + Site,  : 0 (non-NA) cases##
+
 
