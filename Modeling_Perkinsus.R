@@ -87,9 +87,47 @@ View(Master)
 ##Fixed parameters - temp means, salinity means, ph means, year
 ## random variables - sites/lat&long
 
+### GLM Perkinsus data ###
 
-lmer(Prevalence ~ Parameter*Year + Site, data = Master)
+Perkinsus2 <- Perkinsus[-c(3)]
+PM<- na.omit(Perkinsus2)
+PM
 
-##Error in lme4::lFormula(formula = Prevalence ~ Parameter * Year + Site,  : 0 (non-NA) cases##
+PM$Year <- as.numeric(PM$Year)
+PM$Lat <- as.numeric(PM$Lat)
+PM$Prevalence <- as.numeric(PM$Prevalence)
 
+### using lmer()
+model1<-lmer(Prevalence ~ Year + (1|Lat), data = PM)
+model1
+M1<- plot(model1)
+M1
 
+model2<- lmer(Prevalence ~ Lat + (1|Year), PM)
+model2
+
+## using glm()
+model3<-glm(Prevalence ~ Year + Lat, data = PM)
+summary(model3)
+M3<-plot(model3)
+
+## looking at the normal Q-Q plot the residuals are deviating from the theoretical distribution
+## "thin tails" - under dispersed data? 
+
+model4 <- glm(Prevalence ~ Year, data = PM)
+summary(model4)
+M4<-plot(model4)
+M4
+## getting similar normal Q-Q plot as model3. 
+## residual vs fitted showing independence?
+
+model5 <- glm(Prevalence ~ Lat, data = PM)
+summary(model5)
+M5<-plot(model5)
+## residual vs fitted showing independence?
+
+model6<- glm(Prevalence~ Year +Site, data = PM)
+summary(model6)
+plot(model6)
+## QQ plot seems to have more of a normal distrubution than the other models - thin tails? 
+## residuals vs predicted is nonrandom 
