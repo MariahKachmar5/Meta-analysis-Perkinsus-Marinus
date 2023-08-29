@@ -8,13 +8,21 @@ library(zoo)
 
 
 #### open environmental data ####
-EnvMD<- read_excel("~/Documents/UMBC/Meta-Analysis/Environmental Data All Year V2 .xlsx",)
+EnvMD<- read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VAupdated.xlsx",)
 
 Master <- na.omit(EnvMD)
 Master
 View(Master)
 
+EnvVA <- read_excel("~/Documents/UMBC/Meta-Analysis/Env_VA.xlsx",)
+View(EnvVA)
+
+EnvVA2<- na.omit(EnvVA)
+View(EnvVA2)
+
 ### assign data as factors ###
+
+## MD ##
 
 Master$MonitoringLocation <- as.factor(Master$MonitoringLocation)
 Master$MonitoringLocation
@@ -28,7 +36,18 @@ class(Master$Value)
 
 Master$MeasureValue <- as.numeric(Master$MeasureValue)
 
+## VA ##
+
+EnvVA2$MonitoringLocation<-as.factor(EnvVA2$MonitoringLocation)
+
+EnvVA2$Month <- as.factor(EnvVA2$Month)
+
+EnvVA2$Parameter <-as.factor(EnvVA2$Parameter)
+
+EnvVA2$MeasureValue <- as.numeric(EnvVA2$MeasureValue)
+
 #### Subset data ####
+### MD ###
 names(Master)
 Master_PH <- Master[Master$Parameter == "PH",]
 Master_PH
@@ -38,6 +57,11 @@ Master_SALINITY
 
 Master_WTEMP <- Master[Master$Parameter == "WTEMP",]
 Master_WTEMP
+
+### VA ###
+EnvVA_WTEMP <- EnvVA2[EnvVA2$Parameter == "WTEMP",]
+EnvVA_SALINITY <-EnvVA2[EnvVA2$Parameter == "SALINITY",]
+EnvVA_PH <- EnvVA2[EnvVA2$Parameter == "PH",]
 
 ### plotting env data by parameter ####
 
@@ -72,6 +96,7 @@ WTEMP_plot <- ggplot(Master_WTEMP,
 WTEMP_plot
 
 ##### DATES ######
+### MD ###
 Master$SampleDate
 
 strDates <- Master$SampleDate
@@ -101,6 +126,23 @@ Master_1["Month"] <- Master$Month
 Master_1
 View(Master_1)
 
+### Creating year factor ###
+Master_1$Year <- format(strDates, format ="%Y")
+Master_1$Year
+
+### Create year ###
+library(lubridate)
+Master_1$Year <-year(Master$SampleDate)
+Master_1$Year
+head(Master_1)
+
+View(Master_1)
+### add year column to data ###
+Master_1 <- Master
+Master_1["Year"] <- Master$Year
+Master_1
+View(Master_1)
+
 ## resubset data with new month column ###
 
 names(Master_1)
@@ -115,9 +157,63 @@ Master_WTEMP
 View(Master_WTEMP)
 
 
+#### VA dates ###
+View(EnvVA2$SampleDate)
+
+strDates2 <- EnvVA2$SampleDate
+dates2 <- as.Date(strDates2, "%m/%d/%Y")
+dates2
+
+strDates2 <- as.character(dates2)
+strDates2
+
+EnvVA2$SampleDate <- strDates2
+EnvVA2$SampleDate
+
+View(EnvVA2)
+
+### Creating Month factor ###
+EnvVA2$Month <- format(strDates2, format ="%m")
+EnvVA2$Month
+
+### Create month ###
+library(dplyr)
+library(lubridate)
+EnvVA2$Month <-month(EnvVA2$SampleDate)
+EnvVA2$Month
+
+EnvVA2$Year <-year(EnvVA2$SampleDate)
+EnvVA2
+
+
+### add month column to data ###
+EnvVA2_1 <- EnvVA2
+EnvVA2_1["Month"] <- EnvVA2$Month
+EnvVA2_1
+View(EnvVA2_1)
+
+EnvVA2_1 <- EnvVA2
+EnvVA2_1["Year"] <- EnvVA2$Year
+EnvVA2_1
+View(EnvVA2_1)
+
+
+## resubset data with new month column ###
+
+names(Master_1)
+EnvVA2_PH <- EnvVA2_1[EnvVA2_1$Parameter == "PH",]
+EnvVA2_PH
+
+EnvVA2_SALINITY <- EnvVA2_1[EnvVA2_1$Parameter == "SALINITY",]
+EnvVA2_SALINITY
+
+EnvVA2_WTEMP <-EnvVA2_1[EnvVA2_1$Parameter == "WTEMP",]
+EnvVA2_WTEMP
+View(Master_WTEMP)
+
 #### open perkinsus data ###
 
-Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/Perkinsus MD Data V2_Sheet1.csv",)
+Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/PerkinsusMD&VA.csv",)
 View(Perkinsus)
 
 PM <-na.omit(Perkinsus)
@@ -165,7 +261,7 @@ library(ggspatial)
 
 ### Perkinsus Sites ###
 worldMap <- ne_countries(scale = "medium", returnclass = "sf")
-plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
+plot<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Chesapeake Bay")
 plot
 
 plot<-plot+theme(panel.background = element_rect(fill = "white")) 
@@ -179,15 +275,18 @@ plot
 
 Perkinsus$Lat <- as.numeric(Perkinsus$Lat)
 Perkinsus$Long <- as.numeric(Perkinsus$Long)
-View(PM)
 
-plot <- plot+geom_point(data = PM,aes(Long, Lat, color = Site ))
+
+plot <- plot+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))+theme(legend.position = "none")
 plot
 
 
-### Environmental Sites ####
+### Environmental Sites VA ####
+library(readxl)
+EnvALL<- read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VA.xlsx")
+
 worldMap <- ne_countries(scale = "medium", returnclass = "sf")
-plot2<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay")
+plot2<-ggplot(data = worldMap) +geom_sf(fill="light grey") + coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+xlab("Longitude") +ylab("Latitude") +ggtitle(" Chesapeake Bay ENV")
 plot
 
 plot2<-plot2+theme(panel.background = element_rect(fill = "white")) 
@@ -199,12 +298,13 @@ plot2
 plot2<- plot2+theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
 plot2
 
-Master$Lat <- as.numeric(Master$Lat)
-Master$Long <- as.numeric(Master$Long)
+EnvALL$Latitude <- as.numeric(EnvALL$Latitude)
+EnvALL$Longitude <- as.numeric(EnvALL$Longitude)
 
 
-plot2 <- plot2+geom_point(data = Master,aes(Long, Lat, color = MonitoringLocation))
+plot2 <- plot2+geom_point(data = EnvALL,aes(Longitude, Latitude, color = MonitoringLocation))+ theme(legend.position ="none")
 plot2
+
 
 
 
@@ -386,6 +486,7 @@ P_2017 <- PM[PM$Year == "2017", ]
 P_2018 <- PM[PM$Year == "2018", ]
 P_2019 <- PM[PM$Year == "2019", ]
 
+View(P_2019)
 ##Subseting Temperature data by year ##
 
 Temp2017 <- Master_1[Master_1$Year == "2017"|Master_1$Parameter == "WTEMP",]
@@ -435,17 +536,31 @@ Temp3_plot
 ######## 4/28/22 ##########################################
 
 ## yearly means of all sites MD Chesapeake Bay ###
+Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/PerkinsusMD&VA.csv",)
+View(Perkinsus)
+
+PM<-na.omit(Perkinsus)
+View(PM)
+PM$Prevalence<- as.numeric(PM$Prevalence)
+
 library(lubridate)
 library(dplyr)
 
-PM_means<-Perkinsus %>%
-  group_by(Lat, Long) %>%
-  summarize(Prevalence = mean(Prevalence))
+PM_means<-PM %>%
+  group_by(Year) %>%
+  summarize(Mean.Intensity = mean(Mean.Intensity))
 View(PM_means)
 
+PM_means<-PM %>%
+  group_by(Year) %>%
+  summarize(Prevalence = mean(Prevalence))
+View(PM_means)
+warnings()
+
+library(ggplot2)
 ### Plotting Annual Mean P. Marinus Prev % in MD Chesapeake Bay ###
-PM_plot2 <- ggplot(PM_means, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "Annual mean P. marinus Prevalence in MD Chesapeake", y = "Prevalence (%)") +
+PM_plot2 <- ggplot(PM_means, aes(Year, Mean.Intensity)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "Annual mean P. marinus Mean Infection Intensity in Chesapeake Bay", y = "Mean Infection intensity") +
   theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red")
 PM_plot2
 
@@ -456,9 +571,17 @@ wtemp_means<-Master_WTEMP %>%
   summarize(MeanTemperature = mean(MeasureValue))
 wtemp_means
 
+
 ## removing 1984-1989 (unneeded years)###
 wtemp_means<-wtemp_means[-c(1,2,3,4,5,6),]
 wtemp_means
+
+## yearly means temperature all sites VA ##
+EnvVA2_WTEMP
+wtemp_means2<-EnvVA2_WTEMP %>%
+  group_by(Year) %>%
+  summarize(MeanTemperature = mean(MeasureValue))
+wtemp_means2
 
 ## plotting Annual mean temperature in MD Chesapeake Bay ###
 WTEMP_plot2 <- ggplot(wtemp_means, aes(Year, MeanTemperature)) + 
@@ -466,6 +589,11 @@ WTEMP_plot2 <- ggplot(wtemp_means, aes(Year, MeanTemperature)) +
   theme(axis.text.x = element_text(angle= 45)) +  geom_smooth( se=FALSE, col = "red")
 WTEMP_plot2
 
+## plotting Annual mean temperature in VA Chesapeake Bay ###
+WTEMP_plot2 <- ggplot(wtemp_means2, aes(Year, MeanTemperature)) + 
+  labs(title= "Annual mean Temperature in VA Chesapeake", y = "Temperature (deg C") +
+  theme(axis.text.x = element_text(angle= 45)) +  geom_smooth( se=FALSE, col = "red")
+WTEMP_plot2
 
 ### yearly means by site temperature ####
 Tsite_means<- Master_WTEMP %>%
@@ -639,11 +767,10 @@ plot(map_new, axes=TRUE)
 
 map<-fortify(map_new)
 
-Site_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Perkinsus,aes(Long, Lat, color = Site ))+theme(legend.position="none")
+Site_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = EnvALL,aes(Long, Lat, color = Site ))+theme(legend.position="none")
 Site_area
 
-
-
+View(EnvALL)
 
 ##### 5/9/22 #########
 
@@ -735,24 +862,24 @@ Julyph_plot + Augph_plot + Septph_plot + Octph_plot + Novph_plot
 ########## 5/10/22 #################
 names(Master_WTEMP)
 
-T_means <-Master_WTEMP %>%
+T_means <-EnvVA2_WTEMP %>%
   group_by(Month, Year) %>%
   summarize(MeasureValue = mean(MeasureValue))
 View(T_means)
 
-Temp_means_plot <- ggplot(T_means, aes(Year, MeasureValue, color = factor(Month))) + geom_smooth(se= FALSE) +
-  labs(title= "Mean Monthly Temperature MD Chesapeake Bay", y = "Temperature (deg C)") 
+Temp_means_plot <- ggplot(T_means, aes(Month, MeasureValue, color = factor(Year))) + geom_smooth(se= FALSE) +
+  labs(title= "Mean Monthly Temperature VA Chesapeake Bay", y = "Temperature (deg C)") 
   
 Temp_means_plot
 
 
-S_means <-Master_SALINITY %>%
+S_means <-EnvVA2_SALINITY %>%
   group_by(Month, Year) %>%
   summarize(MeasureValue = mean(MeasureValue))
 View(S_means)
 
-S_means_plot <- ggplot(S_means, aes(Year, MeasureValue, color = factor(Month))) + geom_smooth(se= FALSE) +
-  labs(title= "Mean Monthly Salinity MD Chesapeake Bay", y = "PPT")
+S_means_plot <- ggplot(S_means, aes(Month, MeasureValue, color = factor(Year))) + geom_smooth(se= FALSE) +
+  labs(title= "Mean Monthly Salinity VA Chesapeake Bay", y = "PPT")
 S_means_plot
 
 
@@ -762,43 +889,50 @@ S_means_plot
 
 #### TEMPERATURE ######
 
-Springtemp <- Master_WTEMP[Master_WTEMP$Month == "3" | Master_WTEMP$Month== "4"|
-                             Master_WTEMP$Month == "5",]
+Merged<-read.csv("~/Documents/UMBC/Meta-Analysis/MergedData2.csv",)
+View(Merged)
+
+library(ggplot2)
+
+View(Merged.data)
+
+Springtemp <- Merged.data[Merged.data$Month == "Mar" | Merged.data$Month== "Apr"|
+                             Merged.data$Month == "May",]
 View(Springtemp)
 
-Summertemp  <- Master_WTEMP[Master_WTEMP$Month == "6" | Master_WTEMP$Month== "7"|
-                                         Master_WTEMP$Month == "8",]
+Summertemp  <- Merged.data[Merged.data$Month == "Jun" | Merged.data$Month== "Jul"|
+                             Merged.data$Month == "Aug",]
 View(Summertemp)
 
-Falltemp <-Master_WTEMP[Master_WTEMP$Month == "9" | Master_WTEMP$Month== "10"|
-                          Master_WTEMP$Month == "11",]
-View(Falltemp)
+Falltemp <-Merged.data[Merged.data$Month == "Sept" | Merged.data$Month== "Oct"|
+                         Merged.data$Month == "Nov",]
 
-Wintertemp<-Master_WTEMP[Master_WTEMP$Month == "12" | Master_WTEMP$Month== "1"|
-                           Master_WTEMP$Month == "2",]
+Wintertemp<-Merged.data[Merged.data$Month == "Dec" | Merged.data$Month== "Jan"|
+                          Merged.data$Month == "Feb",]
 View(Wintertemp)
 
 #### Spring graph - annual means by and site ####
-
+library(dplyr)
 STmeans <-Springtemp %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(Temperature = mean(MeasureValue))
+  summarize(Temperature = mean(WTEMP))
 View(STmeans)
 
 Spring_means_plot <- ggplot(STmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Spring mean temperature by site MD Chesapeake Bay")+theme(legend.position = "none")
+  labs(title= "Spring", x="", y="")+theme(legend.position = "none")
 Spring_means_plot
 
+library(ggplot2)
 
 ##### Fall graph - annual temp means by site ######
 
 FTmeans <-Falltemp %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(Temperature = mean(MeasureValue))
+  summarize(Temperature = mean(WTEMP))
 View(FTmeans)
 
 Fall_means_plot <- ggplot(FTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Fall mean temperature by site MD Chesapeake Bay")+theme(legend.position = "none")
+  labs(title= "Fall", x="", y="")+theme(legend.position = "none")
 Fall_means_plot
 
 
@@ -806,55 +940,58 @@ Fall_means_plot
 
 SMTmeans <-Summertemp %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(Temperature = mean(MeasureValue))
+  summarize(Temperature = mean(WTEMP))
 View(SMTmeans)
 
-Summer_means_plot <- ggplot(SMTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Summer mean temperature by site MD Chesapeake Bay") +theme(legend.position = "none")
+Summer_means_plot <- ggplot(SMTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se=FALSE)+
+  labs(title= "Summer", x="", y="") +theme(legend.position = "none")
 Summer_means_plot
 
 #### winter graph - annual temperature means by site #####
 
 WTmeans <-Wintertemp %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(Temperature = mean(MeasureValue))
+  summarize(Temperature = mean(WTEMP))
 View(WTmeans)
 
 Winter_means_plot <- ggplot(WTmeans, aes(Year, Temperature, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Winter mean temperature by site MD Chesapeake Bay") + theme(legend.position = "none")
+  labs(title= "Winter", x="", y="") + theme(legend.position = "none")
 Winter_means_plot
 
-Spring_means_plot+Summer_means_plot+Fall_means_plot+Winter_means_plot + theme(legend.position = "right")
+library(ggplot2)
+library(gridExtra)
 
+Spring_means_plot+Summer_means_plot+Fall_means_plot+Winter_means_plot + theme(legend.position = "none", )
+
+plot1<- grid.arrange(Spring_means_plot, Summer_means_plot, Fall_means_plot, Winter_means_plot, left= "Temperature", bottom = "Year")
 
 
 ##### SALINITY ######
 View(Master_SALINITY)
-Springsal <- Master_SALINITY[Master_SALINITY$Month == "3" | Master_SALINITY$Month== "4"|
-                             Master_SALINITY$Month == "5",]
+Springsal <- Merged.data[Merged.data$Month == "Mar" | Merged.data$Month== "Apr"|
+                            Merged.data$Month == "May",]
+View(Springtemp)
 
+Summersal  <- Merged.data[Merged.data$Month == "Jun" | Merged.data$Month== "Jul"|
+                             Merged.data$Month == "Aug",]
+View(Summertemp)
 
-Summersal  <- Master_SALINITY[Master_SALINITY$Month == "6" | Master_SALINITY$Month== "7"|
-                                Master_SALINITY$Month == "8",]
+Fallsal <-Merged.data[Merged.data$Month == "Sept" | Merged.data$Month== "Oct"|
+                         Merged.data$Month == "Nov",]
 
-
-Fallsal <-Master_SALINITY[Master_SALINITY$Month == "9" | Master_SALINITY$Month== "10"|
-                            Master_SALINITY$Month == "11",]
-
-
-Wintersal<-Master_SALINITY[Master_SALINITY$Month == "12" | Master_SALINITY$Month== "1"|
-                             Master_SALINITY$Month == "2",]
+Wintersal<-Merged.data[Merged.data$Month == "Dec" | Merged.data$Month== "Jan"|
+                          Merged.data$Month == "Feb",]
 
 
 #### Spring graph - annual means by and site ####
 
 SSmeans <-Springsal %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(PPT = mean(MeasureValue))
+  summarize(PPT = mean(SALINITY))
 View(SSmeans)
 
 Spring_means_plot2 <- ggplot(SSmeans, aes(Year,PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Spring mean Salinity by site MD Chesapeake Bay")+theme(legend.position = "none")
+  labs(title= "Spring ", y="",x="")+theme(legend.position = "none")
 Spring_means_plot2
 
 
@@ -862,11 +999,11 @@ Spring_means_plot2
 
 FSmeans <-Fallsal %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(PPT = mean(MeasureValue))
+  summarize(PPT = mean(SALINITY))
 View(Fsmeans)
 
 Fall_means_plot2 <- ggplot(FSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Fall mean Salinity by site MD Chesapeake Bay")+theme(legend.position = "none")
+  labs(title= "Fall ", y="",x="")+theme(legend.position = "none")
 Fall_means_plot2
 
 
@@ -874,26 +1011,28 @@ Fall_means_plot2
 
 SMSmeans <-Summersal %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(PPT = mean(MeasureValue))
+  summarize(PPT = mean(SALINITY))
 View(SMTmeans)
 
 Summer_means_plot2 <- ggplot(SMSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Summer mean Salinity by site MD Chesapeake Bay") +theme(legend.position = "none")
+  labs(title= "Summer ", y="",x="") +theme(legend.position = "none")
 Summer_means_plot2
 
 #### winter graph - annual salinity means by site #####
 
 WSmeans <-Wintersal %>%
   group_by(MonitoringLocation, Year) %>%
-  summarize(PPT = mean(MeasureValue))
+  summarize(PPT = mean(SALINITY))
 View(WSmeans)
 
 Winter_means_plot2 <- ggplot(WSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Winter mean Salinity by site MD Chesapeake Bay") + theme(legend.position = "none")
+  labs(title= "Winter ", y="",x="") + theme(legend.position = "none")
 Winter_means_plot2
 
-Spring_means_plot2+Summer_means_plot2+Fall_means_plot2+Winter_means_plot2 + theme(legend.position = "right")
+Spring_means_plot2 +Summer_means_plot2+Fall_means_plot2+Winter_means_plot2 + theme(legend.position = "right")
 
+plot3<- grid.arrange(Spring_means_plot2, Summer_means_plot2, Fall_means_plot2, Winter_means_plot2, left= "Salinity (PPT)", bottom = "Year")+theme(plot.margin = unit(c(1, 1, "cm")))
+plot3
 
 ##### pH ######
 View(Master_PH)
@@ -965,7 +1104,7 @@ Spring_means_plot3+Summer_means_plot3+Fall_means_plot3+Winter_means_plot3 + them
 ####### 5/23/22 #############################
 
 ######## Scatter plot Temperature by month and year (all sites combined) #####
-meansT <-Master_WTEMP %>%
+meansT <-EnvVA2_WTEMP %>%
   group_by( Month, Year, MonitoringLocation) %>%
   summarize(Temperature = mean(MeasureValue))
 meansT
@@ -977,7 +1116,7 @@ scattertemp2 <- ggplot(meansT, aes(Year, Temperature, color = Month)) + geom_poi
 scattertemp2
 
 ######## Scatter plot Salinity by month and year (all sites combined) #####
-meansS <-Master_SALINITY %>%
+meansS <-EnvVA2_SALINITY %>%
   group_by( Month, Year) %>%
   summarize(Salinity = mean(MeasureValue))
 meansS
@@ -988,67 +1127,6 @@ scattersal1
 scattersal2 <- ggplot(meansS, aes(Year, Salinity, color = Month)) + geom_point() + geom_smooth()
 scattersal2
 
-######## Scatter plot pH by month and year (all sites combined) #####
-meansph <-Master_PH %>%
-  group_by( Month, Year) %>%
-  summarize(pH = mean(MeasureValue))
-meansph
-
-scatterph1 <- ggplot(meansph, aes(Month, pH, color = Year)) + geom_point() + geom_smooth()
-scatterph1
-
-scatterph2 <- ggplot(meansph, aes(Year, pH, color = Month)) + geom_point() + geom_smooth()
-scatterph2
-
-
-scattertemp1 + scattersal1 + scatterph1 + 
-  labs(title= "Mean Env Parameters Chesapeake by Month and year for each site")+
-  theme(plot.title = element_text(hjust = .8))
-
-
-#### subsetting out means of sites for each environmental parameter ###
-
-View(meansT)
-TempCB4.2C <- meansT[meansT$MonitoringLocation == "CB4.2C",]
-TempCB4.2C
-
-TempCB4.4 <- meansT[meansT$MonitoringLocation == "CB4.4",]
-TempCB4.4
-
-TempCB5.1 <- meansT[meansT$MonitoringLocation == "CB5.1",]
-TempCB5.1
-
-TempCB5.2 <- meansT[meansT$MonitoringLocation == "CB5.2",]
-TempCB5.2
-
-TempEE2.1 <- meansT[meansT$MonitoringLocation == "EE2.1",]
-TempEE2.1
-
-TempEE3.1 <- meansT[meansT$MonitoringLocation == "EE3.1",]
-TempEE3.1
-
-TempET5.2 <- meansT[meansT$MonitoringLocation == "ET5.2",]
-TempET5.2
-
-TempLE1.1 <- meansT[meansT$MonitoringLocation == "LE1.1",]
-TempLE1.1
-
-TempCB3.2 <- meansT[meansT$MonitoringLocation == "CB3.2",]
-TempCB3.2
-
-TempCB3.3W<- meansT[meansT$MonitoringLocation == "CB3.3W",]
-TempCB3.3W
-
-TempCB4.2C <- meansT[meansT$MonitoringLocation == "CB4.2C",]
-TempCB4.2C
-
-
-
-### graphing by site ###
-
-siteplot1 <- ggplot(TempCB5.2, aes(Month, Temperature, color = Year)) + geom_point() + 
-  labs(title = "Mean temperature site CB5.2")
-siteplot1
 
 
 
@@ -1060,13 +1138,14 @@ View(Perkinsus)
 PM<- na.omit(Perkinsus)
 
 Pmeans <-PM %>%
-  group_by(Year, Lat) %>%
-  summarize(Prevalence = mean(Prevalence))
+  group_by(Lat, Year) %>%
+  summarize(Prevalence = mean(Prevalence), Mean_Intensity = mean(MeanIntensity), Collected = mean(Collected),Infected= mean(Infected))
 Pmeans
 View(Pmeans)
 
-plot <- ggplot(Pmeans, aes(Lat, Year, color= Prevalence)) + geom_point()+
-  scale_colour_gradientn(colours= rainbow(5)) + labs(title = " Perkinsus means by year and latitude ")
+
+
+plot <- ggplot(Pmeans, aes(Year, Lat, color= Prevalence)) + geom_point()+scale_colour_gradientn(colours= rainbow(5)) + labs(title = " Perkinsus means by year and latitude ")
 plot
 
 
@@ -1086,11 +1165,50 @@ Perkinsus$Prevalence <-as.numeric(Perkinsus$Prevalence)
 
 prevalence_map <-ggplot(data = worldMap) +geom_sf(fill="light grey") +
   coord_sf(xlim = c(-78, -75), ylim = c(37, 40),expand = TRUE)+
-  xlab("Longitude") +ylab("Latitude") +ggtitle("Maryland Chesapeake Bay Prevalence All Years")+
+  xlab("Longitude") +ylab("Latitude") +ggtitle("1990")+
   theme(panel.background = element_rect(fill = "white"))+
   annotate(geom = "text",x = -76.1,y = 37.5,label = "Chesapeake Bay",color = "grey",size = 3, angle=90, fontface = "italic")+
   annotation_north_arrow(location = "tl",pad_x = unit(0.5, "cm"),pad_y = unit(1, "cm"),height=unit(1,"cm"),width=unit(0.5,"cm"))+
-  theme(panel.grid.major = element_line(linetype = "dashed",color = "dark grey" ,size = 0.2))
-prevalence_map + geom_scatterpie(data = Perkinsus, aes(Long, Lat,group= Region), r= radius) 
+  theme(panel.grid.major = element_line(linetype = "xdashed",color = "dark grey" ,size = 0.2))
+p1990<-prevalence_map + geom_scatterpie(data =P_1990 , aes(Long, Lat), cols=c("Collected", "Infected"), color = NA) + theme(legend.position="none")
+p1990
+p1990+p2000+p2010+p2019                                                                                                       
 
+##### perkinsus ALL by latitude ####
+Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/PerkinsusMD&VA.csv",)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
 View(Perkinsus)
+
+Perkinsus2 <- Perkinsus[-c(3)]
+Perkinsus2
+View(Perkinsus2)
+
+PM<- na.omit(Perkinsus2)
+View(PM)
+
+Perk$Prevalence<- as.numeric(Perk$Prevalence)
+Perk$Mean.Intensity<-as.numeric(Perk$Mean.Intensity)
+
+Pmeans <- Perk%>%
+  group_by(Lat, Year) %>%
+  summarize(Prevalence = mean(Prevalence))
+Pmeans
+View(Pmeans)
+
+Imeans <-Perk %>%
+  group_by(Lat, Year) %>%
+  summarize(Mean.Intensity = mean(Mean.Intensity))
+Imeans
+
+warnings()
+plot <- ggplot(Pmeans, aes(Year, Lat, color=Prevalence)) + geom_point()+ theme_minimal()+
+  scale_color_gradient2( midpoint = 50,low = "blue", mid = "yellow ", high = " red") + labs(title = " Perkinsus means by year and latitude MD & VA ")
+plot
+
+plot1 <- ggplot(Imeans, aes(Year, Lat, color=Mean.Intensity)) + geom_point()+ theme_minimal() +
+  scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 3, limits=c(0, 5)) +
+  labs(title = " Perkinsus means by year and latitude MD & VA ")
+plot1
+
