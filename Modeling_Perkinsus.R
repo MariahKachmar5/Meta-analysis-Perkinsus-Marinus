@@ -300,6 +300,7 @@ check_collinearity(model3)
 check_collinearity(model4)
 
 
+
 #interpretation
 #A VIF less than 5 indicates a low correlation of that predictor with other predictors.
 #A value between 5 and 10 indicates a moderate correlation, while VIF values larger than 10 are a sign for high, not tolerable correlation of model predictors.
