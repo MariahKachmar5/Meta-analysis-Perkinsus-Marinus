@@ -13,6 +13,10 @@ View(Perkinsus)
 Perk<- na.omit(Perkinsus)
 View(Perk)
 
+ ## Removing sites > 0.5 in distance matrix calculations ####
+Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
+View(Perk)
+
 #Intensity individual data from MDDNR ##
 IntensityMD<- read.csv("~/Documents/UMBC/Meta-Analysis/MDDNR_INDV_1990-2015 .csv",)
 View(IntensityMD)
@@ -23,9 +27,14 @@ write.table(Int1990_2015, file ="MDDNR_1990-2015.xlsx",sep=",", row.names=FALSE)
 library(writexl)
 write_xlsx(Int1990_2015,"~/Documents/UMBC/Meta-Analysis/MDDNR_1990-2015.xlsx" )
 
+#### Environmental Data ####
+
 EnvALL<- read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VAupdated.xlsx")
 View(EnvALL)
 write.table(Env, file="Env.csv", sep=",", row.names=FALSE)
+
+EnvALL<- filter(EnvALL, SampleDate > '1989-12-31', Layer == "S")
+View(EnvALL)
 
 #### creating dates for environmental data ###
 View(EnvALL$SampleDate)
@@ -56,16 +65,21 @@ EnvALL$Year <-year(EnvALL$SampleDate)
 EnvALL
 View(EnvALL)
 
-### add month column to data ###
-Env1 <- Env
-Env1["Month"] <- EnvVA2$Month
-Env1
-View(Env1)
+EnvALL$Day <-day(EnvALL$SampleDate)
+View(EnvALL)
 
-Env1 <- Env
-Env1["Year"] <- Env$Year
-Env1
-View(Env1)
+
+
+### add month column to data ###
+#Env1 <- Env
+#nv1["Month"] <- Env$Month
+#Env1
+#View(Env1)
+
+#Env1 <- Env
+#Env1["Year"] <- Env$Year
+#Env1
+#View(Env1)
 
 ### subsetting environmental data by parameter ###
 
@@ -78,7 +92,7 @@ SALINITY <- EnvALL[EnvALL$Parameter == "SALINITY",]
 SALINITY
 SALINITY <- SALINITY %>%
   rename(SALINITY = MeasureValue)
-
+View(SALINITY)
 
 WTEMP <-EnvALL[EnvALL$Parameter == "WTEMP",]
 View(WTEMP)
@@ -87,11 +101,54 @@ WTEMP <- WTEMP %>%
 
 ### REMERGING ENVIRONMENTAL DATA ####
 
-MasterENV<- merge(SALINITY, WTEMP, by =c("Year","Month", "MonitoringLocation"), all = TRUE)
+MasterENV<- merge(SALINITY, WTEMP, by =c("Year","Month", "Day", "MonitoringLocation", "SampleDate", "Latitude", "Longitude", "Depth", "Layer"), all = TRUE)
 View(MasterENV)
+
+MasterENV<- subset(MasterENV, select = -c(Parameter.x,Parameter.y))
 
 MasterENV<-na.omit(MasterENV)
 View(MasterENV)
+
+### Filtering so that there is only one sample date per month ###
+
+library(lubridate)
+library(dplyr)
+
+class(MasterENV$SampleDate)
+MasterENV$SampleDate <- as.Date(MasterENV$SampleDate, format = "%Y-%m-%d")
+
+MasterENV$Month_Year <- format(MasterENV$SampleDate, "%Y-%m")
+MasterENV$Month_Day <- format(MasterENV$SampleDate, "%m-%d")
+
+
+MasterENV_filtered3<- MasterENV %>%
+  group_by(MonitoringLocation,Year, Month) %>%
+  slice(1)%>%
+  ungroup()
+
+#MasterENV <- MasterENV %>%
+#  mutate(month_year_monitoringlocation = paste0(format(SampleDate, "%Y-%m"), "-", MonitoringLocation))
+#View(MasterENV)
+
+#MasterENV_filtered <- MasterENV %>%
+ # group_by(month_year_monitoringlocation) %>%
+ # filter(n()==1) %>%
+  #ungroup()
+View(MasterENV_filtered3)
+
+envplot<- ggplot(MasterENV_filtered3, aes(Year, SALINITY, color = MonitoringLocation))+geom_smooth(se= FALSE)
+envplot
+
+desired_start_year <- 1990 
+site_start_years <- MasterENV_filtered3 %>%
+  group_by(MonitoringLocation) %>%
+  summarize(start_year = min(year(SampleDate)))
+
+MasterENV_filtered2<- MasterENV_filtered3 %>%
+  inner_join(site_start_years, by= "MonitoringLocation") %>%
+  filter(start_year == desired_start_year) %>%
+  select(-start_year)
+View(MasterENV_filtered2)
 
 ### Yearly means for environmental parameters by site and time ###
 
@@ -259,6 +316,23 @@ Anova(model5)
 model6<- lmer(SALINITY ~ Lat * Year + (1|Site), data = Merged.data)
 Anova(model6)
 
+### Pearson's Correlation- Temperature and Salinity ### https://www.r-bloggers.com/2021/10/pearson-correlation-in-r/
+Correlation<- cor(Merged.data$WTEMP, Merged.data$SALINITY, method= 'pearson')
+Correlation
+#[1] 0.06595104
+# r value of 0-0.3 = not correlated
+
+##Quartiles ###
+
+Temp_90<- quantile(MasterENV$WTEMP, probs=c(0.9))
+Temp_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
+
+Sal_90<- quantile(MasterENV$SALINITY,probs=c(0.9))
+Sal_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
+
+Merged.data_Q <- cbind(Merged.data, Temp_90, Temp_10, Sal_90,Sal_10)
+View(Merged.data_Q)
+
 ###### modeling env + prev ######
 
 library(car)
@@ -275,7 +349,7 @@ View(Merged.data$Site)
 
 View(Merged.data)
 
-model3<- lmer(Prevalence~ oysteryear*  SALINITY * Region+  (1|Site) + (1|MonitoringLocation), Merged.data)
+model3<- lmer(Prevalence~ oysteryear+ Temp_90 + Region +  (1|Site) + (1|MonitoringLocation),  Merged.data_Q)
 Anova(model3)
 summary(model3)
 #Effect sizes: 
