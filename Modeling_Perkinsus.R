@@ -125,7 +125,9 @@ MasterENV_filtered3<- MasterENV %>%
   group_by(MonitoringLocation,Year, Month) %>%
   slice(1)%>%
   ungroup()
+View(MasterENV_filtered3)
 
+##Alternative way ###
 #MasterENV <- MasterENV %>%
 #  mutate(month_year_monitoringlocation = paste0(format(SampleDate, "%Y-%m"), "-", MonitoringLocation))
 #View(MasterENV)
@@ -134,11 +136,12 @@ MasterENV_filtered3<- MasterENV %>%
  # group_by(month_year_monitoringlocation) %>%
  # filter(n()==1) %>%
   #ungroup()
-View(MasterENV_filtered3)
+
 
 envplot<- ggplot(MasterENV_filtered3, aes(Year, SALINITY, color = MonitoringLocation))+geom_smooth(se= FALSE)
 envplot
 
+# removing sites with missing data from 1990-2020
 desired_start_year <- 1990 
 site_start_years <- MasterENV_filtered3 %>%
   group_by(MonitoringLocation) %>%
