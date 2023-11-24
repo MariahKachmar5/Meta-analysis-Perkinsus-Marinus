@@ -401,4 +401,40 @@ library(gridExtra)
 
 efplot<- grid.arrange(Pefplot, Intefplot,left= textGrob("d", gp=gpar(fontsize=20)), bottom = textGrob("Month", gp=gpar(fontsize=20)))
 
-                      
+
+###### QC Environmental Data ####
+View(EnvALL)
+## When is sampling occurring for each site?###     
+
+EnvALL$Parameter <- as.factor(EnvALL$Parameter)
+EnvALL$Parameter <- EnvALL[EnvALL$Parameter == "WTEMP",]
+
+E1990 <- EnvALL[EnvALL$SampleDate > "1990-01-01" & EnvALL$SampleDate < "1990-12-31",]
+
+E2019 <- EnvALL[EnvALL$SampleDate > "2019-01-01" & EnvALL$SampleDate < "2019-12-31",]
+
+EnvALL$SampleDate <-as.Date(EnvALL$SampleDate)
+
+SampleDatePlot<- ggplot(E2019, aes(SampleDate, MonitoringLocation))+geom_point()+scale_x_date(date_breaks="5 day", date_labels="%Y-%m-%d")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+SampleDatePlot
+View(E1990)
+
+#### QUANTILES vs Prevalence ###
+
+Q90_T<- ggplot( Merged.data_Q, aes(T_Q90, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q90 TEMP")
+Q90_T
+
+Q10_T<- ggplot( Merged.data_Q, aes(T_Q10, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q10 TEMP")
+Q10_T
+
+Q90_S<- ggplot( Merged.data_Q, aes(S_Q90, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q90 SALINITY")
+Q90_S
+
+Q10_S<- ggplot( Merged.data_Q, aes(S_Q10, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q10 SALINITY")
+Q10_S
+ 
+TvS<- ggplot(Merged.data_Q, aes(T_Q90, S_Q10))+ geom_point() + geom_smooth(se= FALSE, method = lm )
+TvS
+
+  
