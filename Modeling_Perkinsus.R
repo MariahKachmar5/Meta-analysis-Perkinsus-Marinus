@@ -1,12 +1,22 @@
 
-#### Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis ####
+#Created by: Mariah L. Kachmar
+#Date:
+#Last updated: 
+#Description: Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis 
 
+#Set working directory
 setwd("~/Documents/UMBC/Meta-Analysis")
 
-install.packages(lme4)
+#Load all packaged
 library(lme4)
 library(readxl)
+library(dplyr)
 
+####################### LOAD AND CLEAN DATA FILES ####################################
+
+################ DISEASE DATA #######################
+
+##Perkinsus data (Maryland and Virginia)
 Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/PerkinsusMD&VA2.csv",)
 View(Perkinsus)
 
@@ -17,17 +27,42 @@ View(Perk)
 Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
 View(Perk)
 
-#Intensity individual data from MDDNR ##
-IntensityMD<- read.csv("~/Documents/UMBC/Meta-Analysis/MDDNR_INDV_1990-2015 .csv",)
+##Intensity individual data from MDDNR- loading and cleaning 
+IntensityMD<- read.csv("~/Documents/UMBC/Meta-Analysis/MDDNR_1990-2020.csv",)
 View(IntensityMD)
-Int1990_2015<- subset(IntensityMD, select=c(Region, Name, SiteCode, YearSamp,SampleDate, AnimalNum, DermoIntentNum))
-View(Int1990_2015)
 
-write.table(Int1990_2015, file ="MDDNR_1990-2015.xlsx",sep=",", row.names=FALSE)
-library(writexl)
-write_xlsx(Int1990_2015,"~/Documents/UMBC/Meta-Analysis/MDDNR_1990-2015.xlsx" )
+as.data.frame(IntensityMD)
 
-#### Environmental Data ####
+#Rebinning intensity scores to follow VIMS
+
+IntensityMD<- IntensityMD %>%
+  mutate(Intensity_score = recode(Intensity, 
+                                 "0" = 0, "1" = 0.5, "2" = 3, "3"= 3, "4"= 3, "5"= 5,"6"= 5, "7"=5))
+head(IntensityMD)
+
+View(IntensityMD)
+#Calculating mean intensity for each site and year
+IntensityMD$prevalent = ifelse(IntensityMD$Intensity_score == 0, '0',
+                            ifelse(IntensityMD$Intensity_score > 0, '1', NA))
+
+present <- nrow(IntensityMD %>% filter(prevalent == '1'))
+absent <- nrow(IntensityMD %>% filter(prevalent == '0'))
+
+prevalence_all <- present/(present+absent)
+prevalence_all
+
+str(IntensityMD$prevalent)
+IntensityMD$prevalent <- as.numeric(IntensityMD$prevalent)
+
+Mean_IntensityMD <- IntensityMD %>%
+  group_by(Region, Site, Year, SampleDate) %>%
+  summarize(Intensity_final = sum(Intensity_score = as.numeric(as.character(Intensity_score)), 
+                            na.rm = TRUE)/sum(prevalent, na.rm=TRUE))
+
+View(Mean_IntensityMD) # Need to fix Na values 
+
+
+######################### Environmental Data ##############################
 
 EnvALL<- read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VAupdated.xlsx")
 View(EnvALL)
@@ -69,7 +104,6 @@ EnvALL$Day <-day(EnvALL$SampleDate)
 View(EnvALL)
 
 
-
 ### add month column to data ###
 #Env1 <- Env
 #nv1["Month"] <- Env$Month
@@ -109,7 +143,7 @@ MasterENV<- subset(MasterENV, select = -c(Parameter.x,Parameter.y))
 MasterENV<-na.omit(MasterENV)
 View(MasterENV)
 
-### Filtering so that there is only one sample date per month ###
+### Filtering environmental data so there is only one sample date per month each year ###
 
 library(lubridate)
 library(dplyr)
@@ -156,14 +190,14 @@ View(MasterENV_filtered2)
 ### Yearly means for environmental parameters by site and time ###
 
 library(dplyr)
-Smeans <-MasterENV %>%
+Smeans <-MasterENV_filtered2 %>%
   group_by(Year, Month, SALINITY, MonitoringLocation) %>%
   summarize(SALINITY = mean(SALINITY))
 View(Smeans)
 
 #### TEMP ###
-MonthlyMeans<-MasterENV %>%
-  group_by(Month, Year, WTEMP, MonitoringLocation) %>%
+MonthlyMeans<-MasterENV_filtered2 %>%
+  group_by(Month, Year, WTEMP, MonitoringLocation, SampleDate) %>%
   summarize(WTEMP = mean(WTEMP))
 View(MonthlyMeans)
 
@@ -174,8 +208,8 @@ View(MonthlyMeans)
 
 ### Salinity ###
 
-MonthlyMeans1<-MasterENV %>%
-  group_by(Month, Year, SALINITY, MonitoringLocation) %>%
+MonthlyMeans1<-MasterENV_filtered2 %>%
+  group_by(Month, Year, SALINITY, MonitoringLocation, SampleDate) %>%
   summarize(SALINITY = mean(SALINITY))
 View(MonthlyMeans1)
 
@@ -207,12 +241,14 @@ Merged.data$oysteryear=ifelse(Merged.data$Month== "Nov"| Merged.data$Month=="Dec
 
 head(Merged.data)
 
+Merged.data <- Merged.data %>% 
+  rename( "SampleDate"= "SampleDate.x")
+
 View(Merged.data)
 
 write.table(Merged.data, file="MergedData2.csv", sep=",", row.names=FALSE)
 
 View(Perk)
-
 
 
 ## Subsetting by month ##
@@ -244,31 +280,7 @@ Oct$Prevalence<- as.numeric(Oct$Prevalence)
 Nov$Prevalence<- as.numeric(Nov$Prevalence)
 Dec$Prevalence<- as.numeric(Dec$Prevalence)
 
-### Site Salinity Means & binning L-M-H ###
 
-SiteSalinity<-ddply(Merged.data, .(Site), summarise,
-                  SALINITY = mean(SALINITY))
-View(SiteSalinity)
-
-SiteDisease<-ddply(Merged.data, .(Site), summarise,
-                 Prevalence = mean(Prevalence), Intensity= mean(Mean.Intensity))
-View(SiteDisease)
-
-SiteSalDisease <-merge(SiteSalinity, SiteDisease, by =c("Site"))
-View(SiteSalDisease)
-
-library(ggplot2)
-SalDiseasePlot<- ggplot(SiteSalDisease, aes(SALINITY)) + geom_histogram() 
-SalDiseasePlot
-
-##Binning L 0-10, M 10.01 - 20, H 20.01+
-SiteSalDisease$Range <- as.factor(ifelse(SiteSalDisease$SALINITY<10, 'LOW',
-                                    ifelse(SiteSalDisease$SALINITY >20, 'HIGH', "MEDIUM")))
-head(SiteSalDisease)
-
-SiteSalDisease = subset(SiteSalDisease, select = -c(Salinity.Range))
-
-View(SiteSalDisease)
 
 ############################### STATISTICS ##################################################################
 
@@ -295,7 +307,7 @@ head(Perk)
 ### using lmer()
 library(car)
 
-### Perkinsus ###
+### spatio-temporal trends Perkinsus ###
 
 
 model1<- lmer(Prevalence ~ Lat * oysteryear + (1|Site), data = Perk)
@@ -311,13 +323,26 @@ Anova(modelX)
 modelY<- lmer(Mean.Intensity ~ Site * oysteryear + (1|Lat), data = Perk)
 Anova(modelY)
 
-### Environmental Data ####
+### Environmental Data trends ####
 
-model5<- lmer(WTEMP ~ Lat * Year + (1|Site), data = Merged.data)
+Merged.data$SampleDate<- scale(Merged.data$SampleDate)
+Merged.data$Year<- scale(Merged.data$Year)
+Merged.data$Lat<- scale(Merged.data$Lat)
+
+View(Merged.data)
+Merged.data$Day<- format(Merged.data$SampleDate, "%d")
+head(Merged.data)
+
+model5<- lmer(WTEMP ~  Year * Day * Month + (1|Site), data = Merged.data)
 Anova(model5)
   
-model6<- lmer(SALINITY ~ Lat * Year + (1|Site), data = Merged.data)
+model6<- lmer(SALINITY ~ Lat * Year *Day + (1|Site), data = Merged.data)
 Anova(model6)
+
+View(Merged.data)
+
+Month_day<- table(Merged.data$Month, Merged.data$Day)
+View(Month_day)
 
 ### Pearson's Correlation- Temperature and Salinity ### https://www.r-bloggers.com/2021/10/pearson-correlation-in-r/
 Correlation<- cor(Merged.data$WTEMP, Merged.data$SALINITY, method= 'pearson')
@@ -325,41 +350,74 @@ Correlation
 #[1] 0.06595104
 # r value of 0-0.3 = not correlated
 
+
+##### Environmental effects on Perkinsus prev & intensity ########
+
 ##Quartiles ###
 
-Temp_90<- quantile(MasterENV$WTEMP, probs=c(0.9))
-Temp_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
+Merged.data<-na.omit(Merged.data)
 
-Sal_90<- quantile(MasterENV$SALINITY,probs=c(0.9))
-Sal_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
+quantile_Temp <- Merged.data %>%
+  group_by(Site, Year) %>%
+  summarize(
+    T_Q10 = quantile(WTEMP, probs = 0.1),
+    T_Q90 = quantile(WTEMP, probs = 0.9)
+  ) %>%
+  ungroup()
+View(quantile_Temp)
 
-Merged.data_Q <- cbind(Merged.data, Temp_90, Temp_10, Sal_90,Sal_10)
+quantile_Sal <- Merged.data %>%
+  group_by(Site, Year) %>%
+  summarize(
+    S_Q10 = quantile(SALINITY, probs = 0.1),
+    S_Q90 = quantile(SALINITY, probs = 0.9)
+  ) %>%
+  ungroup()
+View(quantile_Sal)
+
+Merged.data1 <- merge(Merged.data, quantile_Temp, by =c("Year","Site"))
+View(Merged.data1)
+
+Merged.data_Q <- merge(Merged.data1, quantile_Sal, by = c("Year","Site"))
 View(Merged.data_Q)
 
-###### modeling env + prev ######
+#Temp_90<- quantile(MasterENV$WTEMP, probs=c(0.9))
+#Temp_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
+
+#Sal_90<- quantile(MasterENV$SALINITY,probs=c(0.9))
+#Sal_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
+
+#Merged.data_Q <- cbind(Merged.data, Temp_90, Temp_10, Sal_90,Sal_10)
+#View(Merged.data_Q)
 
 library(car)
 
-class(Merged.data$Prevelence)
-Merged.data$Prevalence <- as.numeric(Merged.data$Prevalence)
-Merged.data$oysteryear <- as.numeric(Merged.data$oysteryear)
-Merged.data$WTEMP <- as.numeric(Merged.data$WTEMP)
-Merged.data$SALINITY <- as.numeric(Merged.data$SALINITY)
-Merged.data$Prevalence <- as.numeric(Merged.data$Prevalence)
+class(Merged.data_Q$Prevalence)
+Merged.data_Q$Prevalence <- as.numeric(Merged.data_Q$Prevalence)
+Merged.data_Q$oysteryear <- as.numeric(Merged.data_Q$oysteryear)
+Merged.data_Q$WTEMP <- as.numeric(Merged.data_Q$WTEMP)
+Merged.data_Q$SALINITY <- as.numeric(Merged.data_Q$SALINITY)
+Merged.data_Q$T_Q10 <- as.numeric(Merged.data_Q$T_Q10)
+Merged.data_Q$T_Q90 <- as.numeric(Merged.data_Q$T_Q90)
+Merged.data_Q$S_Q10 <- as.numeric(Merged.data_Q$S_Q10)
+Merged.data_Q$S_Q90 <- as.numeric(Merged.data_Q$S_910)
+
+View(Merged.data_Q$T_Q90)
+View(Merged.data_Q)
 
 class(Merged.data$Site)
 View(Merged.data$Site)
 
 View(Merged.data)
 
-model3<- lmer(Prevalence~ oysteryear+ Temp_90 + Region +  (1|Site) + (1|MonitoringLocation),  Merged.data_Q)
+model3<- lmer(Prevalence~ oysteryear+ T_Q90+T_Q10 + S_Q90+ S_Q10+ Region +  (1|Site) + (1|MonitoringLocation),  Merged.data_Q)
 Anova(model3)
 summary(model3)
 #Effect sizes: 
 # Temperature d = 25.66 / 901.35 = .03
 # Salinity d = 33.99 / 901.35 = .04
 
-model4<- lmer(Mean.Intensity~ oysteryear* WTEMP* SALINITY*Region + (1|Site) + (1|MonitoringLocation), Merged.data)
+model4<- lmer(Mean.Intensity~ oysteryear* T_Q90+T_Q10 + S_Q90+ S_Q10*Region + (1|Site) + (1|MonitoringLocation), Merged.data)
 Anova(model4)
 summary(model4)
 #Effect sizes: 
@@ -403,55 +461,113 @@ mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'O
 aictab(cand.set = MonthlyPrev, modnames = mod.names)
 
 ### Prevalence ##
-model8<- lmer(Prevalence~  WTEMP + SALINITY +(1|oysteryear) + (1|Site)+ (1|MonitoringLocation), Jan)
+model8<- lmer(Prevalence~ WTEMP + SALINITY+ Region  + (1|Site)+ (1|MonitoringLocation), Jan)
 Anova(model8)
 summary(model8)
 
 check_collinearity(model8)
 
-model9<- lmer(Prevalence~ WTEMP +SALINITY+(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Feb)
+model9<- lmer(Prevalence~ WTEMP +SALINITY+ Region + (1|Site) + (1|MonitoringLocation), Feb)
 Anova(model9)
 summary(model9)
 
-model10<- lmer(Prevalence~ WTEMP + SALINITY +(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Mar)
+model10<- lmer(Prevalence~ WTEMP + SALINITY +Region+ (1|Site) + (1|MonitoringLocation), Mar)
 Anova(model10)
 summary(model10)
 
-model11<- lmer(Prevalence~ WTEMP+ SALINITY +(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Apr)
+model11<- lmer(Prevalence~ WTEMP+ SALINITY +Region + (1|Site) + (1|MonitoringLocation), Apr)
 Anova(model11)
 summary(model11)
 
-model12<- lmer(Prevalence~ WTEMP + SALINITY +(1|oysteryear)+ (1|Site) + (1|MonitoringLocation), May)
+model12<- lmer(Prevalence~ WTEMP + SALINITY +Region+ (1|Site) + (1|MonitoringLocation), May)
 Anova(model12)
 summary(model12)
 
-model13<- lmer(Prevalence~ WTEMP +SALINITY +(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jun)
+model13<- lmer(Prevalence~ WTEMP +SALINITY +Region+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jun)
 Anova(model13)
 summary(model13)
 
-model14<- lmer(Prevalence~ WTEMP + SALINITY+(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jul)
+model14<- lmer(Prevalence~ WTEMP + SALINITY+ Region + (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jul)
 Anova(model14)
 summary(model14)
 
-model15<- lmer(Prevalence~ WTEMP + SALINITY+(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Aug)
+model15<- lmer(Prevalence~ WTEMP + SALINITY+Region + (1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Aug)
 Anova(model15)
 summary(model15)
 
-model16<- lmer(Prevalence~ WTEMP + SALINITY+(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Sept)
+model16<- lmer(Prevalence~ WTEMP + SALINITY+Region + (1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Sept)
 Anova(model16)
 summary(model16)
 
-model17<- lmer(Prevalence~ WTEMP +SALINITY+(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Oct)
+model17<- lmer(Prevalence~ WTEMP +SALINITY+Region+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Oct)
 Anova(model17)
 summary(model17)
 
-model18<- lmer(Prevalence~ WTEMP + SALINITY +(1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Nov)
+model18<- lmer(Prevalence~ WTEMP + SALINITY +Region+ (1|oysteryear) +(1|Site) + (1|MonitoringLocation), Nov)
 Anova(model18)
 summary(model18)
 
-model19<- lmer(Prevalence~ WTEMP + SALINITY+(1|oysteryear) + (1|Site) + (1|MonitoringLocation), Dec)
+model19<- lmer(Prevalence~ WTEMP + SALINITY+Region+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Dec)
 Anova(model19)
 summary(model19)
+
+#### Pearson's correlation between models ###
+#Predicted values#
+Predicted_Jan<- predict(model8, Jan)
+View(Predicted_Jan)
+Predicted_Feb<- predict(model9, Feb)
+Predicted_Mar<- predict(model10, Mar)
+Predicted_Apr<- predict(model11, Apr)
+Predicted_May<- predict(model12, May)
+Predicted_Jun<- predict(model13, Jun)
+Predicted_Jul<- predict(model14, Jul)
+Predicted_Aug<- predict(model15, Aug)
+Predicted_Sept<- predict(model16, Sept)
+Predicted_Oct<- predict(model17, Oct)
+Predicted_Nov<- predict(model18, Nov)
+Predicted_Dec<- predict(model19, Dec)
+
+Predicted_values<-cbind(Jan= Predicted_Jan, Feb= Predicted_Feb, Mar= Predicted_Mar, Apr= Predicted_Apr,
+                         May= Predicted_May, Jun= Predicted_Jun, Jul= Predicted_Jul,Aug= Predicted_Aug,
+                         Sept= Predicted_Sept, Oct=Predicted_Oct, Nov= Predicted_Nov, Dec= Predicted_Dec)
+View(Predicted_values)
+Predicted_values<-na.omit(Predicted_values)
+Model_correlations <-cor(Predicted_values)
+print(Model_correlations)
+
+#######  Jan        Feb        Mar        Apr        May        Jun
+#Jan  1.00000000 0.21016485 0.05728583 0.04698284 0.03515336 0.01108076
+#Feb  0.21016485 1.00000000 0.08397097 0.03502557 0.06677192 0.05700673
+#Mar  0.05728583 0.08397097 1.00000000 0.31743044 0.30746188 0.33492442
+#Apr  0.04698284 0.03502557 0.31743044 1.00000000 0.42750554 0.40434910
+#May  0.03515336 0.06677192 0.30746188 0.42750554 1.00000000 0.48093075
+#Jun  0.01108076 0.05700673 0.33492442 0.40434910 0.48093075 1.00000000
+#Jul  0.01946920 0.04895789 0.32710932 0.37211123 0.41575871 0.46842519
+#Aug  0.05931225 0.06574116 0.29731629 0.47853431 0.41970089 0.39318013
+#Sept 0.04843564 0.05661391 0.34545181 0.28909222 0.29289213 0.24506444
+#Oct  0.07023044 0.02360382 0.33610318 0.38694286 0.44032090 0.41329568
+#Nov  0.12194878 0.12610892 0.10561802 0.05815338 0.10956805 0.10881210
+#Dec  0.19051811 0.23474141 0.06621542 0.07005585 0.05407221 0.06586653
+#.        Jul        Aug       Sept        Oct        Nov        Dec
+#Jan  0.01946920 0.05931225 0.04843564 0.07023044 0.12194878 0.19051811
+#Feb  0.04895789 0.06574116 0.05661391 0.02360382 0.12610892 0.23474141
+#Mar  0.32710932 0.29731629 0.34545181 0.33610318 0.10561802 0.06621542
+#Apr  0.37211123 0.47853431 0.28909222 0.38694286 0.05815338 0.07005585
+#May  0.41575871 0.41970089 0.29289213 0.44032090 0.10956805 0.05407221
+#Jun  0.46842519 0.39318013 0.24506444 0.41329568 0.10881210 0.06586653
+#Jul  1.00000000 0.39551679 0.26866410 0.40057943 0.11259983 0.05139048
+#Aug  0.39551679 1.00000000 0.27430900 0.35177701 0.08203247 0.08956273
+#Sept 0.26866410 0.27430900 1.00000000 0.29249666 0.08480751 0.08633808
+#Oct  0.40057943 0.35177701 0.29249666 1.00000000 0.09810091 0.03906420
+#Nov  0.11259983 0.08203247 0.08480751 0.09810091 1.00000000 0.24345313
+#Dec  0.05139048 0.08956273 0.08633808 0.03906420 0.24345313 1.00000000
+
+#r=0; there is no relation between the variable.
+#r=+1; perfectly positively correlated.
+#r=-1; perfectly negatively correlated.
+#r= 0 to 0.30; negligible correlation.
+#r=0.30 to 0.50; moderate correlation.
+#r=0.50 to 1 highly correlated.
 
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
 
