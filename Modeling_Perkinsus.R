@@ -5,19 +5,20 @@
 #Description: Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis 
 
 #Set working directory
-setwd("~/Documents/UMBC/Meta-Analysis")
+setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus")
 
 #Load all packaged
 library(lme4)
 library(readxl)
 library(dplyr)
+library(ggplot2)
 
 ####################### LOAD AND CLEAN DATA FILES ####################################
 
 ################ DISEASE DATA #######################
 
 ##Perkinsus data (Maryland and Virginia)
-Perkinsus <- read.csv("~/Documents/UMBC/Meta-Analysis/PerkinsusMD&VA2.csv",)
+Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/PerkinsusMD&VA2.csv",)
 View(Perkinsus)
 
 Perk<- na.omit(Perkinsus)
@@ -28,7 +29,7 @@ Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site
 View(Perk)
 
 ##Intensity individual data from MDDNR- loading and cleaning 
-IntensityMD<- read.csv("~/Documents/UMBC/Meta-Analysis/MDDNR_1990-2020.csv",)
+IntensityMD<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MDDNR_1990-2020.csv",)
 View(IntensityMD)
 
 as.data.frame(IntensityMD)
@@ -61,10 +62,46 @@ Mean_IntensityMD <- IntensityMD %>%
 
 View(Mean_IntensityMD) # Need to fix Na values 
 
+Mean_IntensityMD <-na.omit(Mean_IntensityMD)
+
+#Update Maryland sites and remerge maryland and VA data
+MD <- Perk %>%
+  filter(State == "MD")
+
+VA <- Perk %>%
+  filter(State =="VA")
+
+MD_converted <- merge(Mean_IntensityMD, MD)
+View(MD_converted)
+
+MD_converted <- MD_converted %>%
+  subset(select = -c(Mean.Intensity, SampleDate)) %>%
+  rename(Mean.Intensity = Intensity_final)
+
+#Site count
+Site_count <- MD_converted %>% 
+  distinct(Site) %>% 
+  nrow()
+Site_count #31
+
+Site_count <- VA %>% 
+  distinct(Site) %>% 
+  nrow()
+Site_count  #38
+  
+#Recombine VA & MD
+  
+Perk2 <- rbind(VA, MD_converted)  
+View(Perk2)
+
+
+
+#write.csv(Perk2, "C:/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Disease_data_all.csv", row.names=FALSE)
+
 
 ######################### Environmental Data ##############################
 
-EnvALL<- read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VAupdated.xlsx")
+EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/EnvironmentalData_MD&VAupdated.xlsx")
 View(EnvALL)
 write.table(Env, file="Env.csv", sep=",", row.names=FALSE)
 
@@ -221,7 +258,7 @@ View(MonthlyMeans1)
 View(Perk)
 library(dplyr)
 ### Merging data sheets using Monthly/yearly means  #### 
-Master1<- merge(Perk, MonthlyMeans, by =c("Year", "MonitoringLocation"))
+Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation"))
 View(Master1)
 
 Master1<- Master1 %>% 
@@ -234,51 +271,24 @@ View(Master1)
 
 
 
-Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation"))
+Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"))
 View(Merged.data)
 
 Merged.data$oysteryear=ifelse(Merged.data$Month== "Nov"| Merged.data$Month=="Dec", Merged.data$Year+1, Merged.data$Year)
 
 head(Merged.data)
 
-Merged.data <- Merged.data %>% 
-  rename( "SampleDate"= "SampleDate.x")
+#Merged.data <- Merged.data %>% 
+ # rename( "SampleDate"= "SampleDate.x")
 
 View(Merged.data)
 
-write.table(Merged.data, file="MergedData2.csv", sep=",", row.names=FALSE)
-
-View(Perk)
+write.table(Merged.data, file="MergedData3.csv", sep=",", row.names=FALSE)
 
 
-## Subsetting by month ##
-
-Jan <- Merged.data[Merged.data$Month == "Jan",]
-Feb<- Merged.data[Merged.data$Month == "Feb",]
-Mar<- Merged.data[Merged.data$Month == "Mar",]
-Apr<- Merged.data[Merged.data$Month == "Apr",]
-May<- Merged.data[Merged.data$Month == "May",]
-Jun<- Merged.data[Merged.data$Month == "Jun",]
-Jul<- Merged.data[Merged.data$Month == "Jul",]
-Aug<- Merged.data[Merged.data$Month == "Aug",]
-Sept<- Merged.data[Merged.data$Month == "Sep",]
-Oct<- Merged.data[Merged.data$Month == "Oct",]
-Nov<- Merged.data[Merged.data$Month == "Nov",]
-Dec<- Merged.data[Merged.data$Month == "Dec",]
 
 
-Jan$Prevalence<- as.numeric(Jan$Prevalence)
-Feb$Prevalence<- as.numeric(Feb$Prevalence)
-Mar$Prevalence<- as.numeric(Mar$Prevalence)
-Apr$Prevalence<- as.numeric(Apr$Prevalence)
-May$Prevalence<- as.numeric(May$Prevalence)
-Jun$Prevalence<- as.numeric(Jun$Prevalence)
-Jul$Prevalence<- as.numeric(Jul$Prevalence)
-Aug$Prevalence<- as.numeric(Aug$Prevalence)
-Sept$Prevalence<- as.numeric(Sept$Prevalence)
-Oct$Prevalence<- as.numeric(Oct$Prevalence)
-Nov$Prevalence<- as.numeric(Nov$Prevalence)
-Dec$Prevalence<- as.numeric(Dec$Prevalence)
+
 
 
 
@@ -296,12 +306,13 @@ PM<- na.omit(Perkinsus2)
 PM
 PM$Prevratio=PM$Prevalence/100
 
-Perk$Year <- as.numeric(Perk$Year)
-Perk$Lat <- as.numeric(Perk$Lat)
-Perk$Prevalence <- as.numeric(Perk$Prevalence)
+Perk2$Year <- as.numeric(Perk$Year)
+Perk2$Lat <- as.numeric(Perk$Lat)
+Perk2$Prevalence <- as.numeric(Perk$Prevalence)
 
-Perk$oysteryear=ifelse(Perk$Month== "Nov"| Perk$Month=="Dec", Perk$Year+1, Perk$Year)
-head(Perk)
+Perk2$oysteryear=ifelse(Perk2$Month== "Nov"| Perk2$Month=="Dec", Perk2$Year+1, Perk2$Year)
+head(Perk2)
+
 
 
 ### using lmer()
@@ -310,22 +321,22 @@ library(car)
 ### spatio-temporal trends Perkinsus ###
 
 
-model1<- lmer(Prevalence ~ Lat * oysteryear + (1|Site), data = Perk)
+model1<- lmer(Prevalence ~ Lat * oysteryear + (1|Site), data = Perk2)
 Anova(model1)
 
 
-model2<- lmer(Mean.Intensity ~ Lat * oysteryear + (1|Site), data = Perk)
+model2<- lmer(Mean.Intensity ~ Lat * oysteryear + (1|Site), data = Perk2)
 Anova(model2)
 
-modelX<-lmer(Prevalence ~ Site * oysteryear + (1|Lat), data= Perk)
-Anova(modelX)
+#modelX<-lmer(Prevalence ~ Site * oysteryear + (1|Lat), data= Perk2)
+#Anova(modelX)
 
-modelY<- lmer(Mean.Intensity ~ Site * oysteryear + (1|Lat), data = Perk)
-Anova(modelY)
+#modelY<- lmer(Mean.Intensity ~ Site * oysteryear + (1|Lat), data = Perk2)
+#Anova(modelY)
 
 ### Environmental Data trends ####
 
-Merged.data$SampleDate<- scale(Merged.data$SampleDate)
+Merged.data$SampleDate<- scale(Merged.data$SampleDate.y)
 Merged.data$Year<- scale(Merged.data$Year)
 Merged.data$Lat<- scale(Merged.data$Lat)
 
@@ -333,10 +344,10 @@ View(Merged.data)
 Merged.data$Day<- format(Merged.data$SampleDate, "%d")
 head(Merged.data)
 
-model5<- lmer(WTEMP ~  Year * Day * Month + (1|Site), data = Merged.data)
+model5<- lmer(WTEMP ~  Year * Lat + (1|Site), data = Merged.data)
 Anova(model5)
   
-model6<- lmer(SALINITY ~ Lat * Year *Day + (1|Site), data = Merged.data)
+model6<- lmer(SALINITY ~ Year * Lat + (1|Site), data = Merged.data)
 Anova(model6)
 
 View(Merged.data)
@@ -410,19 +421,15 @@ View(Merged.data$Site)
 
 View(Merged.data)
 
-model3<- lmer(Prevalence~ oysteryear+ T_Q90+T_Q10 + S_Q90+ S_Q10+ Region +  (1|Site) + (1|MonitoringLocation),  Merged.data_Q)
+model3<- lmer(Prevalence~ oysteryear+ T_Q90 +T_Q10 + S_Q90+ S_Q10+ Region +  (1|Site) + (1|MonitoringLocation),  Merged.data_Q)
 Anova(model3)
 summary(model3)
-#Effect sizes: 
-# Temperature d = 25.66 / 901.35 = .03
-# Salinity d = 33.99 / 901.35 = .04
 
-model4<- lmer(Mean.Intensity~ oysteryear* T_Q90+T_Q10 + S_Q90+ S_Q10*Region + (1|Site) + (1|MonitoringLocation), Merged.data)
+
+model4<- lmer(Mean.Intensity~ oysteryear* T_Q90 +T_Q10 + S_Q90+ S_Q10*Region + (1|Site) + (1|MonitoringLocation), Merged.data_Q)
 Anova(model4)
 summary(model4)
-#Effect sizes: 
-# Temperature d = 1.131 / 1.5461 = .73
-# Salinity d = .3565 / 1.5461 = .23
+
 
 ### Collinearity- https://www.codingprof.com/3-ways-to-test-for-multicollinearity-in-r-examples/ ###
 library("olsrr") ## error - using wrong model, need lm()
@@ -441,6 +448,35 @@ check_collinearity(model4)
 #A value between 5 and 10 indicates a moderate correlation, while VIF values larger than 10 are a sign for high, not tolerable correlation of model predictors.
 #The Increased SE column in the output indicates how much larger the standard error is due to the correlation with other predictors.
 
+########################### Monthly Models #############################################
+## Subsetting by month ##
+
+Jan <- Merged.data[Merged.data$Month == "Jan",]
+Feb<- Merged.data[Merged.data$Month == "Feb",]
+Mar<- Merged.data[Merged.data$Month == "Mar",]
+Apr<- Merged.data[Merged.data$Month == "Apr",]
+May<- Merged.data[Merged.data$Month == "May",]
+Jun<- Merged.data[Merged.data$Month == "Jun",]
+Jul<- Merged.data[Merged.data$Month == "Jul",]
+Aug<- Merged.data[Merged.data$Month == "Aug",]
+Sept<- Merged.data[Merged.data$Month == "Sep",]
+Oct<- Merged.data[Merged.data$Month == "Oct",]
+Nov<- Merged.data[Merged.data$Month == "Nov",]
+Dec<- Merged.data[Merged.data$Month == "Dec",]
+
+
+Jan$Prevalence<- as.numeric(Jan$Prevalence)
+Feb$Prevalence<- as.numeric(Feb$Prevalence)
+Mar$Prevalence<- as.numeric(Mar$Prevalence)
+Apr$Prevalence<- as.numeric(Apr$Prevalence)
+May$Prevalence<- as.numeric(May$Prevalence)
+Jun$Prevalence<- as.numeric(Jun$Prevalence)
+Jul$Prevalence<- as.numeric(Jul$Prevalence)
+Aug$Prevalence<- as.numeric(Aug$Prevalence)
+Sept$Prevalence<- as.numeric(Sept$Prevalence)
+Oct$Prevalence<- as.numeric(Oct$Prevalence)
+Nov$Prevalence<- as.numeric(Nov$Prevalence)
+Dec$Prevalence<- as.numeric(Dec$Prevalence)
 
 ###### What months have the most effect on prev & intensity? #####
 
@@ -460,54 +496,55 @@ MonthlyPrev<- list(model8, model9, model10, model11, model12, model13, model14, 
 mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'Oct', 'Nov', "Dec")
 aictab(cand.set = MonthlyPrev, modnames = mod.names)
 
+
 ### Prevalence ##
-model8<- lmer(Prevalence~ WTEMP + SALINITY+ Region  + (1|Site)+ (1|MonitoringLocation), Jan)
+model8<- lmer(Prevalence~ WTEMP + SALINITY+ Region +(1|Day) + (1|Site)+ (1|MonitoringLocation), Jan)
 Anova(model8)
 summary(model8)
 
 check_collinearity(model8)
 
-model9<- lmer(Prevalence~ WTEMP +SALINITY+ Region + (1|Site) + (1|MonitoringLocation), Feb)
+model9<- lmer(Prevalence~ WTEMP +SALINITY+ Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Feb)
 Anova(model9)
 summary(model9)
 
-model10<- lmer(Prevalence~ WTEMP + SALINITY +Region+ (1|Site) + (1|MonitoringLocation), Mar)
+model10<- lmer(Prevalence~ WTEMP + SALINITY +Region+(1|Day)+ (1|Site) + (1|MonitoringLocation), Mar)
 Anova(model10)
 summary(model10)
 
-model11<- lmer(Prevalence~ WTEMP+ SALINITY +Region + (1|Site) + (1|MonitoringLocation), Apr)
+model11<- lmer(Prevalence~ WTEMP+ SALINITY +Region +(1|Day)+ (1|Site) + (1|MonitoringLocation), Apr)
 Anova(model11)
 summary(model11)
 
-model12<- lmer(Prevalence~ WTEMP + SALINITY +Region+ (1|Site) + (1|MonitoringLocation), May)
+model12<- lmer(Prevalence~ WTEMP + SALINITY +Region+(1|Day)+ (1|Site) + (1|MonitoringLocation), May)
 Anova(model12)
 summary(model12)
 
-model13<- lmer(Prevalence~ WTEMP +SALINITY +Region+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jun)
+model13<- lmer(Prevalence~ WTEMP +SALINITY +Region+(1|Day)+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jun)
 Anova(model13)
 summary(model13)
 
-model14<- lmer(Prevalence~ WTEMP + SALINITY+ Region + (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jul)
+model14<- lmer(Prevalence~ WTEMP + SALINITY+ Region+(1|Day) + (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Jul)
 Anova(model14)
 summary(model14)
 
-model15<- lmer(Prevalence~ WTEMP + SALINITY+Region + (1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Aug)
+model15<- lmer(Prevalence~ WTEMP + SALINITY+Region +(1|Day)+ (1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Aug)
 Anova(model15)
 summary(model15)
 
-model16<- lmer(Prevalence~ WTEMP + SALINITY+Region + (1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Sept)
+model16<- lmer(Prevalence~ WTEMP + SALINITY+Region+(1|Day) + (1|oysteryear)+ (1|Site) + (1|MonitoringLocation), Sept)
 Anova(model16)
 summary(model16)
 
-model17<- lmer(Prevalence~ WTEMP +SALINITY+Region+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Oct)
+model17<- lmer(Prevalence~ WTEMP +SALINITY+Region+(1|Day)+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Oct)
 Anova(model17)
 summary(model17)
 
-model18<- lmer(Prevalence~ WTEMP + SALINITY +Region+ (1|oysteryear) +(1|Site) + (1|MonitoringLocation), Nov)
+model18<- lmer(Prevalence~ WTEMP + SALINITY +Region+(1|Day)+ (1|oysteryear) +(1|Site) + (1|MonitoringLocation), Nov)
 Anova(model18)
 summary(model18)
 
-model19<- lmer(Prevalence~ WTEMP + SALINITY+Region+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Dec)
+model19<- lmer(Prevalence~ WTEMP + SALINITY+Region+(1|Day)+ (1|oysteryear) + (1|Site) + (1|MonitoringLocation), Dec)
 Anova(model19)
 summary(model19)
 
@@ -589,51 +626,51 @@ p.adjust(Pint,method="fdr")
 
 ### Intensity ###
 
-model20<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Jan)
+model20<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jan)
 Anova(model20)
 summary(model20)
 
-model21<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Feb)
+model21<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Feb)
 Anova(model21)
 summary(model21)
 
-model22<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Mar)
+model22<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Mar)
 Anova(model22)
 summary(model22)
 
-model23<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Apr)
+model23<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Apr)
 Anova(model23)
 summary(model23)
 
-model24<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), May)
+model24<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), May)
 Anova(model24)
 summary(model24)
 
-model25<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Jun)
+model25<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jun)
 Anova(model25)
 summary(model25)
 
-model26<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Jul)
+model26<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jul)
 Anova(model26)
 summary(model26)
 
-model27<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Aug)
+model27<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Aug)
 Anova(model27)
 summary(model27)
 
-model28<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Sept)
+model28<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Sept)
 Anova(model28)
 summary(model28)
 
-model29<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Oct)
+model29<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Oct)
 Anova(model29)
 summary(model29)
 
-model30<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Nov)
+model30<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Nov)
 Anova(model30)
 summary(model30)
 
-model31<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site) + (1|MonitoringLocation), Dec)
+model31<- lmer(Mean.Intensity~ WTEMP * SALINITY +Region+ (1|Day) + (1|Site) + (1|MonitoringLocation), Dec)
 Anova(model31)
 summary(model31)
 
