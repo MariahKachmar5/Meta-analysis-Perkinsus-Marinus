@@ -12,8 +12,14 @@ library(lme4)
 library(readxl)
 library(dplyr)
 library(ggplot2)
+library(glmm)
+library(MASS)
+library(car)
+library(lubridate)
 
-####################### LOAD AND CLEAN DATA FILES ####################################
+########################### LOAD AND CLEAN DATA FILES ##################################################################
+
+
 
 ################ DISEASE DATA #######################
 
@@ -99,7 +105,9 @@ write.table(Perk2, file="Disease_data_converted.csv", sep=",", row.names=FALSE)
 
 
 
-######################### Environmental Data ##############################
+
+
+######################### Environmental Data ###############################
 
 EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/EnvironmentalData_MD&VAupdated.xlsx")
 View(EnvALL)
@@ -255,8 +263,10 @@ MonthlyMeans1$Month <- month.abb[MonthlyMeans1$Month]
 head(MonthlyMeans1)
 View(MonthlyMeans1)
 
-View(Perk)
-library(dplyr)
+
+
+
+################################## MERGING ENV & PERKINSUS DATA ######################################################
 ### Merging data sheets using Monthly/yearly means  #### 
 Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation"))
 View(Master1)
@@ -283,7 +293,7 @@ head(Merged.data)
 
 View(Merged.data)
 
-write.table(Merged.data, file="MergedData3.csv", sep=",", row.names=FALSE)
+write.table(Merged.data, file="MergedData.csv", sep=",", row.names=FALSE)
 
 
 
@@ -294,11 +304,6 @@ write.table(Merged.data, file="MergedData3.csv", sep=",", row.names=FALSE)
 
 ############################### STATISTICS ##################################################################
 
-##### NOTES ######
-##Fixed parameters - Temperature, Salinity, Oysteryear, Latitude
-## random variables - reef sites, monitoring location
-
-### GLM Perkinsus data ###
 
 View(Perk)
 Perkinsus2 <- Perkinsus[-c(3)]
@@ -315,23 +320,23 @@ head(Perk2)
 
 
 
-### using lmer()
-library(car)
+### using lmer(), polr(), glmm()
+
 
 ### spatio-temporal trends Perkinsus ###
 
 
-model1<- lmer(Prevalence ~ Lat * oysteryear + (1|Site), data = Perk2)
+model1<- glmm(fixed = Prevalence ~ Region * oysteryear , random = list(Site = ~1), data = Perk2, family.glmm = binomial.glmm, varcomps.names = c("Site"))
 Anova(model1)
 
-
-model2<- lmer(Mean.Intensity ~ Lat * oysteryear + (1|Site), data = Perk2)
+Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
+model2<- polr(Mean.Intensity ~ Region * oysteryear , data = Perk2, Hess = TRUE)
 Anova(model2)
 
-modelX<-lmer(Prevalence ~ Site * oysteryear + (1|Lat), data= Perk2)
+modelX<-glmm(fixed =Prevalence ~ Site * oysteryear, random = list(Region = ~10), data= Perk2, family.glmm = binomial.glmm, varcomps.names = c("Region"))
 Anova(modelX)
 
-modelY<- lmer(Mean.Intensity ~ Site * oysteryear + (1|Lat), data = Perk2)
+modelY<- polr(Mean.Intensity ~ Site * oysteryear, data = Perk2, Hess = TRUE)
 Anova(modelY)
 
 ### Environmental Data trends ####
@@ -340,9 +345,7 @@ Merged.data$SampleDate<- scale(Merged.data$SampleDate.y)
 Merged.data$Year<- scale(Merged.data$Year)
 Merged.data$Lat<- scale(Merged.data$Lat)
 
-View(Merged.data)
-Merged.data$Day<- format(Merged.data$SampleDate, "%d")
-head(Merged.data)
+
 
 model5<- lmer(WTEMP ~  Year * Lat + (1|Site), data = Merged.data)
 Anova(model5)
@@ -350,96 +353,40 @@ Anova(model5)
 model6<- lmer(SALINITY ~ Year * Lat + (1|Site), data = Merged.data)
 Anova(model6)
 
-View(Merged.data)
 
-Month_day<- table(Merged.data$Month, Merged.data$Day)
-View(Month_day)
 
 ### Pearson's Correlation- Temperature and Salinity ### https://www.r-bloggers.com/2021/10/pearson-correlation-in-r/
-Correlation<- cor(Merged.data$WTEMP, Merged.data$SALINITY, method= 'pearson')
-Correlation
+#Correlation<- cor(Merged.data$WTEMP, Merged.data$SALINITY, method= 'pearson')
+#Correlation
 #[1] 0.06595104
 # r value of 0-0.3 = not correlated
 
 
 ##### Environmental effects on Perkinsus prev & intensity ########
 
-##Quartiles ###
 
-Merged.data<-na.omit(Merged.data)
 
-quantile_Temp <- Merged.data %>%
-  group_by(Site, Year) %>%
-  summarize(
-    T_Q10 = quantile(WTEMP, probs = 0.1),
-    T_Q90 = quantile(WTEMP, probs = 0.9)
-  ) %>%
-  ungroup()
-View(quantile_Temp)
-
-quantile_Sal <- Merged.data %>%
-  group_by(Site, Year) %>%
-  summarize(
-    S_Q10 = quantile(SALINITY, probs = 0.1),
-    S_Q90 = quantile(SALINITY, probs = 0.9)
-  ) %>%
-  ungroup()
-View(quantile_Sal)
-
-Merged.data1 <- merge(Merged.data, quantile_Temp, by =c("Year","Site"))
-View(Merged.data1)
-
-Merged.data_Q <- merge(Merged.data1, quantile_Sal, by = c("Year","Site"))
-View(Merged.data_Q)
-
-#Temp_90<- quantile(MasterENV$WTEMP, probs=c(0.9))
-#Temp_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
-
-#Sal_90<- quantile(MasterENV$SALINITY,probs=c(0.9))
-#Sal_10<- quantile(MasterENV$WTEMP, probs=c(0.1))
-
-#Merged.data_Q <- cbind(Merged.data, Temp_90, Temp_10, Sal_90,Sal_10)
-#View(Merged.data_Q)
-
-library(car)
-
-class(Merged.data_Q$Prevalence)
-Merged.data_Q$Prevalence <- as.numeric(Merged.data_Q$Prevalence)
-Merged.data_Q$oysteryear <- as.numeric(Merged.data_Q$oysteryear)
-Merged.data_Q$WTEMP <- as.numeric(Merged.data_Q$WTEMP)
-Merged.data_Q$SALINITY <- as.numeric(Merged.data_Q$SALINITY)
-Merged.data_Q$T_Q10 <- as.numeric(Merged.data_Q$T_Q10)
-Merged.data_Q$T_Q90 <- as.numeric(Merged.data_Q$T_Q90)
-Merged.data_Q$S_Q10 <- as.numeric(Merged.data_Q$S_Q10)
-Merged.data_Q$S_Q90 <- as.numeric(Merged.data_Q$S_910)
-
-View(Merged.data_Q$T_Q90)
-View(Merged.data_Q)
-
-class(Merged.data$Site)
-View(Merged.data$Site)
-
-View(Merged.data)
-
-model3<- lmer(Prevalence~ oysteryear+ T_Q90 +T_Q10 + S_Q90+ S_Q10+ Region +  (1|Site) + (1|MonitoringLocation),  Merged.data_Q)
+model3<- glmm(fixed = Prevalence ~ oysteryear+ WTEMP +SALINITY+ Region , random =list(Site = ~1, MonitoringLocation = ~1), 
+              Merged.data, family.glmm = binomial.glmm, 
+              varcomps.names = c("Site", "MonitoringLocation"))
 Anova(model3)
 summary(model3)
 
-
-model4<- lmer(Mean.Intensity~ oysteryear+ T_Q90 +T_Q10 + S_Q90+ S_Q10+Region + (1|Site) + (1|MonitoringLocation), Merged.data_Q)
+Merged.data$Mean.Intensity<-as.factor(Merged.data$Mean.Intensity)
+model4<- polr(Mean.Intensity~ oysteryear+ WTEMP +SALINITY+ Region , Merged.data, Hess = TRUE)
 Anova(model4)
 summary(model4)
 
 
 ### Collinearity- https://www.codingprof.com/3-ways-to-test-for-multicollinearity-in-r-examples/ ###
-library("olsrr") ## error - using wrong model, need lm()
-library("corrplot") ## need to be numeric
-corrplot(cor(Merged.data), method = "number")
+#library("olsrr") ## error - using wrong model, need lm()
+#library("corrplot") ## need to be numeric
+#corrplot(cor(Merged.data), method = "number")
 
 #https://easystats.github.io/blog/posts/performance_check_collinearity/
-library(performance)
-check_collinearity(model3)
-check_collinearity(model4)
+#library(performance)
+#check_collinearity(model3)
+#check_collinearity(model4)
 
 
 
@@ -491,10 +438,10 @@ Dec$Prevalence<- as.numeric(Dec$Prevalence)
 
 #The model with the lowest AIC value is always listed first. From the output we can see that the following model has the lowest AIC value and is thus the best fitting model
 
-library(AICcmodavg)
-MonthlyPrev<- list(model8, model9, model10, model11, model12, model13, model14, model15, model16, model17, model18, model19)
-mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'Oct', 'Nov', "Dec")
-aictab(cand.set = MonthlyPrev, modnames = mod.names)
+#library(AICcmodavg)
+#MonthlyPrev<- list(model8, model9, model10, model11, model12, model13, model14, model15, model16, model17, model18, model19)
+#mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'Oct', 'Nov', "Dec")
+#aictab(cand.set = MonthlyPrev, modnames = mod.names)
 
 
 ### Prevalence ##
@@ -548,37 +495,6 @@ model19<- lmer(Prevalence~ WTEMP + SALINITY+Region+(1|Day) + (1|Site) + (1|Monit
 Anova(model19)
 summary(model19)
 
-#### Pearson's correlation between models ###
-#Predicted values#
-Predicted_Jan<- predict(model8, Jan)
-View(Predicted_Jan)
-Predicted_Feb<- predict(model9, Feb)
-Predicted_Mar<- predict(model10, Mar)
-Predicted_Apr<- predict(model11, Apr)
-Predicted_May<- predict(model12, May)
-Predicted_Jun<- predict(model13, Jun)
-Predicted_Jul<- predict(model14, Jul)
-Predicted_Aug<- predict(model15, Aug)
-Predicted_Sept<- predict(model16, Sept)
-Predicted_Oct<- predict(model17, Oct)
-Predicted_Nov<- predict(model18, Nov)
-Predicted_Dec<- predict(model19, Dec)
-
-Predicted_values<-cbind(Jan= Predicted_Jan, Feb= Predicted_Feb, Mar= Predicted_Mar, Apr= Predicted_Apr,
-                         May= Predicted_May, Jun= Predicted_Jun, Jul= Predicted_Jul,Aug= Predicted_Aug,
-                         Sept= Predicted_Sept, Oct=Predicted_Oct, Nov= Predicted_Nov, Dec= Predicted_Dec)
-View(Predicted_values)
-Predicted_values<-na.omit(Predicted_values)
-Model_correlations <-cor(Predicted_values)
-print(Model_correlations)
-
-#r=0; there is no relation between the variable.
-#r=+1; perfectly positively correlated.
-#r=-1; perfectly negatively correlated.
-#r= 0 to 0.30; negligible correlation.
-#r=0.30 to 0.50; moderate correlation.
-#r=0.50 to 1 highly correlated.
-
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
 
 Ptemp<- c(0.7865,6.45E-05,6.97E-09,0.001132, 0.2381 ,0.65623,8.30E-06,0.59027,1.12E-05,4.53E-05,0.7505,0.004616)
@@ -611,53 +527,53 @@ n.preg<-p.adjust(PReg,method="fdr")
 #  [1] 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073
 View(as.table(n.preg))
 
-### Intensity ###
+################################ Intensity ######################
 
-model20<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jan)
+model20<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jan, Hess = TRUE)
 Anova(model20)
 summary(model20)
 
-model21<- lmer(Mean.Intensity~ WTEMP+ SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Feb)
+model21<- polr(Mean.Intensity~ WTEMP+ SALINITY +Region, Feb, Hess= TRUE)
 Anova(model21)
 summary(model21)
 
-model22<- lmer(Mean.Intensity~ WTEMP +SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Mar)
+model22<- polr(Mean.Intensity~ WTEMP +SALINITY +Region, Mar, Hess= TRUE)
 Anova(model22)
 summary(model22)
 
-model23<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Apr)
+model23<-polr(Mean.Intensity~ WTEMP + SALINITY +Region, Apr, Hess= TRUE)
 Anova(model23)
 summary(model23)
 
-model24<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), May)
+model24<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, May, Hess= TRUE)
 Anova(model24)
 summary(model24)
 
-model25<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jun)
+model25<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jun, Hess= TRUE)
 Anova(model25)
 summary(model25)
 
-model26<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jul)
+model26<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jul, Hess= TRUE)
 Anova(model26)
 summary(model26)
 
-model27<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Aug)
+model27<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Aug, Hess= TRUE)
 Anova(model27)
 summary(model27)
 
-model28<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Sept)
+model28<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Sept, Hess= TRUE)
 Anova(model28)
 summary(model28)
 
-model29<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Oct)
+model29<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Oct, Hess= TRUE)
 Anova(model29)
 summary(model29)
 
-model30<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Nov)
+model30<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Nov, Hess= TRUE)
 Anova(model30)
 summary(model30)
 
-model31<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+ (1|Day) + (1|Site) + (1|MonitoringLocation), Dec)
+model31<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Dec, Hess= TRUE)
 Anova(model31)
 summary(model31)
 
