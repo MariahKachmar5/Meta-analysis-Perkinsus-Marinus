@@ -1,8 +1,12 @@
 
 #Created by: Mariah L. Kachmar
 #Date:
-#Last updated: 
+#Last updated: 1/25/24
 #Description: Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis 
+
+#NOTES: receiving error for glmm() for prevalence data
+
+#####################################################################################################
 
 #Set working directory
 setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/")
