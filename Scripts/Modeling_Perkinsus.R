@@ -101,7 +101,7 @@ Perk2 <- rbind(VA, MD_converted)
 View(Perk2)
 
 
-write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Disease_data_converted.csv", sep=",", row.names=FALSE)
+write.table(Perk2, file="Disease_data_converted.csv", sep=",", row.names=FALSE)
 
 
 
@@ -293,7 +293,7 @@ head(Merged.data)
 
 View(Merged.data)
 
-write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MergedData.csv", sep=",", row.names=FALSE)
+write.table(Merged.data, file="MergedData.csv", sep=",", row.names=FALSE)
 
 
 ## Subset MD ##
@@ -301,7 +301,7 @@ write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-M
 Maryland <- Merged.data %>%
   filter(State == "MD")
 
-write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Maryland_data_all.csv", sep = ",", row.names=FALSE)
+write.table(Maryland, file = "Maryland_data_all.csv", sep = ",", row.names=FALSE)
 
 
 
