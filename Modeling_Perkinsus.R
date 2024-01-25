@@ -5,7 +5,7 @@
 #Description: Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis 
 
 #Set working directory
-setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/scripts")
+setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/")
 
 #Load all packaged
 library(lme4)
