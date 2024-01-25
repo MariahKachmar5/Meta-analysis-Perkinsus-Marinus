@@ -296,9 +296,12 @@ View(Merged.data)
 write.table(Merged.data, file="MergedData.csv", sep=",", row.names=FALSE)
 
 
+## Subset MD ##
 
+Maryland <- Merged.data %>%
+  filter(State == "MD")
 
-
+write.table(Maryland, file = "Maryland_data_all.csv", sep = ",", row.names=FALSE)
 
 
 
