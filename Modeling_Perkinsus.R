@@ -311,36 +311,35 @@ write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Ma
 
 ############################### STATISTICS ##################################################################
 
+# Create ratios for beta distribution
+View(Perk2)
+Perk2$Prevalence <- as.numeric(Perk2$Prevalence)
+Perk2$Prevratio=Perk2$Prevalence/100
 
-View(Perk)
-Perkinsus2 <- Perkinsus[-c(3)]
-PM<- na.omit(Perkinsus2)
-PM
-PM$Prevratio=PM$Prevalence/100
+#Perk2$Year <- as.numeric(Perk$Year)
+#Perk2$Lat <- as.numeric(Perk$Lat)
+#Perk2$Prevalence <- as.numeric(Perk$Prevalence)
 
-Perk2$Year <- as.numeric(Perk$Year)
-Perk2$Lat <- as.numeric(Perk$Lat)
-Perk2$Prevalence <- as.numeric(Perk$Prevalence)
-
-Perk2$oysteryear=ifelse(Perk2$Month== "Nov"| Perk2$Month=="Dec", Perk2$Year+1, Perk2$Year)
+#Perk2$oysteryear=ifelse(Perk2$Month== "Nov"| Perk2$Month=="Dec", Perk2$Year+1, Perk2$Year)
 head(Perk2)
-
+Perk2<- na.omit(Perk2)
 
 
 ### using lmer(), polr(), glmm()
 
 
 ### spatio-temporal trends Perkinsus ###
-
-
-model1<- glmm(fixed = Prevalence ~ Region * oysteryear , random = list(Site = ~1), data = Perk2, family.glmm = binomial.glmm, varcomps.names = c("Site"))
+library(glmmTMB)
+Perk2$Site<-as.factor(Perk2$Site)
+model1<- glmm(fixed = Prevratio~ Region * oysteryear, random = list(Site = ~1), data = Perk2, family.glmm  = binomial.glmm, varcomps.names = c("Site"))
 Anova(model1)
+
 
 Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
 model2<- polr(Mean.Intensity ~ Region * oysteryear , data = Perk2, Hess = TRUE)
 Anova(model2)
 
-modelX<-glmm(fixed =Prevalence ~ Site * oysteryear, random = list(Region = ~10), data= Perk2, family.glmm = binomial.glmm, varcomps.names = c("Region"))
+modelX<-glmm(fixed =Prevalence ~ Site * oysteryear, random = list(Region = ~1), data= Perk2, family.glmm = binomial.glmm, varcomps.names = c("Region"))
 Anova(modelX)
 
 modelY<- polr(Mean.Intensity ~ Site * oysteryear, data = Perk2, Hess = TRUE)
