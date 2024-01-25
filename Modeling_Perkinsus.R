@@ -331,7 +331,7 @@ Perk2<- na.omit(Perk2)
 ### spatio-temporal trends Perkinsus ###
 library(glmmTMB)
 Perk2$Site<-as.factor(Perk2$Site)
-model1<- glmm(fixed = Prevratio~ Region * oysteryear, random = list(Site = ~1), data = Perk2, family.glmm  = binomial.glmm, varcomps.names = c("Site"))
+model1<- glmm(fixed = Prevratio~ Region * oysteryear, random = list(Site = ~1), data = Perk2, family.glmm = binomial.glmm, varcomps.names = c("Site"))
 Anova(model1)
 
 
