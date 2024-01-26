@@ -328,17 +328,23 @@ View(Perk2)
 Perk2$oysteryear=ifelse(Perk2$Month== "Nov"| Perk2$Month=="Dec", Perk2$Year+1, Perk2$Year)
 head(Perk2)
 
-
+Perk2<-na.omit(Perk2)
 
 ### using lmer(), polr(), glmm()
 
 
 ### spatio-temporal trends Perkinsus ###
-library(betareg)
 
-model1<- betareg(Prev_ratio ~ Region * oysteryear, data = Perk2)
+summary(Perk2$Prev_ratio)
+
+model1<- glmer(Prev_ratio ~ Region + oysteryear + (1|Site), data = Perk2, family = beta_family(link="logit"))
 Anova(model1)
 
+#removed * interaction term between region and year because i was getting an error for rank defficiency = multicolinearity
+#Error in eval(family$initialize, rho) : y values must be 0 < y < 1
+
+summary(Perk2$Prev_ratio) #values are between 0 and 1 for min and max
+                          #can the max not =1 and min not = 0?
 
 Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
 model2<- polr(Mean.Intensity ~ Region * oysteryear , data = Perk2, Hess = TRUE)
