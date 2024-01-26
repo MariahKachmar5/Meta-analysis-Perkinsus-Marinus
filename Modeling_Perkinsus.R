@@ -313,25 +313,30 @@ write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Ma
 
 # Create ratios for beta distribution
 View(Perk2)
+
 Perk2$Prevalence <- as.numeric(Perk2$Prevalence)
-Perk2$Prevratio=Perk2$Prevalence/100
+
+Perk2$Prev_ratio <- Perk2$Prevalence/100
+head(Perk2)
+View(Perk2)
 
 #Perk2$Year <- as.numeric(Perk$Year)
 #Perk2$Lat <- as.numeric(Perk$Lat)
 #Perk2$Prevalence <- as.numeric(Perk$Prevalence)
 
-#Perk2$oysteryear=ifelse(Perk2$Month== "Nov"| Perk2$Month=="Dec", Perk2$Year+1, Perk2$Year)
+#Oyster year
+Perk2$oysteryear=ifelse(Perk2$Month== "Nov"| Perk2$Month=="Dec", Perk2$Year+1, Perk2$Year)
 head(Perk2)
-Perk2<- na.omit(Perk2)
+
 
 
 ### using lmer(), polr(), glmm()
 
 
 ### spatio-temporal trends Perkinsus ###
-library(glmmTMB)
-Perk2$Site<-as.factor(Perk2$Site)
-model1<- glmm(fixed = Prevratio~ Region * oysteryear, random = list(Site = ~1), data = Perk2, family.glmm = binomial.glmm, varcomps.names = c("Site"))
+library(betareg)
+
+model1<- betareg(Prev_ratio ~ Region * oysteryear, data = Perk2)
 Anova(model1)
 
 
