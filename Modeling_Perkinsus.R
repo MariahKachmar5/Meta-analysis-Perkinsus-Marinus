@@ -236,6 +236,9 @@ MasterENV_filtered2<- MasterENV_filtered3 %>%
   select(-start_year)
 View(MasterENV_filtered2)
 
+write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Filtered_Env_Master.csv", sep = ",", row.names=FALSE)
+
+
 ### Yearly means for environmental parameters by site and time ###
 
 library(dplyr)
@@ -336,8 +339,7 @@ Perk2<-na.omit(Perk2)
 ### spatio-temporal trends Perkinsus ###
 
 summary(Perk2$Prev_ratio)
-
-model1<- glmer(Prev_ratio ~ Region + oysteryear + (1|Site), data = Perk2, family = beta_family(link="logit"))
+model1<- glmer(Prev_ratio ~ Region + oysteryear + (1|Site), data = Perk2, family = beta_family)
 Anova(model1)
 
 #removed * interaction term between region and year because i was getting an error for rank defficiency = multicolinearity
