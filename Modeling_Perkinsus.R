@@ -20,6 +20,8 @@ library(glmm)
 library(MASS)
 library(car)
 library(lubridate)
+library(glmmTMB)
+
 
 ########################### LOAD AND CLEAN DATA FILES ##################################################################
 
@@ -194,9 +196,6 @@ View(MasterENV)
 
 ### Filtering environmental data so there is only one sample date per month each year ###
 
-library(lubridate)
-library(dplyr)
-
 class(MasterENV$SampleDate)
 MasterENV$SampleDate <- as.Date(MasterENV$SampleDate, format = "%Y-%m-%d")
 
@@ -241,7 +240,7 @@ write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Ma
 
 ### Yearly means for environmental parameters by site and time ###
 
-library(dplyr)
+
 Smeans <-MasterENV_filtered2 %>%
   group_by(Year, Month, SALINITY, MonitoringLocation) %>%
   summarize(SALINITY = mean(SALINITY))
@@ -287,7 +286,6 @@ Master1<- Master1 %>%
 View(Master1)
 
 
-
 Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"))
 View(Merged.data)
 
@@ -307,7 +305,7 @@ write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-M
 
 Maryland <- Merged.data %>%
   filter(State == "MD")
-
+View(Maryland)
 write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Maryland_data_all.csv", sep = ",", row.names=FALSE)
 
 
@@ -338,24 +336,23 @@ Perk2<-na.omit(Perk2)
 
 ### spatio-temporal trends Perkinsus ###
 
-summary(Perk2$Prev_ratio)
-model1<- glmer(Prev_ratio ~ Region + oysteryear + (1|Site), data = Perk2, family = beta_family)
+
+epsilon <- 1e-6  # Small constant to avoid exactly 1
+Perk2$Prev_ep <- pmin(pmax(Perk2$Prev_ratio, epsilon), 1 - epsilon)
+
+#Region
+model1<- glmmTMB(Prev_ep ~ Region + oysteryear + (1|Site), data = Perk2, family = beta_family())
 Anova(model1)
 
-#removed * interaction term between region and year because i was getting an error for rank defficiency = multicolinearity
-#Error in eval(family$initialize, rho) : y values must be 0 < y < 1
-
-summary(Perk2$Prev_ratio) #values are between 0 and 1 for min and max
-                          #can the max not =1 and min not = 0?
-
 Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
-model2<- polr(Mean.Intensity ~ Region * oysteryear , data = Perk2, Hess = TRUE)
+model2<- polr(Mean.Intensity ~ Region + oysteryear , data = Perk2, Hess = TRUE)
 Anova(model2)
 
-modelX<-glmm(fixed =Prevalence ~ Site * oysteryear, random = list(Region = ~1), data= Perk2, family.glmm = binomial.glmm, varcomps.names = c("Region"))
+#Site
+modelX<-glmmTMB(Prev_ep ~ Site + oysteryear , data= Perk2, family = beta_family())
 Anova(modelX)
 
-modelY<- polr(Mean.Intensity ~ Site * oysteryear, data = Perk2, Hess = TRUE)
+modelY<- polr(Mean.Intensity ~ Site + oysteryear, data = Perk2, Hess = TRUE)
 Anova(modelY)
 
 ### Environmental Data trends ####
@@ -366,10 +363,10 @@ Merged.data$Lat<- scale(Merged.data$Lat)
 
 
 
-model5<- lmer(WTEMP ~  Year * Lat + (1|Site), data = Merged.data)
+model5<- lmer(WTEMP ~  Year + Region + (1|Site), data = Merged.data)
 Anova(model5)
   
-model6<- lmer(SALINITY ~ Year * Lat + (1|Site), data = Merged.data)
+model6<- lmer(SALINITY ~ Year + Region + (1|Site), data = Merged.data)
 Anova(model6)
 
 
@@ -382,12 +379,17 @@ Anova(model6)
 
 
 ##### Environmental effects on Perkinsus prev & intensity ########
+#Epsilon ratio calculation
+Merged.data$Prevalence <- as.numeric(Merged.data$Prevalence)
 
+Merged.data$Prev_ratio <- Merged.data$Prevalence/100
+head(Merged.data)
 
+Merged.data$Prev_ep <- pmin(pmax(Merged.data$Prev_ratio, epsilon), 1 - epsilon)
+head(Merged.data)
 
-model3<- glmm(fixed = Prevalence ~ oysteryear+ WTEMP +SALINITY+ Region , random =list(Site = ~1, MonitoringLocation = ~1), 
-              Merged.data, family.glmm = binomial.glmm, 
-              varcomps.names = c("Site", "MonitoringLocation"))
+#models 
+model3<- glmmTMB(Prev_ep ~  oysteryear + WTEMP + SALINITY + Region + (1|Site), data = Merged.data, family = beta_family())
 Anova(model3)
 summary(model3)
 
@@ -462,59 +464,64 @@ Dec$Prevalence<- as.numeric(Dec$Prevalence)
 #mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'Oct', 'Nov', "Dec")
 #aictab(cand.set = MonthlyPrev, modnames = mod.names)
 
-
+library(knitr)
 ### Prevalence ##
-model8<- lmer(Prevalence~ WTEMP + SALINITY+ Region +(1|Day) + (1|Site)+ (1|MonitoringLocation), Jan)
-Anova(model8)
+model8<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Jan, family = beta_family())
+results8<-tidy(Anova(model8))
 summary(model8)
+View(results_model8)
 
-check_collinearity(model8)
-
-model9<- lmer(Prevalence~ WTEMP +SALINITY+ Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Feb)
-Anova(model9)
+model9<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Feb, family = beta_family())
+results9<-tidy(Anova(model9))
 summary(model9)
 
-model10<- lmer(Prevalence~ WTEMP + SALINITY +Region+(1|Day)+ (1|Site) + (1|MonitoringLocation), Mar)
-Anova(model10)
+model10<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Mar, family = beta_family())
+results10<-tidy(Anova(model10))
 summary(model10)
 
-model11<- lmer(Prevalence~ WTEMP+ SALINITY +Region +(1|Day)+ (1|Site) + (1|MonitoringLocation), Apr)
-Anova(model11)
+model11<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Apr, family = beta_family())
+results11<-tidy(Anova(model11))
 summary(model11)
 
-model12<- lmer(Prevalence~ WTEMP + SALINITY +Region+(1|Day)+ (1|Site) + (1|MonitoringLocation), May)
-Anova(model12)
+model12<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), May, family = beta_family())
+results12<-tidy(Anova(model12))
 summary(model12)
 
-model13<- lmer(Prevalence~ WTEMP +SALINITY +Region+(1|Day)+ (1|Site) + (1|MonitoringLocation), Jun)
-Anova(model13)
+model13<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Jun, family = beta_family())
+results13<-tidy(Anova(model13))
 summary(model13)
 
-model14<- lmer(Prevalence~ WTEMP + SALINITY+ Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Jul)
-Anova(model14)
+model14<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Jul, family = beta_family())
+results14<-tidy(Anova(model14))
 summary(model14)
 
-model15<- lmer(Prevalence~ WTEMP + SALINITY+Region +(1|Day) + (1|Site) + (1|MonitoringLocation), Aug)
-Anova(model15)
+model15<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Aug, family = beta_family())
+results15<-tidy(Anova(model15))
 summary(model15)
 
-model16<- lmer(Prevalence~ WTEMP + SALINITY+Region+(1|Day)  + (1|Site) + (1|MonitoringLocation), Sept)
-Anova(model16)
+model16<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Sept, family = beta_family())
+results16<-tidy(Anova(model16))
 summary(model16)
 
-model17<- lmer(Prevalence~ WTEMP +SALINITY+Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Oct)
-Anova(model17)
+model17<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Oct, family = beta_family())
+results17<-tidy(Anova(model17))
 summary(model17)
 
-model18<- lmer(Prevalence~ WTEMP + SALINITY +Region+(1|Day)+(1|Site) + (1|MonitoringLocation), Nov)
-Anova(model18)
+model18<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Nov, family = beta_family())
+results18<-tidy(Anova(model18))
 summary(model18)
 
-model19<- lmer(Prevalence~ WTEMP + SALINITY+Region+(1|Day) + (1|Site) + (1|MonitoringLocation), Dec)
-Anova(model19)
+model19<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Dec, family = beta_family())
+results19<-tidy(Anova(model19))
 summary(model19)
 
+
+Monthly_Prevalence_Results <-rbind(results8, results9, results10, results11, results12, results13, results14, results15, results16, results17, results18, results19)
+View(Monthly_Prevalence_Results)
+write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Prevalence_Results.csv", sep=",", row.names=FALSE)
+
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
+
 
 Ptemp<- c(0.7865,6.45E-05,6.97E-09,0.001132, 0.2381 ,0.65623,8.30E-06,0.59027,1.12E-05,4.53E-05,0.7505,0.004616)
 
@@ -545,6 +552,7 @@ View(as.table(n.psal))
 n.preg<-p.adjust(PReg,method="fdr")
 #  [1] 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073
 View(as.table(n.preg))
+
 
 ################################ Intensity ######################
 
