@@ -580,50 +580,6 @@ summary(model31)
 
 ## ADJUSTING P VALUE INTENSITY & MONTH ##
 
-ITemp<-c(0.32431
-         ,0.138779
-         ,5.77E-07
-         ,4.43E-05
-         ,0.006992
-         ,0.06077
-         ,0.5943
-         ,0.1668
-         ,0.01139
-         ,0.2461
-         ,0.183275
-         ,0.362107)
-ISal<-c(0.02944
-        ,0.004285
-        ,0.0001118
-        ,0.0003577
-        ,2.20E-16
-        ,2.24E-08
-        ,4.57E-11
-        ,1.94E-08
-        ,3.51E-06
-        ,2.79E-05
-        ,0.004623
-        ,0.0006841)
-IReg<-c(0.87721
-        ,0.812266
-        ,0.717824
-        ,0.8082627
-        ,2.20E-16
-        ,0.86188
-        ,0.6702
-        ,0.7002
-        ,0.78725
-        ,0.7669
-        ,0.791898
-        ,0.8413955)
 
-n.itemp<-p.adjust(ITemp, method="fdr")
-View(as.table(n.itemp))
-
-n.isal<-p.adjust(ISal, method="fdr")
-View(as.table(n.isal))
-
-n.ireg<-p.adjust(IReg, method="fdr")
-View(as.table(n.ireg))
 
 
