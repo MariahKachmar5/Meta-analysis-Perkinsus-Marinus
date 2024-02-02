@@ -515,43 +515,17 @@ model19<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLoc
 results19<-tidy(Anova(model19))
 summary(model19)
 
-
+## Combining Anova () chi sq stats into a table 
 Monthly_Prevalence_Results <-rbind(results8, results9, results10, results11, results12, results13, results14, results15, results16, results17, results18, results19)
 View(Monthly_Prevalence_Results)
-write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Prevalence_Results.csv", sep=",", row.names=FALSE)
 
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
 
-
-Ptemp<- c(0.7865,6.45E-05,6.97E-09,0.001132, 0.2381 ,0.65623,8.30E-06,0.59027,1.12E-05,4.53E-05,0.7505,0.004616)
-
-PSal<- c(1.56E-11,1.25E-12,2.20E-16,7.81E-15,2.00E-16,1.76E-11,2.20E-16,2.00E-16,2.20E-16,2.20E-16,1.26E-09,1.74E-10)
-PReg <- c(0.1071
-          ,0.159
-          ,0.1907
-          ,0.102586
-          ,0.1198
-          ,0.06833
-          ,0.1414
-          ,0.07093
-          ,0.1798
-          ,0.1287
-          ,0.2073
-          ,0.198185)
-
-n.ptemp<-p.adjust(Ptemp, method= "fdr")
-#[1] 7.865000e-01 1.548000e-04 8.364000e-08 2.264000e-03 3.571500e-01 7.865000e-01 4.480000e-05 7.865000e-01 4.480000e-05
-#[10] 1.359000e-04 7.865000e-01 7.913143e-03
-View(as.table(n.ptemp))
-
-n.psal <-p.adjust(PSal, method= "fdr")
-#[1] 2.080000e-11 1.875000e-12 4.400000e-16 1.338857e-14 4.400000e-16 2.112000e-11 4.400000e-16 4.400000e-16 4.400000e-16
-#[10] 4.400000e-16 1.260000e-09 1.898182e-10
-View(as.table(n.psal))
-
-n.preg<-p.adjust(PReg,method="fdr")
-#  [1] 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073 0.2073
-View(as.table(n.preg))
+Monthly_Prevalence_Results$fdr.p.value <- p.adjust(Monthly_Prevalence_Results$p.value, method = "fdr")
+Monthly_Prevalence_Results
+Monthly_Prevalence_Results$Month <- c("Jan", "Jan", "Jan", "Feb", "Feb", "Feb", "Mar", "Mar", "Mar", "Apr", "Apr","Apr", "May", "May", "May", "Jun", "Jun", "Jun", "Jul", "Jul","Jul", 
+                                      "Aug", "Aug", "Aug", "Sept", "Sept", "Sept", "Oct", "Oct", "Oct", "Nov", "Nov", "Nov", "Dec", "Dec", "Dec")
+write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Prevalence_Results.csv", sep=",", row.names=FALSE)
 
 
 ################################ Intensity ######################
