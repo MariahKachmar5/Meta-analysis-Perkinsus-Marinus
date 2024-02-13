@@ -21,6 +21,7 @@ library(MASS)
 library(car)
 library(lubridate)
 library(glmmTMB)
+library(ordinal)
 
 
 ########################### LOAD AND CLEAN DATA FILES ##################################################################
@@ -248,7 +249,7 @@ View(Smeans)
 
 #### TEMP ###
 MonthlyMeans<-MasterENV_filtered2 %>%
-  group_by(Month, Year, WTEMP, MonitoringLocation, SampleDate) %>%
+  group_by(Month, Year, WTEMP, MonitoringLocation, SampleDate, Latitude, Longitude) %>%
   summarize(WTEMP = mean(WTEMP))
 View(MonthlyMeans)
 
@@ -274,7 +275,7 @@ View(MonthlyMeans1)
 
 ################################## MERGING ENV & PERKINSUS DATA ######################################################
 ### Merging data sheets using Monthly/yearly means  #### 
-Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation"))
+Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation", "Month"))
 View(Master1)
 
 Master1<- Master1 %>% 
@@ -286,7 +287,7 @@ Master1<- Master1 %>%
 View(Master1)
 
 
-Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"))
+Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"), all = TRUE)
 View(Merged.data)
 
 Merged.data$oysteryear=ifelse(Merged.data$Month== "Nov"| Merged.data$Month=="Dec", Merged.data$Year+1, Merged.data$Year)
@@ -345,7 +346,7 @@ model1<- glmmTMB(Prev_ep ~ Region + oysteryear + (1|Site), data = Perk2, family 
 Anova(model1)
 
 Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
-model2<- polr(Mean.Intensity ~ Region + oysteryear , data = Perk2, Hess = TRUE)
+model2<- clmm(Mean.Intensity ~ Region + oysteryear + (1|Site) , data = Perk2, Hess = FALSE)
 Anova(model2)
 
 #Site
@@ -529,57 +530,69 @@ write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analy
 
 
 ################################ Intensity ######################
+library(ordinal)
 
-model20<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jan, Hess = TRUE)
+model20<- clmm(Mean.Intensity~ WTEMP + SALINITY +Region + (1|Site) + (1|MonitoringLocation), data = Jan, Hess = TRUE)
 Anova(model20)
+results20<- tidy(Anova(model20))
 summary(model20)
 
 model21<- polr(Mean.Intensity~ WTEMP+ SALINITY +Region, Feb, Hess= TRUE)
-Anova(model21)
+results21<-tidy(Anova(model21))
 summary(model21)
 
 model22<- polr(Mean.Intensity~ WTEMP +SALINITY +Region, Mar, Hess= TRUE)
-Anova(model22)
+results22<-tidy(Anova(model22))
 summary(model22)
 
 model23<-polr(Mean.Intensity~ WTEMP + SALINITY +Region, Apr, Hess= TRUE)
-Anova(model23)
+results23<-tidy(Anova(model23))
 summary(model23)
 
 model24<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, May, Hess= TRUE)
-Anova(model24)
+results24<-tidy(Anova(model24))
 summary(model24)
 
 model25<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jun, Hess= TRUE)
-Anova(model25)
+results25<-tidy(Anova(model25))
 summary(model25)
 
 model26<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jul, Hess= TRUE)
-Anova(model26)
+results26<-tidy(Anova(model26))
 summary(model26)
 
 model27<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Aug, Hess= TRUE)
-Anova(model27)
+results27<-tidy(Anova(model27))
 summary(model27)
 
 model28<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Sept, Hess= TRUE)
-Anova(model28)
+results28<-tidy(Anova(model28))
 summary(model28)
 
 model29<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Oct, Hess= TRUE)
-Anova(model29)
+results29<-tidy(Anova(model29))
 summary(model29)
 
 model30<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Nov, Hess= TRUE)
-Anova(model30)
+results30<-tidy(Anova(model30))
 summary(model30)
 
 model31<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Dec, Hess= TRUE)
-Anova(model31)
+results31<-tidy(Anova(model31))
 summary(model31)
 
 ## ADJUSTING P VALUE INTENSITY & MONTH ##
 
+## Combining Anova () chi sq stats into a table 
+Monthly_Intensity_Results <-rbind(results20, results21, results22, results23, results24, results25, results26, results27, results28, results29, results30, results31)
+View(Monthly_Intensity_Results)
 
+### ADJUSTING P VALUE PREVALENCE & MONTH ###
+
+Monthly_Intensity_Results$fdr.p.value <- p.adjust(Monthly_Intensity_Results$p.value, method = "fdr")
+Monthly_Intensity_Results
+Monthly_Intensity_Results$Month <- c("Jan", "Jan", "Jan", "Feb", "Feb", "Feb", "Mar", "Mar", "Mar", "Apr", "Apr","Apr", "May", "May", "May", "Jun", "Jun", "Jun", "Jul", "Jul","Jul", 
+                                      "Aug", "Aug", "Aug", "Sept", "Sept", "Sept", "Oct", "Oct", "Oct", "Nov", "Nov", "Nov", "Dec", "Dec", "Dec")
+write.table(Monthly_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Intensity_Results.csv", sep=",", row.names=FALSE)
 
 

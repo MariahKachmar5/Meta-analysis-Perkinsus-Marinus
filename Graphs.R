@@ -437,4 +437,21 @@ Q10_S
 TvS<- ggplot(Merged.data_Q, aes(T_Q90, S_Q10))+ geom_point() + geom_smooth(se= FALSE, method = lm )
 TvS
 
-  
+
+###### Regions most impacted by disease ###############
+View(Perkinsus)
+
+mean_prev_reg <- Perkinsus %>%
+  dplyr::group_by(Region, oysteryear, State) %>%
+  dplyr::summarise(mean_prevalence = mean(Prevalence))
+
+mean_prev_reg
+library(wesanderson)
+
+#custom_palette <- rainbow(29)
+
+region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region)) + facet_wrap(~State)
+ #+scale_color_manual(values = custom_palette)
+
+region_p
+
