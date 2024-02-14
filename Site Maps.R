@@ -36,7 +36,10 @@ Env2$Longitude<- as.numeric(Env2$Longitude)
 EnvSite_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Env2,aes(Longitude, Latitude, color = MonitoringLocation ))+theme(legend.position="none")
 EnvSite_area
 
-OySite_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Merged.data,aes(Long, Lat, color = Site ))+theme(legend.position="none")
+
+OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
+  geom_text(data = Perk2,aes(Long, Lat, color= Region, label = Region), size = 2)#+theme(legend.position="none")
+
 OySite_area
 
 Both<-ggarrange(EnvSite_area+ rremove("ylab") + rremove("xlab"),OySite_area+ rremove("ylab") + rremove("xlab"), 

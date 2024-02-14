@@ -38,22 +38,21 @@ Perk<- na.omit(Perkinsus)
 View(Perk)
 
  ## Removing sites > 0.5 in distance matrix calculations ####
-Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
-View(Perk)
+#Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
+
 
 ##Intensity individual data from MDDNR- loading and cleaning 
 IntensityMD<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MDDNR_1990-2020.csv",)
-View(IntensityMD)
 
 as.data.frame(IntensityMD)
 
 #Rebinning intensity scores to follow VIMS
 
 IntensityMD<- IntensityMD %>%
-  mutate(Intensity_score = recode(Intensity, 
+  mutate(Intensity_score = dplyr::recode(Intensity, 
                                  "0" = 0, "1" = 0.5, "2" = 3, "3"= 3, "4"= 3, "5"= 5,"6"= 5, "7"=5))
 head(IntensityMD)
-
+IntensityMD <-na.omit(IntensityMD)
 View(IntensityMD)
 #Calculating mean intensity for each site and year
 IntensityMD$prevalent = ifelse(IntensityMD$Intensity_score == 0, '0',
@@ -65,12 +64,14 @@ absent <- nrow(IntensityMD %>% filter(prevalent == '0'))
 prevalence_all <- present/(present+absent)
 prevalence_all
 
+View(IntensityMD)
+
 str(IntensityMD$prevalent)
 IntensityMD$prevalent <- as.numeric(IntensityMD$prevalent)
 
 Mean_IntensityMD <- IntensityMD %>%
-  group_by(Region, Site, Year, SampleDate) %>%
-  summarize(Intensity_final = sum(Intensity_score = as.numeric(as.character(Intensity_score)), 
+  dplyr::group_by(Region, Site, Year, SampleDate) %>%
+  dplyr::summarize(Intensity_final = sum(Intensity_score = as.numeric(as.character(Intensity_score)), 
                             na.rm = TRUE)/sum(prevalent, na.rm=TRUE))
 
 View(Mean_IntensityMD) # Need to fix Na values 
@@ -89,13 +90,13 @@ View(MD_converted)
 
 MD_converted <- MD_converted %>%
   subset(select = -c(Mean.Intensity, SampleDate)) %>%
-  rename(Mean.Intensity = Intensity_final)
+  dplyr::rename(Mean.Intensity = Intensity_final)
 
 #Site count
 Site_count <- MD_converted %>% 
   distinct(Site) %>% 
   nrow()
-Site_count #31
+Site_count #36
 
 Site_count <- VA %>% 
   distinct(Site) %>% 
@@ -280,11 +281,11 @@ View(Master1)
 
 View(Perk2)
 Master1<- Master1 %>% 
-  rename( "Sample.month"= "Month.x")
+  dplyr::rename("Sample.month"= "Month.x")
 View(Master1)
 
 Master1<- Master1 %>% 
-  rename( "Month"= "Month.y")
+  dplyr::rename( "Month"= "Month.y")
 View(Master1)
 
 
@@ -300,6 +301,12 @@ head(Merged.data)
 
 View(Merged.data)
 
+Merged.data<- Merged.data %>% 
+  dplyr::rename( "Lat_Env"= "Latitude")
+
+Merged.data<- Merged.data %>% 
+  dplyr::rename( "Long_Env"= "Longitude")
+View(Merged.data)
 write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MergedData.csv", sep=",", row.names=FALSE)
 
 
@@ -333,6 +340,7 @@ head(Perk2)
 
 Perk2<-na.omit(Perk2)
 
+View(Perk2)
 ### using lmer(), polr(), glmm()
 
 
