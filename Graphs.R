@@ -450,7 +450,8 @@ library(wesanderson)
 
 #custom_palette <- rainbow(29)
 
-region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region)) + facet_wrap(~State)
+region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region)) + 
+  facet_wrap(Region~.)
  #+scale_color_manual(values = custom_palette)
 
 region_p

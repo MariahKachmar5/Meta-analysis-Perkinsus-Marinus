@@ -275,9 +275,10 @@ View(MonthlyMeans1)
 
 ################################## MERGING ENV & PERKINSUS DATA ######################################################
 ### Merging data sheets using Monthly/yearly means  #### 
-Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation", "Month"))
+Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation"))
 View(Master1)
 
+View(Perk2)
 Master1<- Master1 %>% 
   rename( "Sample.month"= "Month.x")
 View(Master1)
@@ -287,7 +288,7 @@ Master1<- Master1 %>%
 View(Master1)
 
 
-Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"), all = TRUE)
+Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"))
 View(Merged.data)
 
 Merged.data$oysteryear=ifelse(Merged.data$Month== "Nov"| Merged.data$Month=="Dec", Merged.data$Year+1, Merged.data$Year)
@@ -346,7 +347,7 @@ model1<- glmmTMB(Prev_ep ~ Region + oysteryear + (1|Site), data = Perk2, family 
 Anova(model1)
 
 Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
-model2<- clmm(Mean.Intensity ~ Region + oysteryear + (1|Site) , data = Perk2, Hess = FALSE)
+model2<- clmm(Mean.Intensity ~ Region + oysteryear + (1|Site) , data = Perk2, Hess = TRUE)
 Anova(model2)
 
 #Site
