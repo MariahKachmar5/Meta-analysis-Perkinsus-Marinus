@@ -440,6 +440,8 @@ TvS
 
 ###### Regions most impacted by disease ###############
 View(Perkinsus)
+Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Perkinsus$Year+1, Perkinsus$Year)
+head(Perkinsus)
 
 mean_prev_reg <- Perkinsus %>%
   dplyr::group_by(Region, oysteryear, State) %>%
