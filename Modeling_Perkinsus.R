@@ -22,7 +22,8 @@ library(car)
 library(lubridate)
 library(glmmTMB)
 library(ordinal)
-
+library(knitr)
+library(broom)
 
 ########################### LOAD AND CLEAN DATA FILES ##################################################################
 
@@ -307,10 +308,11 @@ Merged.data<- Merged.data %>%
 Merged.data<- Merged.data %>% 
   dplyr::rename( "Long_Env"= "Longitude")
 View(Merged.data)
+
 write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MergedData.csv", sep=",", row.names=FALSE)
 
 
-## Subset MD ##
+## Subset MD for Sarah ##
 
 Maryland <- Merged.data %>%
   filter(State == "MD")
@@ -355,14 +357,14 @@ model1<- glmmTMB(Prev_ep ~ Region + oysteryear + (1|Site), data = Perk2, family 
 Anova(model1)
 
 Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
-model2<- clmm(Mean.Intensity ~ Region + oysteryear + (1|Site) , data = Perk2, Hess = TRUE)
+model2<- lmer(Mean.Intensity ~ Region + oysteryear + (1|Site) , data = Perk2)
 Anova(model2)
 
 #Site
-modelX<-glmmTMB(Prev_ep ~ Site + oysteryear , data= Perk2, family = beta_family())
+modelX<-glmmTMB(Prev_ep ~ Site + oysteryear +(1|Region) , data= Perk2, family = beta_family())
 Anova(modelX)
 
-modelY<- polr(Mean.Intensity ~ Site + oysteryear, data = Perk2, Hess = TRUE)
+modelY<- lmer(Mean.Intensity ~ Site + oysteryear+ (1|Region), data = Perk2)
 Anova(modelY)
 
 ### Environmental Data trends ####
@@ -403,8 +405,7 @@ model3<- glmmTMB(Prev_ep ~  oysteryear + WTEMP + SALINITY + Region + (1|Site), d
 Anova(model3)
 summary(model3)
 
-Merged.data$Mean.Intensity<-as.factor(Merged.data$Mean.Intensity)
-model4<- polr(Mean.Intensity~ oysteryear+ WTEMP +SALINITY+ Region , Merged.data, Hess = TRUE)
+model4<- lmer(Mean.Intensity~ oysteryear+ WTEMP +SALINITY+ Region +(1|Site) , data= Merged.data)
 Anova(model4)
 summary(model4)
 
@@ -474,12 +475,12 @@ Dec$Prevalence<- as.numeric(Dec$Prevalence)
 #mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'Oct', 'Nov', "Dec")
 #aictab(cand.set = MonthlyPrev, modnames = mod.names)
 
-library(knitr)
+
 ### Prevalence ##
 model8<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Jan, family = beta_family())
 results8<-tidy(Anova(model8))
 summary(model8)
-View(results_model8)
+
 
 model9<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Feb, family = beta_family())
 results9<-tidy(Anova(model9))
@@ -541,52 +542,52 @@ write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analy
 ################################ Intensity ######################
 library(ordinal)
 
-model20<- clmm(Mean.Intensity~ WTEMP + SALINITY +Region + (1|Site) + (1|MonitoringLocation), data = Jan, Hess = TRUE)
+model20<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region + (1|Site) + (1|MonitoringLocation), data = Jan, Hess = TRUE)
 Anova(model20)
 results20<- tidy(Anova(model20))
 summary(model20)
 
-model21<- polr(Mean.Intensity~ WTEMP+ SALINITY +Region, Feb, Hess= TRUE)
+model21<- lmer(Mean.Intensity~ WTEMP+ SALINITY +Region +(1|Site) + (1|MonitoringLocation), Feb)
 results21<-tidy(Anova(model21))
 summary(model21)
 
-model22<- polr(Mean.Intensity~ WTEMP +SALINITY +Region, Mar, Hess= TRUE)
+model22<- lmer(Mean.Intensity~ WTEMP +SALINITY +Region+(1|Site) + (1|MonitoringLocation), Mar)
 results22<-tidy(Anova(model22))
 summary(model22)
 
-model23<-polr(Mean.Intensity~ WTEMP + SALINITY +Region, Apr, Hess= TRUE)
+model23<-lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Apr)
 results23<-tidy(Anova(model23))
 summary(model23)
 
-model24<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, May, Hess= TRUE)
+model24<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), May)
 results24<-tidy(Anova(model24))
 summary(model24)
 
-model25<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jun, Hess= TRUE)
+model25<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Jun)
 results25<-tidy(Anova(model25))
 summary(model25)
 
-model26<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Jul, Hess= TRUE)
+model26<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Jul)
 results26<-tidy(Anova(model26))
 summary(model26)
 
-model27<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Aug, Hess= TRUE)
+model27<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Aug)
 results27<-tidy(Anova(model27))
 summary(model27)
 
-model28<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Sept, Hess= TRUE)
+model28<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Sept)
 results28<-tidy(Anova(model28))
 summary(model28)
 
-model29<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Oct, Hess= TRUE)
+model29<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Oct)
 results29<-tidy(Anova(model29))
 summary(model29)
 
-model30<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Nov, Hess= TRUE)
+model30<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Nov)
 results30<-tidy(Anova(model30))
 summary(model30)
 
-model31<- polr(Mean.Intensity~ WTEMP + SALINITY +Region, Dec, Hess= TRUE)
+model31<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region+(1|Site) + (1|MonitoringLocation), Dec)
 results31<-tidy(Anova(model31))
 summary(model31)
 

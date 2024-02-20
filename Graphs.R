@@ -443,7 +443,7 @@ View(Perkinsus)
 Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Perkinsus$Year+1, Perkinsus$Year)
 head(Perkinsus)
 
-mean_prev_reg <- Perkinsus %>%
+mean_prev_reg <- Perk2 %>%
   dplyr::group_by(Region, oysteryear, State) %>%
   dplyr::summarise(mean_prevalence = mean(Prevalence))
 
@@ -452,8 +452,8 @@ library(wesanderson)
 
 #custom_palette <- rainbow(29)
 
-region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region)) + 
-  facet_wrap(Region~.)
+region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_line(aes(color=Region)) + 
+  facet_wrap(Region~.) + theme_classic()+geom_smooth(method= lm, se=FALSE)
  #+scale_color_manual(values = custom_palette)
 
 region_p
