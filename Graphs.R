@@ -443,12 +443,15 @@ View(Perkinsus)
 Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Perkinsus$Year+1, Perkinsus$Year)
 head(Perkinsus)
 
+
 mean_prev_reg <- Perk2 %>%
   dplyr::group_by(Region, oysteryear, State) %>%
   dplyr::summarise(mean_prevalence = mean(Prevalence))
 
 mean_prev_reg
 library(wesanderson)
+
+mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 #custom_palette <- rainbow(29)
 

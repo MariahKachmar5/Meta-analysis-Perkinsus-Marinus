@@ -36,9 +36,17 @@ Env2$Longitude<- as.numeric(Env2$Longitude)
 EnvSite_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Env2,aes(Longitude, Latitude, color = MonitoringLocation ))+theme(legend.position="none")
 EnvSite_area
 
+Perk2 <- filter(Perk2, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
+
+library(RColorBrewer)
+n <- 28
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+qual_col_pals
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+col_vector
 
 OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
-  geom_point(data = Perk2,aes(Long, Lat, color= Region), size = 2)#+theme(legend.position="none")
+  geom_point(data = Perk2,aes(Long, Lat, color= Region), size = 2) +theme(legend.position="none") + scale_color_manual(values = col_vector)
 
 OySite_area
 
@@ -47,3 +55,5 @@ Both<-ggarrange(EnvSite_area+ rremove("ylab") + rremove("xlab"),OySite_area+ rre
 Both
 
 
+Regional_trends <- ggarrange(region_p, OySite_area)
+Regional_trends
