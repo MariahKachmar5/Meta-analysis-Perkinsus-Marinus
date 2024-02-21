@@ -541,7 +541,7 @@ write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analy
 
 ################################ Intensity ######################
 
-model20<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region + (1|Site) + (1|MonitoringLocation), data = Jan, Hess = TRUE)
+model20<- lmer(Mean.Intensity~ WTEMP + SALINITY +Region + (1|Site) + (1|MonitoringLocation), data = Jan)
 Anova(model20)
 results20<- tidy(Anova(model20))
 summary(model20)

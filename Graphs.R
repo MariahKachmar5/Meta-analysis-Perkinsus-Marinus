@@ -171,207 +171,6 @@ SalinityTrend2 <-ggplot(Means2, aes(Month,mean_SALINITY, color = Year))+geom_poi
   ylab("Yearly Mean Salinity (ppt)") + xlab("Month")+geom_smooth(se=FALSE, method=lm,col= "red")
 SalinityTrend2
 
-##################################################################################
-######### SEASONS ###############
-
-#### TEMPERATURE ######
-
-Merged<-read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/MergedData2.csv",)
-View(Merged)
-
-Merged<-na.omit(Merged.data)
-View(Merged)
-library(ggplot2)
-
-View(Merged.data)
-
-Springtemp <- Merged[Merged$Month == "Mar" | Merged$Month== "Apr"|
-                            Merged$Month == "May",]
-View(Springtemp)
-
-Summertemp  <- Merged[Merged$Month == "Jun" | Merged$Month== "Jul"|
-                             Merged$Month == "Aug",]
-View(Summertemp)
-
-Falltemp <-Merged[Merged$Month == "Sept" | Merged$Month== "Oct"|
-                         Merged$Month == "Nov",]
-
-Wintertemp<-Merged[Merged$Month == "Dec" | Merged$Month== "Jan"|
-                          Merged$Month == "Feb",]
-View(Wintertemp)
-
-#### Spring graph - annual means by and site ####
-library(dplyr)
-STmeans <-Springtemp %>%
-  group_by(Lat, oysterear, Site) %>%
-  summarize(Temperature = mean(WTEMP))
-View(STmeans)
-
-Spring_means_plot <- ggplot(STmeans, aes(Year, Temperature, color=Site)) + geom_smooth(se = FALSE, method=lm) +labs(title= "Spring", x="", y="")+ theme(legend.position = "none")
-Spring_means_plot
-
-library(ggplot2)
-
-##### Fall graph - annual temp means by site ######
-
-FTmeans <-Falltemp %>%
-  group_by(Lat, Year) %>%
-  summarize(Temperature = mean(WTEMP))
-View(FTmeans)
-
-Fall_means_plot <- ggplot(FTmeans, aes(Year, Temperature)) + geom_smooth(se = FALSE)+
-  labs(title= "Fall", x="", y="")+theme(legend.position = "none")
-Fall_means_plot
-
-Fall_means_plot2<- ggplot(FTmeans, aes(Year, Temperature)) + geom_col()+
-  labs(title= "Fall")+ geom_smooth(method=lm, se = FALSE, col= "red") 
-
-Fall_means_plot2
-
-##### Summer graph - annual temp means by site ####
-
-SMTmeans <-Summertemp %>%
-  group_by(Lat, Year) %>%
-  summarize(Temperature = mean(WTEMP))
-View(SMTmeans)
-
-Summer_means_plot <- ggplot(SMTmeans, aes(Year, Temperature)) + geom_smooth(se=TRUE, method=lm)+
-  labs(title= "Summer", x="", y="") +theme(legend.position = "none")
-Summer_means_plot
-
-#### winter graph - annual temperature means by site #####
-
-WTmeans <-Wintertemp %>%
-  group_by(Lat, Year) %>%
-  summarize(Temperature = mean(WTEMP))
-View(WTmeans)
-
-Winter_means_plot <- ggplot(WTmeans, aes(Year, Temperature)) + geom_smooth(se = FALSE)+
-  labs(title= "Winter", x="", y="") + theme(legend.position = "none")
-Winter_means_plot
-
-library(ggplot2)
-library(gridExtra)
-
-Spring_means_plot+Summer_means_plot+Fall_means_plot+Winter_means_plot + theme(legend.position = "none", )
-
-plot1<- grid.arrange(Spring_means_plot, Summer_means_plot, Fall_means_plot, Winter_means_plot, left= "Temperature", bottom = "Year")
-
-
-##### SALINITY ######
-View(Master_SALINITY)
-Springsal <- Merged[Merged$Month == "Mar" | Merged$Month== "Apr"|
-                           Merged$Month == "May",]
-View(Springtemp)
-
-Summersal  <- Merged[Merged$Month == "Jun" | Merged$Month== "Jul"|
-                            Merged$Month == "Aug",]
-View(Summertemp)
-
-Fallsal <-Merged[Merged$Month == "Sept" | Merged$Month== "Oct"|
-                        Merged$Month == "Nov",]
-
-Wintersal<-Merged[Merged$Month == "Dec" | Merged$Month== "Jan"|
-                         Merged$Month == "Feb",]
-
-
-#### Spring graph - annual means by and site ####
-
-SSmeans <-Springsal %>%
-  group_by(Lat, Year) %>%
-  summarize(PPT = mean(SALINITY))
-View(SSmeans)
-
-Spring_means_plot2 <- ggplot(SSmeans, aes(Year,PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Spring ", y="",x="")+theme(legend.position = "none")
-Spring_means_plot2
-
-
-##### Fall graph - annual salinity means by site ######
-
-FSmeans <-Fallsal %>%
-  group_by(Lat, Year) %>%
-  summarize(PPT = mean(SALINITY))
-View(FSmeans)
-
-Fall_means_plot2 <- ggplot(FSmeans, aes(Year, Lat, color= PPT)) + geom_point()+
-  labs(title= "Fall ", y="",x="")
-Fall_means_plot2
-
-
-##### Summer graph - annual salinity means by site ####
-
-SMSmeans <-Summersal %>%
-  group_by(Lat, Year) %>%
-  summarize(PPT = mean(SALINITY))
-View(SMTmeans)
-
-Summer_means_plot2 <- ggplot(SMSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Summer ", y="",x="") +theme(legend.position = "none")
-Summer_means_plot2
-
-#### winter graph - annual salinity means by site #####
-
-WSmeans <-Wintersal %>%
-  group_by(Lat, Year) %>%
-  summarize(PPT = mean(SALINITY))
-View(WSmeans)
-
-Winter_means_plot2 <- ggplot(WSmeans, aes(Year, PPT, color = factor(MonitoringLocation))) + geom_smooth(se = FALSE)+
-  labs(title= "Winter ", y="",x="") + theme(legend.position = "none")
-Winter_means_plot2
-
-Spring_means_plot2 +Summer_means_plot2+Fall_means_plot2+Winter_means_plot2 + theme(legend.position = "right")
-
-plot3<- grid.arrange(Spring_means_plot2, Summer_means_plot2, Fall_means_plot2, Winter_means_plot2, left= "Salinity (PPT)", bottom = "Year")+theme(plot.margin = unit(c(1, 1, "cm")))
-plot3
-
-library(tidyverse)
-View(Merged)
-### SALINITY ###
-Spring1<- ggplot(SSmeans, aes(Year, Lat, color = PPT))+geom_point()+ theme_minimal()+labs(title= "Spring ", y="",x="") +theme(legend.position = "")+scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 15, limits=c(0, 28))
-Spring1
-
-Summer1<- ggplot(SMSmeans, aes(Year, Lat, color = PPT))+geom_point()+ theme_minimal()+labs(title= "Summer ", y="",x="") +theme(legend.position = "")+scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 15, limits=c(0, 28))
-Summer1
-
-Fall1<- ggplot(FSmeans, aes(Year, Lat, color = PPT))+geom_point()+ theme_minimal()+labs(title= "Fall ", y="",x="") +theme(legend.position = "")+scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 15, limits=c(0, 28))
-Fall1
-
-Winter1<-ggplot(WSmeans, aes(Year, Lat, color=PPT)) + geom_point()+ theme_minimal()+labs(title= "Winter ", y="",x="") +theme(legend.position = "")+scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 15, limits=c(0, 28))
-Winter1
-
-Latplot1<- ggarrange(Spring1+ rremove("ylab") + rremove("xlab"),Summer1+ rremove("ylab") + rremove("xlab"), Fall1+ rremove("ylab") + rremove("xlab"),Winter1+ rremove("ylab") + rremove("xlab"), nrow=2, ncol=2, common.legend = TRUE, legend= "right" )
-
-Latplot1
-
-require(grid)
-
-annotate_figure(Latplot1, left = textGrob("Latitude", rot = 90, vjust = 1, gp = gpar(cex = 1.3)),
-                bottom = textGrob("Year", gp = gpar(cex = 1.3)))
-
-View(STmeans)
-## TEMPERATURE ##
-Spring2<- ggplot(STmeans, aes(Year, Lat, color = Temperature))+geom_point()+ theme_minimal()+labs(title= "Spring ", y="",x="") +scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 14, limits=c(10, 18))
-Spring2
-
-Summer2<- ggplot(SMTmeans, aes(Year, Lat, color = Temperature))+geom_point()+ theme_minimal()+labs(title= "Summer ", y="",x="") +scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 27, limits=c(24, 30))
-Summer2
-
-Fall2<- ggplot(FTmeans, aes(Year, Lat, color = Temperature))+geom_point()+ theme_minimal()+labs(title= "Fall ", y="",x="") +scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 15, limits=c(10, 20))
-Fall2
-
-Winter2<-ggplot(WTmeans, aes(Year, Lat, color=Temperature)) + geom_point()+ theme_minimal()+labs(title= "Winter ", y="",x="") +scale_color_gradient2(low = "blue", mid = "yellow ", high = "red", midpoint= 6, limits=c(2, 10))
-Winter2
-
-Latplot2<- ggarrange(Spring2+ rremove("ylab") + rremove("xlab"),Summer2+ rremove("ylab") + rremove("xlab"), Fall2+ rremove("ylab") + rremove("xlab"),Winter2+ rremove("ylab") + rremove("xlab"), nrow=2, ncol=2 )
-
-Latplot2
-
-require(grid)
-
-annotate_figure(Latplot2, left = textGrob("Latitude", rot = 90, vjust = 1, gp = gpar(cex = 1.3)),
-                bottom = textGrob("Year", gp = gpar(cex = 1.3)))
 
 ##################################################################################################################
 
@@ -420,22 +219,7 @@ SampleDatePlot<- ggplot(E2019, aes(SampleDate, MonitoringLocation))+geom_point()
 SampleDatePlot
 View(E1990)
 
-#### QUANTILES vs Prevalence ###
 
-Q90_T<- ggplot( Merged.data_Q, aes(T_Q90, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q90 TEMP")
-Q90_T
-
-Q10_T<- ggplot( Merged.data_Q, aes(T_Q10, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q10 TEMP")
-Q10_T
-
-Q90_S<- ggplot( Merged.data_Q, aes(S_Q90, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q90 SALINITY")
-Q90_S
-
-Q10_S<- ggplot( Merged.data_Q, aes(S_Q10, Prevalence)) + geom_point()+ geom_smooth(se=FALSE, method=lm)+labs(title= "Q10 SALINITY")
-Q10_S
- 
-TvS<- ggplot(Merged.data_Q, aes(T_Q90, S_Q10))+ geom_point() + geom_smooth(se= FALSE, method = lm )
-TvS
 
 
 ###### Regions most impacted by disease ###############
@@ -453,11 +237,75 @@ library(wesanderson)
 
 mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
-#custom_palette <- rainbow(29)
+library(RColorBrewer)
+n <- 28
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+qual_col_pals
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+col_vector
+
 
 region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_line(aes(color=Region)) + 
-  facet_wrap(Region~.) + theme_classic()+geom_smooth(method= lm, se=FALSE)
+  facet_wrap(Region~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = col_vector) +
+  theme(strip.text = element_text(size = 8), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
  #+scale_color_manual(values = custom_palette)
 
 region_p
 
+################# GIS map Perkinsus sites  ########################################
+
+options(repr.plot.width=20, repr.plot.height=15)
+library(ggplot2)
+library(ggmap)
+library(maps)
+library(mapdata)
+library(maptools)
+library(dplyr)
+library(rgdal)
+library(geosphere)
+library(plotrix)
+library(ggrepel)
+library(sf)
+library(ggpubr)
+library(grid)
+
+map_new <- st_read("~/Documents/UMBC/Meta-Analysis/ChesapeakeBay/Chesapeake_Bay_Shoreline_High_Resolution/", "Chesapeake_Bay_Shoreline_High_Resolution")
+map_new
+
+options(sf_max.plot=1)
+plot(map_new, axes=TRUE)
+
+map<-fortify(map_new)
+
+View(Merged.data)
+
+Env2<-read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VAupdated.xlsx")
+View(Env2)
+
+Env2$Latitude<-as.numeric(Env2$Latitude)
+Env2$Longitude<- as.numeric(Env2$Longitude)
+
+EnvSite_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Env2,aes(Longitude, Latitude, color = MonitoringLocation ))+theme(legend.position="none")
+EnvSite_area
+
+Perk2 <- filter(Perk2, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
+
+library(RColorBrewer)
+n <- 28
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+qual_col_pals
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+col_vector
+
+OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
+  geom_point(data = Perk2,aes(Long, Lat, color= Region), size = 2) +theme(legend.position="none") + scale_color_manual(values = col_vector)
+
+OySite_area
+
+Both<-ggarrange(EnvSite_area+ rremove("ylab") + rremove("xlab"),OySite_area+ rremove("ylab") + rremove("xlab"), 
+                nrow=1, labels=c("A", "B"))
+Both
+
+
+Regional_trends <- ggarrange(region_p, OySite_area)
+Regional_trends
