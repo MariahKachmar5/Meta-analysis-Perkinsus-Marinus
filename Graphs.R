@@ -229,11 +229,10 @@ head(Perkinsus)
 
 
 mean_prev_reg <- Perk2 %>%
-  dplyr::group_by(Region, oysteryear, State) %>%
+  dplyr::group_by(Region, oysteryear, State, Lat, Long) %>%
   dplyr::summarise(mean_prevalence = mean(Prevalence))
 
-mean_prev_reg
-library(wesanderson)
+View(mean_prev_reg)
 
 mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
@@ -244,8 +243,18 @@ qual_col_pals
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
 col_vector
 
+library(tidyverse)
+library(dplyr)
+class(mean_prev_reg$Region)
 
-region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_line(aes(color=Region)) + 
+#REORDERING BY LATITUDE
+mean_prev_reg$Region2<- factor(mean_prev_reg$Region, levels = c("NANTICOKE RIVER", "UPPER BAY", "CHESTER RIVER", "EASTERN BAY", "WYE RIVER", "MILES RIVER", "BROAD CREEK",
+                                    "HARRIS CREEK", "CHOPTANK RIVER", "LITTLE CHOPTANK RIVER", "PATUXENT RIVER", "MIDDLE BAY", "MANOKIN RIVER",
+                                    "POTOMAC RIVER", "LOWER BAY","FISHING BAY", "HONGA RIVER", "TANGIER SOUND", "HOLLAND STRAITS","POCOMOKE SOUND",
+                                    "RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","YORK RIVER","MOBJACK BAY","JAMES RIVER"))
+
+view(mean_prev_reg)
+region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region)) + 
   facet_wrap(Region~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = col_vector) +
   theme(strip.text = element_text(size = 8), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
  #+scale_color_manual(values = custom_palette)
@@ -288,7 +297,7 @@ Env2$Longitude<- as.numeric(Env2$Longitude)
 EnvSite_area<-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = Env2,aes(Longitude, Latitude, color = MonitoringLocation ))+theme(legend.position="none")
 EnvSite_area
 
-Perk2 <- filter(Perk2, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
+Perk2 <- filter(Perk2, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 library(RColorBrewer)
 n <- 28
@@ -298,7 +307,7 @@ col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_co
 col_vector
 
 OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
-  geom_point(data = Perk2,aes(Long, Lat, color= Region), size = 2) +theme(legend.position="none") + scale_color_manual(values = col_vector)
+  geom_point(data = Perk2,aes(Long, Lat, color= Region), size = 4) +theme(legend.position="none") + scale_color_manual(values = col_vector)
 
 OySite_area
 
@@ -309,3 +318,33 @@ Both
 
 Regional_trends <- ggarrange(region_p, OySite_area)
 Regional_trends
+
+
+####### Looking at monthly trends of prev & intensity by temperature due to negative effect sizes #######
+
+
+
+
+#prevalence vs temp
+Jan_prev<-ggplot(Jan, aes(WTEMP, Prevalence, color = Site))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")
+Apr_prev<-ggplot(Apr, aes(WTEMP, Prevalence, color = Site))+geom_point() +labs(title = element_text("April"))+theme(legend.position="none")
+June_prev<-ggplot(Jun, aes(WTEMP, Prevalence, color = Site)) +geom_point()+labs(title = element_text("June"))+theme(legend.position="none")
+July_prev<-ggplot(Jul, aes(WTEMP, Prevalence, color = Site)) +geom_point()+labs(title = element_text("July"))+theme(legend.position="none")
+Sept_prev<-ggplot(Sept, aes(WTEMP, Prevalence, color = Site))+geom_point() +labs(title = element_text("September"))+theme(legend.position="none")
+Oct_prev<-ggplot(Oct, aes(WTEMP, Prevalence, color = Site))+geom_point() +labs(title = element_text("October"))+theme(legend.position="none")
+Dec_prev<-ggplot(Dec, aes(WTEMP, Prevalence, color = Site))+geom_point() +labs(title = element_text("December"))+theme(legend.position="none")
+
+all_prev_temp<- ggarrange(Jan_prev, Apr_prev,June_prev, July_prev, Sept_prev, 
+                          Oct_prev, Dec_prev)
+all_prev_temp
+
+#intensity vs temp
+Jan_I<-ggplot(Jan, aes(WTEMP,Mean.Intensity, color = Site)) +geom_point()+labs(title = element_text("January"))+theme(legend.position="none")
+July_I<-ggplot(Jul, aes(WTEMP,Mean.Intensity, color = Site)) +geom_point()+labs(title = element_text("July"))+theme(legend.position="none")
+Sept_I<-ggplot(Sept, aes(WTEMP,Mean.Intensity, color = Site)) +geom_point()+labs(title = element_text("September"))+theme(legend.position="none")
+Oct_I<-ggplot(Oct, aes(WTEMP,Mean.Intensity, color = Site))+geom_point() +labs(title = element_text("October"))+theme(legend.position="none")
+Nov_I<-ggplot(Nov, aes(WTEMP,Mean.Intensity, color = Site)) +geom_point()+labs(title = element_text("November"))+theme(legend.position="none")
+Dec_I<-ggplot(Dec, a2es(WTEMP,Mean.Intensity, color = Site))+geom_point() +labs(title = element_text("December"))+theme(legend.position="none")
+
+all_int_temp<- ggarrange(Jan_I, July_I, Sept_I, Oct_I, Nov_I, Dec_I)
+all_int_temp
