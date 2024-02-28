@@ -243,6 +243,13 @@ qual_col_pals
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
 col_vector
 
+
+
+colors <- c("#FF0000", "#0033FF", "#FF6600", "#9900FF", "#00FFFF", "#FF00FF", "#FFFF00", "#993333", "#999999",
+                    "#006600", "#FF9999", "#330066", "#00CCFF","#99FF33", "#FFCCFF", "#000000", "#CC9966", "#330000","#336666",
+                    "#FFCC66", "#003300", "#0099FF", "#FF3399", "#FF9933", "#0066FF", "#FFCC99", "#663366", "#33FFCC")
+                         
+
 library(tidyverse)
 library(dplyr)
 class(mean_prev_reg$Region)
@@ -255,7 +262,7 @@ mean_prev_reg$Region2<- factor(mean_prev_reg$Region, levels = c("NANTICOKE RIVER
 
 view(mean_prev_reg)
 region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region2)) + 
-  facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = col_vector) +
+  facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
   theme(strip.text = element_text(size = 8), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
  #+scale_color_manual(values = custom_palette)
 
@@ -301,7 +308,7 @@ Perk2 <- filter(Perk2, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 
 OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
-  geom_point(data = mean_prev_reg,aes(Long, Lat, color= Region2), size = 3) +theme(legend.position="none") + scale_color_manual(values = col_vector)
+  geom_point(data = mean_prev_reg,aes(Long, Lat, color= Region2), size = 3) +theme(legend.position="none") + scale_color_manual(values = colors)
 
 OySite_area
 
@@ -315,7 +322,7 @@ Regional_trends
 
 
 ####### Looking at monthly trends of prev & intensity by temperature due to negative effect sizes #######
-
+## Prevalence ##
 Jan_mean<- Jan %>%
   group_by(oysteryear, WTEMP)%>%
   summarize(mean_prevalence = mean(Prevalence))
@@ -354,17 +361,17 @@ Nov_mean<- Nov %>%
   summarize(mean_prevalence = mean(Prevalence))
 #prevalence vs temp
 Jan_prev<-ggplot(Jan_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Feb_prev<-ggplot(Jan_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-m_prev<-ggplot(Jan_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Feb_prev<-ggplot(Feb_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("February"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Mar_prev<-ggplot(Mar_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("March"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 Apr_prev<-ggplot(Apr_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("April"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Jan_prev<-ggplot(Jan_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+May_prev<-ggplot(May_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("May"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 June_prev<-ggplot(June_mean, aes(WTEMP, mean_prevalence)) +geom_point()+labs(title = element_text("June"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-July_prev<-ggplot(Jul, aes(WTEMP, Prevalence, color= Site )) +geom_point()+labs(title = element_text("July"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+July_prev<-ggplot(July_mean, aes(WTEMP, mean_prevalence)) +geom_point()+labs(title = element_text("July"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 Sept_prev<-ggplot(Sept_mean, aes(WTEMP, mean_prevalence ))+geom_point() +labs(title = element_text("September"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 Oct_prev<-ggplot(Oct_mean, aes(WTEMP, mean_prevalence ))+geom_point() +labs(title = element_text("October"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 Dec_prev<-ggplot(Dec_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("December"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 Aug_prev<-ggplot(Aug_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("August"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Nov_prev<-ggplot(Jan_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Nov_prev<-ggplot(Nov_mean, aes(WTEMP, mean_prevalence))+geom_point() +labs(title = element_text("November"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 
 all_prev_temp<- ggarrange(Jan_prev, Feb_prev, Mar_prev,Apr_prev,
                           May_prev,June_prev, July_prev, 
@@ -372,18 +379,33 @@ all_prev_temp<- ggarrange(Jan_prev, Feb_prev, Mar_prev,Apr_prev,
                           Oct_prev, Nov_prev,Dec_prev)
 all_prev_temp
 
-July_prev
 
+## Intensity ##
 Jan_mean2<- Jan %>%
+  group_by(oysteryear, WTEMP)%>%
+  summarize(mean_I = mean(Mean.Intensity))
+Feb_mean2<- Feb %>%
+  group_by(oysteryear, WTEMP)%>%
+  summarize(mean_I = mean(Mean.Intensity))
+Mar_mean2<- Mar %>%
+  group_by(oysteryear, WTEMP)%>%
+  summarize(mean_I = mean(Mean.Intensity))
+Apr_mean2<- Apr %>%
+  group_by(oysteryear, WTEMP)%>%
+  summarize(mean_I = mean(Mean.Intensity))
+May_mean2<- May %>%
+  group_by(oysteryear, WTEMP)%>%
+  summarize(mean_I = mean(Mean.Intensity))
+June_mean2<- Jun %>%
   group_by(oysteryear, WTEMP)%>%
   summarize(mean_I = mean(Mean.Intensity))
 July_mean2<- Jul %>%
   group_by(oysteryear, WTEMP)%>%
   summarize(mean_I = mean(Mean.Intensity))
-Sept_mean2<- Sept %>%
+Aug_mean2<- Aug %>%
   group_by(oysteryear, WTEMP)%>%
   summarize(mean_I = mean(Mean.Intensity))
-Nov_mean2<- Nov %>%
+Sept_mean2<- Sept %>%
   group_by(oysteryear, WTEMP)%>%
   summarize(mean_I = mean(Mean.Intensity))
 Oct_mean2<- Oct %>%
@@ -392,14 +414,25 @@ Oct_mean2<- Oct %>%
 Dec_mean2<- Dec %>%
   group_by(oysteryear, WTEMP)%>%
   summarize(mean_I = mean(Mean.Intensity))
+Nov_mean2<- Nov %>%
+  group_by(oysteryear, WTEMP)%>%
+  summarize(mean_I = mean(Mean.Intensity))
+#prevalence vs temp
+Jan_I<-ggplot(Jan_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Feb_I<-ggplot(Feb_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("February"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Mar_I<-ggplot(Mar_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("March"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Apr_I<-ggplot(Apr_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("April"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+May_I<-ggplot(May_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("May"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+June_I<-ggplot(June_mean2, aes(WTEMP, mean_I)) +geom_point()+labs(title = element_text("June"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+July_I<-ggplot(July_mean2, aes(WTEMP, mean_I)) +geom_point()+labs(title = element_text("July"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Sept_I<-ggplot(Sept_mean2, aes(WTEMP, mean_I ))+geom_point() +labs(title = element_text("September"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Oct_I<-ggplot(Oct_mean2, aes(WTEMP, mean_I ))+geom_point() +labs(title = element_text("October"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Dec_I<-ggplot(Dec_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("December"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Aug_I<-ggplot(Aug_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("August"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
+Nov_I<-ggplot(Nov_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("November"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 
-#intensity vs temp
-Jan_I<-ggplot(Jan_mean2, aes(WTEMP,mean_I)) +geom_point()+labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-July_I<-ggplot(July_mean2, aes(WTEMP,mean_I)) +geom_point()+labs(title = element_text("July"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Sept_I<-ggplot(Sept_mean2, aes(WTEMP,mean_I)) +geom_point()+labs(title = element_text("September"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Oct_I<-ggplot(Oct_mean2, aes(WTEMP,mean_I))+geom_point() +labs(title = element_text("October"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Nov_I<-ggplot(Nov_mean2, aes(WTEMP,mean_I)) +geom_point()+labs(title = element_text("November"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-Dec_I<-ggplot(Dec_mean2, aes(WTEMP,mean_I))+geom_point() +labs(title = element_text("December"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
-
-all_int_temp<- ggarrange(Jan_I, July_I, Sept_I, Oct_I, Nov_I, Dec_I)
+all_int_temp<- ggarrange(Jan_I, Feb_I, Mar_prev,Apr_I,
+                          May_I,June_I, July_I, 
+                          Aug_I,Sept_I, 
+                          Oct_I, Nov_I,Dec_I)
 all_int_temp

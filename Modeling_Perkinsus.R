@@ -605,3 +605,35 @@ Monthly_Intensity_Results$Month <- c("Jan", "Jan", "Jan", "Feb", "Feb", "Feb", "
 write.table(Monthly_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Intensity_Results.csv", sep=",", row.names=FALSE)
 
 
+################################## Regional Models ########################################################
+
+#Subetting data by Region to create individual spreadsheets
+Nanticoke <- Merged.data[Merged.data$Region == "NANTICOKE RIVER",]
+UpperBay<- Merged.data[Merged.data$Region == "UPPER BAY",]
+Chester<- Merged.data[Merged.data$Region == "CHESTER RIVER",]
+EasternBay<- Merged.data[Merged.data$Region == "EASTERN BAY",]
+Wye<- Merged.data[Merged.data$Region == "WYE RIVER",]
+Miles<- Merged.data[Merged.data$Region == "MILES RIVER",]
+BroadCreek<- Merged.data[Merged.data$Region == "BROAD CREEK",]
+HarrisCreek<- Merged.data[Merged.data$Region == "HARRIS CREEK",]
+Choptank<- Merged.data[Merged.data$Region == "CHOPTANK RIVER",]
+LittleChoptank<- Merged.data[Merged.data$Region == "LITTLE CHOPTANK RIVER",]
+Patuxent<- Merged.data[Merged.data$Region == "PATUXENT RIVER",]
+MiddleBay<- Merged.data[Merged.data$Region == "MIDDLE BAY",]
+Manokin <- Merged.data[Merged.data$Region == "MANOKIN RIVER",]
+Potomac<- Merged.data[Merged.data$Region == "POTOMAC RIVER",]
+LowerBay<- Merged.data[Merged.data$Region == "LOWER BAY",]
+FishingBay<- Merged.data[Merged.data$Region == "FISHING BAY",]
+Honga<- Merged.data[Merged.data$Region == "HONGA RIVER",]
+TangierS<- Merged.data[Merged.data$Region == "TANGIER SOUND",]
+HollandS<- Merged.data[Merged.data$Region == "HOLLAND STRAITS",]
+PocomokeS<- Merged.data[Merged.data$Region == "POCOMOKE SOUND",]
+Rappahannock<- Merged.data[Merged.data$Region == "RAPPAHANNOCK RIVER",]
+GWicomico<- Merged.data[Merged.data$Region == "GREAT WICOMICO RIVER",]
+Corrotoman<- Merged.data[Merged.data$Region == "CORROTOMAN RIVER",]
+Piankatank<- Merged.data[Merged.data$Region == "PIANKATANK RIVER",]
+York<- Merged.data[Merged.data$Region == "YORK RIVER",]
+Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY",]
+James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
+
+
