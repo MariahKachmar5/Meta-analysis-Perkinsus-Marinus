@@ -636,4 +636,133 @@ York<- Merged.data[Merged.data$Region == "YORK RIVER",]
 Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY",]
 James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
 
+### Prevalence ##
+model32<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ (1|Site)+ (1|MonitoringLocation), Nanticoke, family = beta_family())
+results32<-tidy(Anova(model32))
+summary(model32)
+
+model33<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), UpperBay, family = beta_family())
+results33<-tidy(Anova(model33))
+summary(model33)
+
+model34<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Chester, family = beta_family())
+results34<-tidy(Anova(model34))
+summary(model34)
+
+model35<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), EasternBay, family = beta_family())
+results35<-tidy(Anova(model35))
+summary(model35)
+
+model36<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Wye, family = beta_family())
+results36<-tidy(Anova(model36))
+summary(model36)
+
+model37<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ (1|Site)+ (1|MonitoringLocation), Miles, family = beta_family())
+results37<-tidy(Anova(model37))
+summary(model37)
+
+model38<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), BroadCreek, family = beta_family())
+results38<-tidy(Anova(model38))
+summary(model38)
+
+model39<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), HarrisCreek, family = beta_family())
+results39<-tidy(Anova(model39))
+summary(model39)
+
+model40<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Choptank, family = beta_family())
+results40<-tidy(Anova(model40))
+summary(model39)
+
+model41<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), LittleChoptank, family = beta_family())
+results41<-tidy(Anova(model41))
+summary(model41)
+
+model42<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Patuxent, family = beta_family())
+results42<-tidy(Anova(model42))
+summary(model42)
+
+model43<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), MiddleBay, family = beta_family())
+results43<-tidy(Anova(model43))
+summary(model43)
+
+model44<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Manokin, family = beta_family())
+results44<-tidy(Anova(model44))
+summary(model44)
+
+model45<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ (1|Site)+ (1|MonitoringLocation), Potomac, family = beta_family())
+results45<-tidy(Anova(model45))
+summary(model45)
+
+
+model46<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), LowerBay, family = beta_family())
+results46<-tidy(Anova(model46))
+summary(model46)
+
+model7<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), FishingBay, family = beta_family())
+results47<-tidy(Anova(model47))
+summary(model47)
+
+model48<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Honga, family = beta_family())
+results48<-tidy(Anova(model48))
+summary(model48)
+
+model49<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), TangierS, family = beta_family())
+results49<-tidy(Anova(model49))
+summary(model49)
+
+model50<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ (1|Site)+ (1|MonitoringLocation), HollandS, family = beta_family())
+results50<-tidy(Anova(model50))
+summary(model50)
+
+model51<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), PocomokeS, family = beta_family())
+results51<-tidy(Anova(model51))
+summary(model51)
+
+model52<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Rappahannock, family = beta_family())
+results52<-tidy(Anova(model52))
+summary(model52)
+
+model53<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), GWicomico, family = beta_family())
+results53<-tidy(Anova(model53))
+summary(model53)
+
+model54<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Corrotoman, family = beta_family())
+results54<-tidy(Anova(model54))
+summary(model54)
+
+model55<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Piankatank, family = beta_family())
+results55<-tidy(Anova(model55))
+summary(model55)
+
+model56<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), York, family = beta_family())
+results56<-tidy(Anova(model56))
+summary(model56)
+
+model57<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation),Mobjack, family = beta_family())
+results57<-tidy(Anova(model57))
+summary(model57)
+
+model58<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), James, family = beta_family())
+results58<-tidy(Anova(model58))
+summary(model58)
+## Combining Anova () chi sq stats into a table 
+Regional_Prevalence_Results <-rbind(results32, results33, results34, results35, results36, results37, results38, results39, results40, results41, results42, results43,
+                                    results44, results45, results46, results47, results48, results49, results50, results51, results52, results53, results54, results55, results56,
+                                    results57, results58)
+View(Regional_Prevalence_Results)
+
+### ADJUSTING P VALUE PREVALENCE & MONTH ###
+
+Regional_Prevalence_Results$fdr.p.value <- p.adjust(Monthly_Prevalence_Results$p.value, method = "fdr")
+Regional_Prevalence_Results
+Regional_Prevalence_Results$Region <- c("NANTICOKE RIVER","NANTICOKE RIVER", "UPPER BAY", "UPPER BAY","CHESTER RIVER", "CHESTER RIVER","EASTERN BAY", "EASTERN BAY",
+                                        "WYE RIVER", "WYE RIVER","MILES RIVER","MILES RIVER", "BROAD CREEK","BROAD CREEK",
+                                        "HARRIS CREEK", "HARRIS CREEK","CHOPTANK RIVER","CHOPTANK RIVER", "LITTLE CHOPTANK RIVER","LITTLE CHOPTANK RIVER",
+                                        "PATUXENT RIVER","PATUXENT RIVER", "MIDDLE BAY",  "MIDDLE BAY","MANOKIN RIVER","MANOKIN RIVER",
+                                        "POTOMAC RIVER","POTOMAC RIVER", "LOWER BAY","LOWER BAY","FISHING BAY","FISHING BAY", "HONGA RIVER","HONGA RIVER",
+                                        "TANGIER SOUND", "TANGIER SOUND","HOLLAND STRAITS","HOLLAND STRAITS","POCOMOKE SOUND","POCOMOKE SOUND",
+                                        "RAPPAHANNOCK RIVER","RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","GREAT WICOMICO RIVER",
+                                        "CORROTOMAN RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","PIANKATANK RIVER","YORK RIVER","YORK RIVER",
+                                        "MOBJACK BAY","MOBJACK BAY","JAMES RIVER","JAMES RIVER")
+write.table(Regional_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Regional_Prevalence_Results.csv", sep=",", row.names=FALSE)
 
