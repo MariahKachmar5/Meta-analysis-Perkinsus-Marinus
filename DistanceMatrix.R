@@ -87,10 +87,10 @@ require(ggplot2)
 
 
 ggplot(mindists, aes(x=perksite, y=min))+
-  geom_point(size=8)+
+  geom_point(size=4)+
   theme_bw()+
   theme(legend.position="right", panel.border = element_blank(), 
         panel.grid.major.x = element_blank(), 
         panel.grid.minor.x = element_blank(),
         axis.ticks.x=element_blank(), axis.line=element_line(color="black"), axis.text=element_text(color="black",, angle=90),
-        text = element_text(size=25))
+        text = element_text(size=15))
