@@ -86,7 +86,7 @@ require(ggplot2)
 
 
 
-ggplot(mindists, aes(x=perksite, y=min))+
+ggplot(mindists, aes(x=perksite, y=distance))+
   geom_point(size=4)+
   theme_bw()+
   theme(legend.position="right", panel.border = element_blank(), 
