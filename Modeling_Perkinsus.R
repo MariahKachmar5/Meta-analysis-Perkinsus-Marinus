@@ -33,10 +33,10 @@ library(broom)
 
 ##Perkinsus data (Maryland and Virginia)
 Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/PerkinsusMD&VA2.csv",)
-View(Perkinsus)
+#View(Perkinsus)
 
 Perk<- na.omit(Perkinsus)
-View(Perk)
+#View(Perk)
 
  ## Removing sites > 0.5 in distance matrix calculations ####
 #Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
@@ -54,7 +54,7 @@ IntensityMD<- IntensityMD %>%
                                  "0" = 0, "1" = 0.5, "2" = 3, "3"= 3, "4"= 3, "5"= 5,"6"= 5, "7"=5))
 head(IntensityMD)
 IntensityMD <-na.omit(IntensityMD)
-View(IntensityMD)
+#View(IntensityMD)
 #Calculating mean intensity for each site and year
 IntensityMD$prevalent = ifelse(IntensityMD$Intensity_score == 0, '0',
                             ifelse(IntensityMD$Intensity_score > 0, '1', NA))
@@ -65,7 +65,7 @@ absent <- nrow(IntensityMD %>% filter(prevalent == '0'))
 prevalence_all <- present/(present+absent)
 prevalence_all
 
-View(IntensityMD)
+#View(IntensityMD)
 
 str(IntensityMD$prevalent)
 IntensityMD$prevalent <- as.numeric(IntensityMD$prevalent)
@@ -75,19 +75,19 @@ Mean_IntensityMD <- IntensityMD %>%
   dplyr::summarize(Intensity_final = sum(Intensity_score = as.numeric(as.character(Intensity_score)), 
                             na.rm = TRUE)/sum(prevalent, na.rm=TRUE))
 
-View(Mean_IntensityMD) # Need to fix Na values 
+#View(Mean_IntensityMD) # Need to fix Na values 
 
 Mean_IntensityMD <-na.omit(Mean_IntensityMD)
 
 #Update Maryland sites and remerge maryland and VA data
 MD <- Perk %>%
   filter(State == "MD")
-
+View(MD)
 VA <- Perk %>%
   filter(State =="VA")
 
 MD_converted <- merge(Mean_IntensityMD, MD)
-View(MD_converted)
+#View(MD_converted)
 
 MD_converted <- MD_converted %>%
   subset(select = -c(Mean.Intensity, SampleDate)) %>%
@@ -109,6 +109,11 @@ Site_count  #34
 Perk2 <- rbind(VA, MD_converted)  
 View(Perk2)
 
+Site_count <- Perk2%>% 
+  distinct(Site) %>% 
+  nrow()
+Site_count #71
+
 
 write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", sep=",", row.names=FALSE)
 
@@ -117,11 +122,11 @@ write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus
 
 ######################### Environmental Data ###############################
 
-EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/EnvironmentalData_MD&VAupdated.xlsx")
+EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/environmental_data_all.xlsx")
 View(EnvALL)
 write.table(Env, file="Env.csv", sep=",", row.names=FALSE)
 
-EnvALL<- filter(EnvALL, SampleDate > '1989-12-31', Layer == "S")
+EnvALL<- filter(EnvALL, SampleDate > '1989-12-31')
 View(EnvALL)
 
 #### creating dates for environmental data ###
@@ -188,7 +193,7 @@ WTEMP <- WTEMP %>%
 
 ### REMERGING ENVIRONMENTAL DATA ####
 
-MasterENV<- merge(SALINITY, WTEMP, by =c("Year","Month", "Day", "MonitoringLocation", "SampleDate", "Latitude", "Longitude", "Depth", "Layer"), all = TRUE)
+MasterENV<- merge(SALINITY, WTEMP, by =c("Year","Month", "MonitoringLocation", "SampleDate", "Latitude", "Longitude", "Depth", "Layer"), all = TRUE)
 View(MasterENV)
 
 MasterENV<- subset(MasterENV, select = -c(Parameter.x,Parameter.y))
@@ -205,11 +210,11 @@ MasterENV$Month_Year <- format(MasterENV$SampleDate, "%Y-%m")
 MasterENV$Month_Day <- format(MasterENV$SampleDate, "%m-%d")
 
 
-MasterENV_filtered3<- MasterENV %>%
+MasterENV_filtered<- MasterENV %>%
   group_by(MonitoringLocation,Year, Month) %>%
   dplyr::slice(1)%>%
   ungroup()
-View(MasterENV_filtered3)
+View(MasterENV_filtered)
 
 ##Alternative way ###
 #MasterENV <- MasterENV %>%
@@ -222,20 +227,20 @@ View(MasterENV_filtered3)
   #ungroup()
 
 
-envplot<- ggplot(MasterENV_filtered3, aes(Year, SALINITY, color = MonitoringLocation))+geom_smooth(se= FALSE)
+envplot<- ggplot(MasterENV_filtered, aes(Year, SALINITY, color = MonitoringLocation))+geom_smooth(se= FALSE)
 envplot
 
 # removing sites with missing data from 1990-2020
 desired_start_year <- 1990 
-site_start_years <- MasterENV_filtered3 %>%
+site_start_years <- MasterENV_filtered %>%
   group_by(MonitoringLocation) %>%
   summarize(start_year = min(year(SampleDate)))
 
-MasterENV_filtered2<- MasterENV_filtered3 %>%
+MasterENV_filtered<- MasterENV_filtered %>%
   inner_join(site_start_years, by= "MonitoringLocation") %>%
   filter(start_year == desired_start_year) %>%
   select(-start_year)
-View(MasterENV_filtered2)
+View(MasterENV_filtered)
 
 write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Filtered_Env_Master.csv", sep = ",", row.names=FALSE)
 
@@ -243,13 +248,13 @@ write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Ma
 ### Yearly means for environmental parameters by site and time ###
 
 
-Smeans <-MasterENV_filtered2 %>%
+Smeans <-MasterENV_filtered %>%
   group_by(Year, Month, SALINITY, MonitoringLocation) %>%
   summarize(SALINITY = mean(SALINITY))
 View(Smeans)
 
 #### TEMP ###
-MonthlyMeans<-MasterENV_filtered3 %>%
+MonthlyMeans<-MasterENV_filtered %>%
   group_by(Month, Year, WTEMP, MonitoringLocation, SampleDate, Latitude, Longitude) %>%
   dplyr::summarize(WTEMP = mean(WTEMP))
 View(MonthlyMeans)
@@ -261,7 +266,7 @@ View(MonthlyMeans)
 
 ### Salinity ###
 
-MonthlyMeans1<-MasterENV_filtered3 %>%
+MonthlyMeans1<-MasterENV_filtered %>%
   group_by(Month, Year, SALINITY, MonitoringLocation, SampleDate) %>%
   dplyr::summarize(SALINITY = mean(SALINITY))
 View(MonthlyMeans1)
@@ -318,6 +323,12 @@ Maryland <- Merged.data %>%
 View(Maryland)
 write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Maryland_data_all.csv", sep = ",", row.names=FALSE)
 
+Site_count <- Merged.data %>% 
+  group_by(State, Site) %>%
+  distinct(Site) %>% 
+  nrow()
+
+Site_count #71
 
 
 ############################### STATISTICS ##################################################################

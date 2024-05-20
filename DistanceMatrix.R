@@ -11,8 +11,8 @@ library(readxl)
 
 options(repr.plot.width=20, repr.plot.height=15)
 
-env =read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/EnvironmentalData_MD&VAupdated.xlsx")
-perk=read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Disease_data_converted.csv", header=FALSE)
+env =read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/EnvironmentalData_MD&VAupdated.csv")
+perk=read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", header=FALSE)
 
 View(env)
 View(perk)
@@ -53,12 +53,12 @@ perk_sites=drop_na(perk_sites, Latitude)
 #pull out longlat
 perk_longlat=as.matrix(sapply(perk_sites[,c(2,3)], as.numeric))
 
+
 perk_longlat<-na.omit(perk_longlat)
 
 #make distance matrix (euclidean)
 distsall=spDists(perk_longlat, env_longlat)
 
-View(distsall)
 
 colnames(distsall)=env_sites$MonitoringLocation
 
@@ -79,7 +79,7 @@ colnames(mindists)=c("perksite", "distance", "envsites")
 
 mindists
 
-write.csv(mindists, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Closest_PerkEnv.csv")
+write.csv(mindists, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/DistanceMatrix_PerkEnv.csv")
 
 #Loading required package: ggplot2
 require(ggplot2)
