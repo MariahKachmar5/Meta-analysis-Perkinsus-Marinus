@@ -102,7 +102,7 @@ Site_count #38
 Site_count <- VA %>% 
   distinct(Site) %>% 
   nrow()
-Site_count  #38
+Site_count  #34
   
 #Recombine VA & MD
   
@@ -110,7 +110,7 @@ Perk2 <- rbind(VA, MD_converted)
 View(Perk2)
 
 
-write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Disease_data_converted.csv", sep=",", row.names=FALSE)
+write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", sep=",", row.names=FALSE)
 
 
 
