@@ -442,10 +442,10 @@ all_int_temp
 
 
 Locations<- Merged.data %>%
-  subset(select= c(MonitoringLocation, Site, Lat, Long, Lat_Env, Long_Env))
+  subset(select= c(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env))
 Locations  
 
-filtered_locations<- Locations %>% distinct(MonitoringLocation, Site, Lat, Long, Lat_Env, Long_Env, .keep_all = TRUE)
+filtered_locations<- Locations %>% distinct(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env, .keep_all = TRUE)
 filtered_locations<-na.omit(filtered_locations)
 class(filtered_locations$Site)
 filtered_locations$Site <- as.factor(filtered_locations$Site)
@@ -466,13 +466,13 @@ filtered_locations$Long_Env <- as.numeric(filtered_locations$Long_Env)
 filtered_locations$Lat_Env <- as.numeric(filtered_locations$Lat_Env)
 
 envlocations<- filtered_locations %>%
-  subset(select=c(MonitoringLocation, Lat_Env, Long_Env))
+  subset(select=c(MonitoringLocation, Region, State, Lat_Env, Long_Env))
 
 mapview(filtered_locations, xcol= "Long", ycol = "Lat", crs=4326, zcol="Site" ,grid=FALSE) + mapview(envlocations, xcol="Long_Env", ycol="Lat_Env",col.regions= "red", grid=FALSE)
 
 
 disease<-filtered_locations %>%
-  subset(select=c(Site, Lat, Long))
+  subset(select=c(Site, Region, State, Lat, Long))
 
 disease$type<- "disease"
 head(disease)
@@ -484,16 +484,26 @@ envlocations<-envlocations %>%
 
 monitoringlocations<- rbind(disease, envlocations)
 monitoringlocations
+library(dplyr)
+MD <- monitoringlocations %>%
+  filter(State == "MD")
+
+VA<- monitoringlocations %>%
+  filter(State == "VA")
 
 
-Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank())+geom_point(data = filtered_locations,aes(Long, Lat), color="red", size = 4) + 
-  geom_point(data=monitoringlocations, aes(Long, Lat, color=type),size = 4) +
-  theme(legend.position=) + labs(title =element_text("Locations of disease & environmental monitoring"))
+
+
+Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank()) + 
+  geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 4) + 
+  geom_point(data=MD, aes(Long, Lat, color=type),size = 4)  +
+  theme(legend.position= "") + labs(title =element_text("Locations of disease & environmental monitoring"))
 Locations_map
 
 
 
-
+map<-ggplot() + geom_point(data = MD,aes(Long, Lat, color = Site, shape = type), size = 5)+theme(legend.position="bottom") #+ scale_color_manual(values =rainbow(47))
+map
 
 
 

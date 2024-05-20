@@ -97,7 +97,7 @@ MD_converted <- MD_converted %>%
 Site_count <- MD_converted %>% 
   distinct(Site) %>% 
   nrow()
-Site_count #36
+Site_count #38
 
 Site_count <- VA %>% 
   distinct(Site) %>% 
@@ -150,7 +150,7 @@ EnvALL$Month <-month(EnvALL$SampleDate)
 EnvALL$Month
 
 EnvALL$Year <-year(EnvALL$SampleDate)
-EnvALL
+head(EnvALL)
 View(EnvALL)
 
 EnvALL$Day <-day(EnvALL$SampleDate)
@@ -173,18 +173,18 @@ View(EnvALL)
 PH <- EnvALL[EnvALL$Parameter == "PH",]
 View(PH)
 PH <- PH %>%
-  rename(pH = MeasureValue)
+  dplyr::rename(pH = MeasureValue)
 
 SALINITY <- EnvALL[EnvALL$Parameter == "SALINITY",]
 SALINITY
 SALINITY <- SALINITY %>%
-  rename(SALINITY = MeasureValue)
+  dplyr::rename(SALINITY = MeasureValue)
 View(SALINITY)
 
 WTEMP <-EnvALL[EnvALL$Parameter == "WTEMP",]
 View(WTEMP)
 WTEMP <- WTEMP %>%
-  rename(WTEMP = MeasureValue)
+  dplyr::rename(WTEMP = MeasureValue)
 
 ### REMERGING ENVIRONMENTAL DATA ####
 
@@ -207,7 +207,7 @@ MasterENV$Month_Day <- format(MasterENV$SampleDate, "%m-%d")
 
 MasterENV_filtered3<- MasterENV %>%
   group_by(MonitoringLocation,Year, Month) %>%
-  slice(1)%>%
+  dplyr::slice(1)%>%
   ungroup()
 View(MasterENV_filtered3)
 
@@ -249,9 +249,9 @@ Smeans <-MasterENV_filtered2 %>%
 View(Smeans)
 
 #### TEMP ###
-MonthlyMeans<-MasterENV_filtered2 %>%
+MonthlyMeans<-MasterENV_filtered3 %>%
   group_by(Month, Year, WTEMP, MonitoringLocation, SampleDate, Latitude, Longitude) %>%
-  summarize(WTEMP = mean(WTEMP))
+  dplyr::summarize(WTEMP = mean(WTEMP))
 View(MonthlyMeans)
 
 MonthlyMeans$Month <- month.abb[MonthlyMeans$Month]
@@ -261,9 +261,9 @@ View(MonthlyMeans)
 
 ### Salinity ###
 
-MonthlyMeans1<-MasterENV_filtered2 %>%
+MonthlyMeans1<-MasterENV_filtered3 %>%
   group_by(Month, Year, SALINITY, MonitoringLocation, SampleDate) %>%
-  summarize(SALINITY = mean(SALINITY))
+  dplyr::summarize(SALINITY = mean(SALINITY))
 View(MonthlyMeans1)
 
 MonthlyMeans1$Month <- month.abb[MonthlyMeans1$Month]
@@ -272,7 +272,7 @@ head(MonthlyMeans1)
 View(MonthlyMeans1)
 
 
-
+View(Perk2)
 
 ################################## MERGING ENV & PERKINSUS DATA ######################################################
 ### Merging data sheets using Monthly/yearly means  #### 
