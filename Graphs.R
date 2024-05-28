@@ -350,6 +350,19 @@ Oct$Prevalence<- as.numeric(Oct$Prevalence)
 Nov$Prevalence<- as.numeric(Nov$Prevalence)
 Dec$Prevalence<- as.numeric(Dec$Prevalence)
 
+Jan$Mean.Intensity<- as.numeric(Jan$Mean.Intensity)
+Feb$Mean.Intensity<- as.numeric(Feb$Mean.Intensity)
+Mar$Mean.Intensity<- as.numeric(Mar$Mean.Intensity)
+Apr$Mean.Intensity<- as.numeric(Apr$Mean.Intensity)
+May$Mean.Intensity<- as.numeric(May$Mean.Intensity)
+Jun$Mean.Intensity<- as.numeric(Jun$Mean.Intensity)
+Jul$Mean.Intensity<- as.numeric(Jul$Mean.Intensity)
+Aug$Mean.Intensity<- as.numeric(Aug$Mean.Intensity)
+Sept$Mean.Intensity<- as.numeric(Sept$Mean.Intensity)
+Oct$Mean.Intensity<- as.numeric(Oct$Mean.Intensity)
+Nov$Mean.Intensity<- as.numeric(Nov$Mean.Intensity)
+Dec$Mean.Intensity<- as.numeric(Dec$Mean.Intensity)
+
 
 ## Prevalence ##
 Jan_mean<- Jan %>%
@@ -408,44 +421,46 @@ all_prev_temp<- ggarrange(Jan_prev, Feb_prev, Mar_prev,Apr_prev,
                           Oct_prev, Nov_prev,Dec_prev)
 all_prev_temp
 
+View(Aug_mean)
+View(Aug)
 
 ## Intensity ##
 Jan_mean2<- Jan %>%
-  group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  group_by(oysteryear, WTEMP) %>%
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Feb_mean2<- Feb %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Mar_mean2<- Mar %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Apr_mean2<- Apr %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 May_mean2<- May %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 June_mean2<- Jun %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 July_mean2<- Jul %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Aug_mean2<- Aug %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Sept_mean2<- Sept %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Oct_mean2<- Oct %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Dec_mean2<- Dec %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 Nov_mean2<- Nov %>%
   group_by(oysteryear, WTEMP)%>%
-  summarize(mean_I = mean(Mean.Intensity))
+  dplyr::summarize(mean_I = mean(Mean.Intensity))
 #prevalence vs temp
 Jan_I<-ggplot(Jan_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("January"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
 Feb_I<-ggplot(Feb_mean2, aes(WTEMP, mean_I))+geom_point() +labs(title = element_text("February"))+theme(legend.position="none")+geom_smooth(method=lm, se=FALSE)
@@ -526,7 +541,7 @@ VA<- monitoringlocations %>%
 
 Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank()) + 
   geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 4) + 
-  geom_point(data=MD, aes(Long, Lat, color=type),size = 4)  +
+  geom_point(data=MonitoringLocations, aes(Long, Lat, color=type),size = 4)  +
   theme(legend.position= "") + labs(title =element_text("Locations of disease & environmental monitoring"))
 Locations_map
 

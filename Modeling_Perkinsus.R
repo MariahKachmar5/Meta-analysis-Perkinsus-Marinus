@@ -617,6 +617,8 @@ write.table(Monthly_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analys
 
 ################################## Regional Models ########################################################
 
+Merged.data$Region
+
 #Subetting data by Region to create individual spreadsheets
 Nanticoke <- Merged.data[Merged.data$Region == "NANTICOKE RIVER",]
 UpperBay<- Merged.data[Merged.data$Region == "UPPER BAY",]
@@ -645,6 +647,17 @@ Piankatank<- Merged.data[Merged.data$Region == "PIANKATANK RIVER",]
 York<- Merged.data[Merged.data$Region == "YORK RIVER",]
 Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY",]
 James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
+
+
+Region_count <- Regions %>% 
+  group_by(State, Region) %>%
+  distinct(Region) %>% 
+  nrow()
+
+Region_count #32
+Regions <-as.table(Merged.data$Region)
+
+
 
 ### Prevalence ##
 model32<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ (1|Site)+ (1|MonitoringLocation), Nanticoke, family = beta_family())
