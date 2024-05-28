@@ -11,7 +11,7 @@ library(readxl)
 
 options(repr.plot.width=20, repr.plot.height=15)
 
-env =read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/EnvironmentalData_MD&VAupdated.csv")
+env =read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/environmental_data_all.csv")
 perk=read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", header=FALSE)
 
 View(env)
@@ -66,6 +66,7 @@ perk_sites = perk_sites[-c(1),]
 perk_sites
 
 rownames(distsall)=perk_sites$Site
+
 
 perk_sites$Site
 

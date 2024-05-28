@@ -320,8 +320,37 @@ Both
 Regional_trends <- ggarrange(region_p, OySite_area)
 Regional_trends
 
+View(Merged.data)
 
 ####### Looking at monthly trends of prev & intensity by temperature due to negative effect sizes #######
+
+Jan <- Merged.data[Merged.data$Month == "Jan",]
+Feb<- Merged.data[Merged.data$Month == "Feb",]
+Mar<- Merged.data[Merged.data$Month == "Mar",]
+Apr<- Merged.data[Merged.data$Month == "Apr",]
+May<- Merged.data[Merged.data$Month == "May",]
+Jun<- Merged.data[Merged.data$Month == "Jun",]
+Jul<- Merged.data[Merged.data$Month == "Jul",]
+Aug<- Merged.data[Merged.data$Month == "Aug",]
+Sept<- Merged.data[Merged.data$Month == "Sep",]
+Oct<- Merged.data[Merged.data$Month == "Oct",]
+Nov<- Merged.data[Merged.data$Month == "Nov",]
+Dec<- Merged.data[Merged.data$Month == "Dec",]
+
+Jan$Prevalence<- as.numeric(Jan$Prevalence)
+Feb$Prevalence<- as.numeric(Feb$Prevalence)
+Mar$Prevalence<- as.numeric(Mar$Prevalence)
+Apr$Prevalence<- as.numeric(Apr$Prevalence)
+May$Prevalence<- as.numeric(May$Prevalence)
+Jun$Prevalence<- as.numeric(Jun$Prevalence)
+Jul$Prevalence<- as.numeric(Jul$Prevalence)
+Aug$Prevalence<- as.numeric(Aug$Prevalence)
+Sept$Prevalence<- as.numeric(Sept$Prevalence)
+Oct$Prevalence<- as.numeric(Oct$Prevalence)
+Nov$Prevalence<- as.numeric(Nov$Prevalence)
+Dec$Prevalence<- as.numeric(Dec$Prevalence)
+
+
 ## Prevalence ##
 Jan_mean<- Jan %>%
   group_by(oysteryear, WTEMP)%>%
@@ -443,7 +472,7 @@ all_int_temp
 
 Locations<- Merged.data %>%
   subset(select= c(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env))
-Locations  
+View(Locations)  
 
 filtered_locations<- Locations %>% distinct(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env, .keep_all = TRUE)
 filtered_locations<-na.omit(filtered_locations)
@@ -463,6 +492,7 @@ library(leaflet)
 filtered_locations$Long <- as.numeric(filtered_locations$Long)
 filtered_locations$Lat <- as.numeric(filtered_locations$Lat)
 filtered_locations$Long_Env <- as.numeric(filtered_locations$Long_Env)
+
 filtered_locations$Lat_Env <- as.numeric(filtered_locations$Lat_Env)
 
 envlocations<- filtered_locations %>%
