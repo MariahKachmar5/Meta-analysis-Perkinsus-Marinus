@@ -260,7 +260,7 @@ mean_prev_reg$Region2<- factor(mean_prev_reg$Region, levels = c("NANTICOKE RIVER
                                     "POTOMAC RIVER", "LOWER BAY","FISHING BAY", "HONGA RIVER", "TANGIER SOUND", "HOLLAND STRAITS","POCOMOKE SOUND",
                                     "RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","YORK RIVER","MOBJACK BAY","JAMES RIVER"))
 
-view(mean_prev_reg)
+View(mean_prev_reg)
 region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region2)) + 
   facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
   theme(strip.text = element_text(size = 8), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
@@ -541,7 +541,7 @@ VA<- monitoringlocations %>%
 
 Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank()) + 
   geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 4) + 
-  geom_point(data=MonitoringLocations, aes(Long, Lat, color=type),size = 4)  +
+  geom_point(data=monitoringlocations, aes(Long, Lat, color=type),size = 4)  +
   theme(legend.position= "") + labs(title =element_text("Locations of disease & environmental monitoring"))
 Locations_map
 

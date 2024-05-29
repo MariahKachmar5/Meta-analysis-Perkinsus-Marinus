@@ -328,7 +328,7 @@ Site_count <- Merged.data %>%
   distinct(Site) %>% 
   nrow()
 
-Site_count #71
+Site_count #72
 
 
 ############################### STATISTICS ##################################################################
@@ -649,12 +649,12 @@ Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY",]
 James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
 
 
-Region_count <- Regions %>% 
+Region_count <- Merged.data %>% 
   group_by(State, Region) %>%
   distinct(Region) %>% 
   nrow()
 
-Region_count #32
+Region_count #33
 Regions <-as.table(Merged.data$Region)
 
 
@@ -776,7 +776,7 @@ View(Regional_Prevalence_Results)
 
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
 
-Regional_Prevalence_Results$fdr.p.value <- p.adjust(Monthly_Prevalence_Results$p.value, method = "fdr")
+Regional_Prevalence_Results$fdr.p.value <- p.adjust(Regional_Prevalence_Results$p.value, method = "fdr")
 Regional_Prevalence_Results
 Regional_Prevalence_Results$Region <- c("NANTICOKE RIVER","NANTICOKE RIVER", "UPPER BAY", "UPPER BAY","CHESTER RIVER", "CHESTER RIVER","EASTERN BAY", "EASTERN BAY",
                                         "WYE RIVER", "WYE RIVER","MILES RIVER","MILES RIVER", "BROAD CREEK","BROAD CREEK",
