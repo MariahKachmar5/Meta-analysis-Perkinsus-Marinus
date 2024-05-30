@@ -41,7 +41,7 @@ Perk<- na.omit(Perkinsus)
  ## Removing sites > 0.5 in distance matrix calculations ####
 #Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
 
-#Removing atlantic side regions
+#Removing Atlantic side regions
 Perk<- filter(Perk, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 ##Intensity individual data from MDDNR- loading and cleaning 
@@ -368,7 +368,7 @@ Perk2$Prev_ep <- pmin(pmax(Perk2$Prev_ratio, epsilon), 1 - epsilon)
 model1<- glmmTMB(Prev_ep ~ Region + oysteryear + (1|Site), data = Perk2, family = beta_family())
 Anova(model1)
 
-Perk2$Mean.Intensity <- as.factor(Perk2$Mean.Intensity)
+Perk2$Mean.Intensity <- as.numeric(Perk2$Mean.Intensity)
 model2<- lmer(Mean.Intensity ~ Region + oysteryear + (1|Site) , data = Perk2)
 Anova(model2)
 
@@ -385,7 +385,7 @@ Merged.data$SampleDate<- scale(Merged.data$SampleDate.y)
 Merged.data$Year<- scale(Merged.data$Year)
 Merged.data$Lat<- scale(Merged.data$Lat)
 
-
+Merged.data
 
 model5<- lmer(WTEMP ~  Year + Region + (1|Site), data = Merged.data)
 Anova(model5)
