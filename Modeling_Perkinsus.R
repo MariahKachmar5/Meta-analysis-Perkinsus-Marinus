@@ -647,9 +647,9 @@ GWicomico<- Merged.data[Merged.data$Region == "GREAT WICOMICO RIVER",]
 Corrotoman<- Merged.data[Merged.data$Region == "CORROTOMAN RIVER",]
 Piankatank<- Merged.data[Merged.data$Region == "PIANKATANK RIVER",]
 York<- Merged.data[Merged.data$Region == "YORK RIVER",]
-Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY",]
+Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY" | Merged.data$Region == "MOBJACK RIVER",]
 James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
-#ST. MARY'S RIVER
+Stmary<- Merged.data[Merged.data$Region == "ST. MARY'S RIVER",]
 
 #Removed EASTERN SHORE & YEOCOMICO RIVER
 
@@ -658,8 +658,7 @@ Region_count <- Merged.data %>%
   distinct(Region) %>% 
   nrow()
 
-Region_count #33
-Regions <-as.table(Merged.data$Region)
+Region_count #29
 
 list(Merged.data$Region)
 
@@ -772,10 +771,14 @@ summary(model57)
 model58<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), James, family = beta_family())
 results58<-tidy(Anova(model58))
 summary(model58)
+
+model59<- glmmTMB(Prev_ep~ WTEMP + SALINITY + (1|Site)+ (1|MonitoringLocation), Stmary, family = beta_family())
+results59<-tidy(Anova(model59))
+summary(model59)
 ## Combining Anova () chi sq stats into a table 
 Regional_Prevalence_Results <-rbind(results32, results33, results34, results35, results36, results37, results38, results39, results40, results41, results42, results43,
                                     results44, results45, results46, results47, results48, results49, results50, results51, results52, results53, results54, results55, results56,
-                                    results57, results58)
+                                    results57, results58, results59)
 View(Regional_Prevalence_Results)
 
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
@@ -790,6 +793,6 @@ Regional_Prevalence_Results$Region <- c("NANTICOKE RIVER","NANTICOKE RIVER", "UP
                                         "TANGIER SOUND", "TANGIER SOUND","HOLLAND STRAITS","HOLLAND STRAITS","POCOMOKE SOUND","POCOMOKE SOUND",
                                         "RAPPAHANNOCK RIVER","RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","GREAT WICOMICO RIVER",
                                         "CORROTOMAN RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","PIANKATANK RIVER","YORK RIVER","YORK RIVER",
-                                        "MOBJACK BAY","MOBJACK BAY","JAMES RIVER","JAMES RIVER")
+                                        "MOBJACK BAY","MOBJACK BAY","JAMES RIVER","JAMES RIVER","ST MARY'S RIVER", "ST MARY'S RIVER")
 write.table(Regional_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Regional_Prevalence_Results.csv", sep=",", row.names=FALSE)
 
