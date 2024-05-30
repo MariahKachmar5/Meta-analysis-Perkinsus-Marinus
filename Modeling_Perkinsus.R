@@ -41,6 +41,8 @@ Perk<- na.omit(Perkinsus)
  ## Removing sites > 0.5 in distance matrix calculations ####
 #Perk <- filter(Perk, Site != 'RAGGED POINT (LC)', Site != 'PARSONS ISLAND', Site != 'PAGAN (S)' , Site != 'OYSTER SHELL PT. (S)')
 
+#Removing atlantic side regions
+Perk<- filter(Perk, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 ##Intensity individual data from MDDNR- loading and cleaning 
 IntensityMD<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MDDNR_1990-2020.csv",)
@@ -97,12 +99,12 @@ MD_converted <- MD_converted %>%
 Site_count <- MD_converted %>% 
   distinct(Site) %>% 
   nrow()
-Site_count #38
+Site_count #36
 
 Site_count <- VA %>% 
   distinct(Site) %>% 
   nrow()
-Site_count  #34
+Site_count  #32
   
 #Recombine VA & MD
   
@@ -112,7 +114,7 @@ View(Perk2)
 Site_count <- Perk2%>% 
   distinct(Site) %>% 
   nrow()
-Site_count #71
+Site_count #67 
 
 
 write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", sep=",", row.names=FALSE)
@@ -647,17 +649,19 @@ Piankatank<- Merged.data[Merged.data$Region == "PIANKATANK RIVER",]
 York<- Merged.data[Merged.data$Region == "YORK RIVER",]
 Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY",]
 James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
+#ST. MARY'S RIVER
 
+#Removed EASTERN SHORE & YEOCOMICO RIVER
 
 Region_count <- Merged.data %>% 
-  group_by(State, Region) %>%
+  #group_by(State, Region) %>%
   distinct(Region) %>% 
   nrow()
 
 Region_count #33
 Regions <-as.table(Merged.data$Region)
 
-
+list(Merged.data$Region)
 
 ### Prevalence ##
 model32<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ (1|Site)+ (1|MonitoringLocation), Nanticoke, family = beta_family())
