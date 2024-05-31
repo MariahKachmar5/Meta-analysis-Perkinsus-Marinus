@@ -84,10 +84,9 @@ Mean_IntensityMD <-na.omit(Mean_IntensityMD)
 #Update Maryland sites and remerge maryland and VA data
 MD <- Perk %>%
   filter(State == "MD")
-View(MD)
 VA <- Perk %>%
   filter(State =="VA")
-
+View(VA)
 MD_converted <- merge(Mean_IntensityMD, MD)
 #View(MD_converted)
 
@@ -114,7 +113,7 @@ View(Perk2)
 Site_count <- Perk2%>% 
   distinct(Site) %>% 
   nrow()
-Site_count #67 
+Site_count #69 
 
 
 write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", sep=",", row.names=FALSE)
@@ -309,6 +308,8 @@ View(Merged.data)
 
 write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MergedData.csv", sep=",", row.names=FALSE)
 
+############# Cleaning the data of outliers ################
+View(Merged.data)
 
 ## Subset MD for Sarah ##
 
