@@ -228,13 +228,13 @@ Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Per
 head(Perkinsus)
 
 
-mean_prev_reg <- Perk2 %>%
-  dplyr::group_by(Region, oysteryear, State, Lat, Long) %>%
+mean_prev_reg <- Merged.data %>%
+  dplyr::group_by(Region, oysteryear, Lat, Long) %>%
   dplyr::summarise(mean_prevalence = mean(Prevalence))
 
 View(mean_prev_reg)
 
-mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
+#mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 library(RColorBrewer)
 n <- 40
@@ -247,7 +247,7 @@ col_vector
 
 colors <- c("#FF0000", "#0033FF", "#FF6600", "#9900FF", "#00FFFF", "#FF00FF", "#FFFF00", "#993333", "#999999",
                     "#006600", "#FF9999", "#330099", "#00CCFF","#99FF33", "#FFCCFF", "#000000", "#CC9966", "#336666",
-                    "#FFCC66", "#003300", "#0099FF", "#FF3399", "#FF9933", "#0066FF", "#6600CC", "#33FFCC", "#CC9999")
+                    "#FFCC66", "#003300", "#0099FF", "#FF3399", "#FF9933", "#0066FF", "#6600CC", "#33FFCC", "#CC9999", "#FFFFCC")
                          
 
 library(tidyverse)
@@ -256,7 +256,7 @@ class(mean_prev_reg$Region)
 
 #REORDERING BY LATITUDE
 mean_prev_reg$Region2<- factor(mean_prev_reg$Region, levels = c("NANTICOKE RIVER", "UPPER BAY", "CHESTER RIVER", "EASTERN BAY", "WYE RIVER", "MILES RIVER", "BROAD CREEK",
-                                    "HARRIS CREEK", "CHOPTANK RIVER", "LITTLE CHOPTANK RIVER", "PATUXENT RIVER", "MIDDLE BAY", "MANOKIN RIVER",
+                                    "HARRIS CREEK", "CHOPTANK RIVER", "LITTLE CHOPTANK RIVER", "ST. MARY'S RIVER", "PATUXENT RIVER", "MIDDLE BAY", "MANOKIN RIVER",
                                     "POTOMAC RIVER", "LOWER BAY","FISHING BAY", "HONGA RIVER", "TANGIER SOUND", "HOLLAND STRAITS","POCOMOKE SOUND",
                                     "RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","YORK RIVER","MOBJACK BAY","JAMES RIVER"))
 
@@ -295,7 +295,7 @@ map<-fortify(map_new)
 
 View(Merged.data)
 
-Env2<-read_excel("~/Documents/UMBC/Meta-Analysis/EnvironmentalData_MD&VAupdated.xlsx")
+Env2<-read_excel("~/Documents/UMBC/Meta-Analysis/environmental_data_all.xlsx")
 View(Env2)
 
 Env2$Latitude<-as.numeric(Env2$Latitude)
