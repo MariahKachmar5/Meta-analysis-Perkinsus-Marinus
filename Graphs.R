@@ -228,6 +228,7 @@ Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Per
 head(Perkinsus)
 
 Merged.data$Prevalence<- as.numeric(Merged.data$Prevalence)
+View(Merged.data)
 
 mean_prev_reg <- Merged.data %>%
   dplyr::group_by(Region, oysteryear, State, Lat, Long) %>%
@@ -281,6 +282,7 @@ library(dplyr)
 library(rgdal)
 library(geosphere)
 library(plotrix)
+
 library(ggrepel)
 library(sf)
 library(ggpubr)
@@ -309,7 +311,7 @@ Perk2 <- filter(Perk2, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 
 OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
-  geom_point(data = mean_prev_reg,aes(Long, Lat, color= Region2), size = 5) +theme(legend.position="none") + scale_color_manual(values = colors)
+  geom_point(data = mean_prev_reg,aes(Long, Lat, color= Region2), size = 3) +theme(legend.position="none") + scale_color_manual(values = colors)
 
 OySite_area
 
@@ -541,8 +543,8 @@ VA<- monitoringlocations %>%
 
 
 Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank()) + 
-  geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 4) + 
-  geom_point(data=monitoringlocations, aes(Long, Lat, color=type),size = 4)  +
+  geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 3) + 
+  geom_point(data=monitoringlocations, aes(Long, Lat, color=type),size = 3)  +
   theme(legend.position= "") + labs(title =element_text("Locations of disease & environmental monitoring"))
 Locations_map
 
