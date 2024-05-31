@@ -125,14 +125,13 @@ write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus
 ######################### Environmental Data ###############################
 
 EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/environmental_data_all.xlsx")
-View(EnvALL)
-write.table(Env, file="Env.csv", sep=",", row.names=FALSE)
+#View(EnvALL)
+#write.table(Env, file="Env.csv", sep=",", row.names=FALSE)
 
 EnvALL<- filter(EnvALL, SampleDate > '1989-12-31')
-View(EnvALL)
+#View(EnvALL)
 
 #### creating dates for environmental data ###
-View(EnvALL$SampleDate)
 
 strDates2 <- EnvALL$SampleDate
 dates2 <- as.Date(strDates2, "%m/%d/%Y")
@@ -158,10 +157,10 @@ EnvALL$Month
 
 EnvALL$Year <-year(EnvALL$SampleDate)
 head(EnvALL)
-View(EnvALL)
+#View(EnvALL)
 
 EnvALL$Day <-day(EnvALL$SampleDate)
-View(EnvALL)
+#View(EnvALL)
 
 
 ### add month column to data ###
@@ -177,31 +176,28 @@ View(EnvALL)
 
 ### subsetting environmental data by parameter ###
 
-PH <- EnvALL[EnvALL$Parameter == "PH",]
-View(PH)
-PH <- PH %>%
-  dplyr::rename(pH = MeasureValue)
+
 
 SALINITY <- EnvALL[EnvALL$Parameter == "SALINITY",]
-SALINITY
+
 SALINITY <- SALINITY %>%
   dplyr::rename(SALINITY = MeasureValue)
-View(SALINITY)
+#View(SALINITY)
 
 WTEMP <-EnvALL[EnvALL$Parameter == "WTEMP",]
-View(WTEMP)
+
 WTEMP <- WTEMP %>%
   dplyr::rename(WTEMP = MeasureValue)
 
 ### REMERGING ENVIRONMENTAL DATA ####
 
 MasterENV<- merge(SALINITY, WTEMP, by =c("Year","Month", "MonitoringLocation", "SampleDate", "Latitude", "Longitude", "Depth", "Layer"), all = TRUE)
-View(MasterENV)
+#View(MasterENV)
 
 MasterENV<- subset(MasterENV, select = -c(Parameter.x,Parameter.y))
 
 MasterENV<-na.omit(MasterENV)
-View(MasterENV)
+#View(MasterENV)
 
 ### Filtering environmental data so there is only one sample date per month each year ###
 
@@ -216,7 +212,7 @@ MasterENV_filtered<- MasterENV %>%
   group_by(MonitoringLocation,Year, Month) %>%
   dplyr::slice(1)%>%
   ungroup()
-View(MasterENV_filtered)
+#View(MasterENV_filtered)
 
 ##Alternative way ###
 #MasterENV <- MasterENV %>%
@@ -241,63 +237,59 @@ site_start_years <- MasterENV_filtered %>%
 MasterENV_filtered<- MasterENV_filtered %>%
   inner_join(site_start_years, by= "MonitoringLocation") %>%
   filter(start_year == desired_start_year) %>%
-  select(-start_year)
-View(MasterENV_filtered)
+  dplyr::select(-start_year)
+#View(MasterENV_filtered)
 
-write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Filtered_Env_Master.csv", sep = ",", row.names=FALSE)
+#write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Filtered_Env_Master.csv", sep = ",", row.names=FALSE)
 
 
 ### Yearly means for environmental parameters by site and time ###
 
 
-Smeans <-MasterENV_filtered %>%
-  group_by(Year, Month, SALINITY, MonitoringLocation) %>%
-  summarize(SALINITY = mean(SALINITY))
-View(Smeans)
+#Smeans <-MasterENV_filtered %>%
+#  group_by(Year, Month, SALINITY, MonitoringLocation) %>%
+#  summarize(SALINITY = mean(SALINITY))
+#View(Smeans)
 
 #### TEMP ###
 MonthlyMeans<-MasterENV_filtered %>%
   group_by(Month, Year, WTEMP, MonitoringLocation, SampleDate, Latitude, Longitude) %>%
   dplyr::summarize(WTEMP = mean(WTEMP))
-View(MonthlyMeans)
+#View(MonthlyMeans)
 
 MonthlyMeans$Month <- month.abb[MonthlyMeans$Month]
 
 head(MonthlyMeans)
-View(MonthlyMeans)
+#View(MonthlyMeans)
 
 ### Salinity ###
 
 MonthlyMeans1<-MasterENV_filtered %>%
   group_by(Month, Year, SALINITY, MonitoringLocation, SampleDate) %>%
   dplyr::summarize(SALINITY = mean(SALINITY))
-View(MonthlyMeans1)
+#View(MonthlyMeans1)
 
 MonthlyMeans1$Month <- month.abb[MonthlyMeans1$Month]
 
 head(MonthlyMeans1)
-View(MonthlyMeans1)
-
-
-View(Perk2)
+#View(MonthlyMeans1)
 
 ################################## MERGING ENV & PERKINSUS DATA ######################################################
 ### Merging data sheets using Monthly/yearly means  #### 
 Master1<- merge(Perk2, MonthlyMeans, by =c("Year", "MonitoringLocation"))
-View(Master1)
+#View(Master1)
 
-View(Perk2)
 Master1<- Master1 %>% 
   dplyr::rename("Sample.month"= "Month.x")
-View(Master1)
+#View(Master1)
 
 Master1<- Master1 %>% 
   dplyr::rename( "Month"= "Month.y")
-View(Master1)
+#View(Master1)
 
 
 Merged.data <- merge(MonthlyMeans1, Master1, by =c("Year","Month", "MonitoringLocation", "SampleDate"))
-View(Merged.data)
+#View(Merged.data)
 
 Merged.data$oysteryear=ifelse(Merged.data$Month== "Nov"| Merged.data$Month=="Dec", Merged.data$Year+1, Merged.data$Year)
 

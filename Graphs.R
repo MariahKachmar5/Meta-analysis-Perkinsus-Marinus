@@ -227,14 +227,15 @@ View(Perkinsus)
 Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Perkinsus$Year+1, Perkinsus$Year)
 head(Perkinsus)
 
+Merged.data$Prevalence<- as.numeric(Merged.data$Prevalence)
 
 mean_prev_reg <- Merged.data %>%
-  dplyr::group_by(Region, oysteryear, Lat, Long) %>%
+  dplyr::group_by(Region, oysteryear, State, Lat, Long) %>%
   dplyr::summarise(mean_prevalence = mean(Prevalence))
 
 View(mean_prev_reg)
 
-#mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
+mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 library(RColorBrewer)
 n <- 40
