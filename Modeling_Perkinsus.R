@@ -802,68 +802,68 @@ write.table(Regional_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-anal
 
 ##### YEAR
 
-model60<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), Nanticoke, family = beta_family())
+model60<- glmmTMB(Prev_ep~ WTEMP * SALINITY + Year + (1|Site)+ (1|MonitoringLocation), Nanticoke, family = beta_family())
 results60<-tidy(Anova(model60))
 summary(model60)
 
-model61<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), UpperBay, family = beta_family())
+model61<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), UpperBay, family = beta_family())
 results61<-tidy(Anova(model61))
 summary(model61)
 
-model62<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), Chester, family = beta_family())
+model62<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), Chester, family = beta_family())
 results62<-tidy(Anova(model62))
 summary(model62)
 
-model63<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), EasternBay, family = beta_family())
+model63<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), EasternBay, family = beta_family())
 results63<-tidy(Anova(model63))
 summary(model63)
 
-model64<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), Wye, family = beta_family())
+model64<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), Wye, family = beta_family())
 results64<-tidy(Anova(model64))
 summary(model64)
 
-model65<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), Miles, family = beta_family())
+model65<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), Miles, family = beta_family())
 results65<-tidy(Anova(model65))
 summary(model65)
 
-model66<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), BroadCreek, family = beta_family())
+model66<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), BroadCreek, family = beta_family())
 results66<-tidy(Anova(model66))
 summary(model66)
 
-model67<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), HarrisCreek, family = beta_family())
+model67<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), HarrisCreek, family = beta_family())
 results67<-tidy(Anova(model67))
 summary(model67)
 
-model68<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), Choptank, family = beta_family())
+model68<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), Choptank, family = beta_family())
 results68<-tidy(Anova(model68))
 summary(model68)
 
-model69<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), LittleChoptank, family = beta_family())
+model69<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), LittleChoptank, family = beta_family())
 results41<-tidy(Anova(model41))
 summary(model41)
 
-model70<- glmmTMB(Prev_ep~ Year+ (1|Site)+ (1|MonitoringLocation), Patuxent, family = beta_family())
+model70<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year+ (1|Site)+ (1|MonitoringLocation), Patuxent, family = beta_family())
 results42<-tidy(Anova(model42))
 summary(model42)
 
-model71<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), MiddleBay, family = beta_family())
+model71<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), MiddleBay, family = beta_family())
 results43<-tidy(Anova(model43))
 summary(model43)
 
-model72<- glmmTMB(Prev_ep~ WYear + (1|Site)+ (1|MonitoringLocation), Manokin, family = beta_family())
+model72<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), Manokin, family = beta_family())
 results44<-tidy(Anova(model44))
 summary(model44)
 
-model73<- glmmTMB(Prev_ep~ Year+ (1|Site)+ (1|MonitoringLocation), Potomac, family = beta_family())
+model73<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year+ (1|Site)+ (1|MonitoringLocation), Potomac, family = beta_family())
 results45<-tidy(Anova(model45))
 summary(model45)
 
 
-model74<- glmmTMB(Prev_ep~ Year+ (1|Site)+ (1|MonitoringLocation), LowerBay, family = beta_family())
+model74<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year+ (1|Site)+ (1|MonitoringLocation), LowerBay, family = beta_family())
 results46<-tidy(Anova(model46))
 summary(model46)
 
-model75<- glmmTMB(Prev_ep~ Year + (1|Site)+ (1|MonitoringLocation), FishingBay, family = beta_family())
+model75<- glmmTMB(Prev_ep~ WTEMP * SALINITY +Year + (1|Site)+ (1|MonitoringLocation), FishingBay, family = beta_family())
 results47<-tidy(Anova(model47))
 summary(model47)
 
