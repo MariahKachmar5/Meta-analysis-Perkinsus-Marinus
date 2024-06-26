@@ -937,3 +937,50 @@ Regional_PrevalenceYear_Results$Region <- c("NANTICOKE RIVER", "UPPER BAY", "CHE
                                         "MOBJACK BAY","JAMES RIVER","ST MARY'S RIVER")
 write.table(Regional_PrevalenceYear_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Regional_PrevalenceYear_Results.csv", sep=",", row.names=FALSE)
 
+### Pearson's correlation
+### Pearson's Correlation- Temperature and Salinity ### https://www.r-bloggers.com/2021/10/pearson-correlation-in-r/
+# r value of 0-0.3 = not correlated
+
+#Running pearson's correlation for Manokin River, James River, Honga River, and Broad Creek as they were significant for T:S and Year for Regional models
+
+#Temperature vs Salinity
+ManokinRiverTvS<- cor(Manokin$WTEMP, Manokin$SALINITY, method= 'pearson')
+ManokinRiverTvS
+#-0.1131532
+HongaRiverTvS<- cor(Honga$WTEMP, Honga$SALINITY, method= 'pearson')
+HongaRiverTvS
+#-0.1650143
+JamesRiverTvS<- cor(James$WTEMP, James$SALINITY, method= 'pearson')
+JamesRiverTvS
+#0.1437193 NOT CORRELATED
+BroadCreekTvS<- cor(BroadCreek$WTEMP, BroadCreek$SALINITY, method= 'pearson')
+BroadCreekTvS
+#-0.2011958
+
+#Temperature vs Year
+ManokinRiverTvY<- cor(Manokin$WTEMP, Manokin$Year, method= 'pearson')
+ManokinRiverTvY
+#0.02633882 - NOT correlated
+HongaRiverTvY<- cor(Honga$WTEMP, Honga$Year, method= 'pearson')
+HongaRiverTvY
+#0.02131326- NOT correlated
+JamesRiverTvY<- cor(James$WTEMP, James$Year, method= 'pearson')
+JamesRiverTvY
+#0.05735578
+BroadCreekTvY<- cor(BroadCreek$WTEMP, BroadCreek$Year, method= 'pearson')
+BroadCreekTvY
+#0.01601823- NOT correlated
+
+#Salinity vs Year
+ManokinRiverYvS<- cor(Manokin$Year, Manokin$SALINITY, method= 'pearson')
+ManokinRiverYvS
+#-0.08819826 
+HongaRiverYvS<- cor(Honga$Year, Honga$SALINITY, method= 'pearson')
+HongaRiverYvS
+#-0.003681306
+JamesRiverYvS<- cor(James$Year, James$SALINITY, method= 'pearson')
+JamesRiverYvS
+#0.05585008 - NOT CORRELATED
+BroadCreekYvS<- cor(BroadCreek$Year, BroadCreek$SALINITY, method= 'pearson')
+BroadCreekYvS
+#-0.06011818 
