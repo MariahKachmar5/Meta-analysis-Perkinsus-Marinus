@@ -95,3 +95,4 @@ ggplot(mindists, aes(x=perksite, y=distance))+
         panel.grid.minor.x = element_blank(),
         axis.ticks.x=element_blank(), axis.line=element_line(color="black"), axis.text=element_text(color="black",, angle=90),
         text = element_text(size=15))
+
