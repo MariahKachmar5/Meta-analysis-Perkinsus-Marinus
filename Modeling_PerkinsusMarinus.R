@@ -10,7 +10,7 @@
 #####################################################################################################
 
 #Set working directory
-setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/")
+setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/code")
 
 #Load all packaged
 library(lme4)
