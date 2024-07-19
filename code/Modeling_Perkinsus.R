@@ -32,7 +32,7 @@ library(broom)
 ################ DISEASE DATA #######################
 
 ##Perkinsus data (Maryland and Virginia)
-Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/data_raw/Perkinsus_data_all.csv",)
+Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_all.csv",)
 #View(Perkinsus)
 
 Perk<- na.omit(Perkinsus)
@@ -45,7 +45,7 @@ Perk<- na.omit(Perkinsus)
 Perk<- filter(Perk, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 ##Intensity individual data from MDDNR- loading and cleaning 
-IntensityMD<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/data_raw/MDDNR_1990-2020.csv",)
+IntensityMD<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MDDNR_1990-2020.csv",)
 
 as.data.frame(IntensityMD)
 
@@ -116,14 +116,14 @@ Site_count <- Perk2%>%
 Site_count #67 
 
 
-write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Perkinsus_data_converted.csv", sep=",", row.names=FALSE)
+write.table(Perk2, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Perkinsus_data_converted.csv", sep=",", row.names=FALSE)
 
 
 
 
 ######################### Environmental Data ###############################
 
-EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/data_raw/environmental_data_all.xlsx")
+EnvALL<- read_excel("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/environmental_data_all.xlsx")
 #View(EnvALL)
 #write.table(Env, file="Env.csv", sep=",", row.names=FALSE)
 
@@ -306,7 +306,7 @@ Merged.data<- Merged.data %>%
   dplyr::rename( "Long_Env"= "Longitude")
 #View(Merged.data)
 
-write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/MergedData.csv", sep=",", row.names=FALSE)
+write.table(Merged.data, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/MergedData.csv", sep=",", row.names=FALSE)
 
 ############# Cleaning the data of outliers ################
 View(Merged.data)
@@ -316,10 +316,9 @@ View(Merged.data)
 Maryland <- Merged.data %>%
   filter(State == "MD")
 View(Maryland)
-write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Maryland_data_all.csv", sep = ",", row.names=FALSE)
+write.table(Maryland, file = "~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Maryland_data_all.csv", sep = ",", row.names=FALSE)
 
 Site_count <- Merged.data %>% 
-  filter(State == "VA") %>%
   group_by(State, Site) %>%
   distinct(Site) %>% 
   nrow()
@@ -406,15 +405,14 @@ head(Merged.data)
 Merged.data$Prev_ep <- pmin(pmax(Merged.data$Prev_ratio, epsilon), 1 - epsilon)
 head(Merged.data)
 
-# Not using these models anymore and subsituting for the monthly and regional models
 #models 
-#model3<- glmmTMB(Prev_ep ~  oysteryear + WTEMP + SALINITY + Region + (1|Site), data = Merged.data, family = beta_family())
-#Anova(model3)
-#summary(model3)
+model3<- glmmTMB(Prev_ep ~  oysteryear + WTEMP + SALINITY + Region + (1|Site), data = Merged.data, family = beta_family())
+Anova(model3)
+summary(model3)
 
-#model4<- lmer(Mean.Intensity~ oysteryear+ WTEMP +SALINITY+ Region +(1|Site) , data= Merged.data)
-#Anova(model4)
-#summary(model4)
+model4<- lmer(Mean.Intensity~ oysteryear+ WTEMP +SALINITY+ Region +(1|Site) , data= Merged.data)
+Anova(model4)
+summary(model4)
 
 
 ### Collinearity- https://www.codingprof.com/3-ways-to-test-for-multicollinearity-in-r-examples/ ###
@@ -543,7 +541,7 @@ Monthly_Prevalence_Results$fdr.p.value <- p.adjust(Monthly_Prevalence_Results$p.
 Monthly_Prevalence_Results
 Monthly_Prevalence_Results$Month <- c("Jan", "Jan", "Jan", "Feb", "Feb", "Feb", "Mar", "Mar", "Mar", "Apr", "Apr","Apr", "May", "May", "May", "Jun", "Jun", "Jun", "Jul", "Jul","Jul", 
                                       "Aug", "Aug", "Aug", "Sept", "Sept", "Sept", "Oct", "Oct", "Oct", "Nov", "Nov", "Nov", "Dec", "Dec", "Dec")
-write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Monthly_Prevalence_Results.csv", sep=",", row.names=FALSE)
+write.table(Monthly_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Prevalence_Results.csv", sep=",", row.names=FALSE)
 
 
 ################################ Intensity ######################
@@ -609,7 +607,7 @@ Monthly_Intensity_Results$fdr.p.value <- p.adjust(Monthly_Intensity_Results$p.va
 Monthly_Intensity_Results
 Monthly_Intensity_Results$Month <- c("Jan", "Jan", "Jan", "Feb", "Feb", "Feb", "Mar", "Mar", "Mar", "Apr", "Apr","Apr", "May", "May", "May", "Jun", "Jun", "Jun", "Jul", "Jul","Jul", 
                                       "Aug", "Aug", "Aug", "Sept", "Sept", "Sept", "Oct", "Oct", "Oct", "Nov", "Nov", "Nov", "Dec", "Dec", "Dec")
-write.table(Monthly_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Monthly_Intensity_Results.csv", sep=",", row.names=FALSE)
+write.table(Monthly_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Monthly_Intensity_Results.csv", sep=",", row.names=FALSE)
 
 
 ################################## Regional Models ########################################################
@@ -800,7 +798,7 @@ Regional_Prevalence_Results$Region <- c("NANTICOKE RIVER","NANTICOKE RIVER", "NA
                                         "RAPPAHANNOCK RIVER","RAPPAHANNOCK RIVER","RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","GREAT WICOMICO RIVER","GREAT WICOMICO RIVER",
                                         "CORROTOMAN RIVER","CORROTOMAN RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","PIANKATANK RIVER","PIANKATANK RIVER","YORK RIVER","YORK RIVER","YORK RIVER",
                                         "MOBJACK BAY","MOBJACK BAY","MOBJACK BAY","JAMES RIVER","JAMES RIVER","JAMES RIVER","ST MARY'S RIVER", "ST MARY'S RIVER","ST MARY'S RIVER")
-write.table(Regional_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Regional_Prevalence_Results_Interactions.csv", sep=",", row.names=FALSE)
+write.table(Regional_Prevalence_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Regional_Prevalence_Results_Interactions.csv", sep=",", row.names=FALSE)
 
 ##### YEAR
 
@@ -937,7 +935,7 @@ Regional_PrevalenceYear_Results$Region <- c("NANTICOKE RIVER", "UPPER BAY", "CHE
                                        "RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER",
                                        "CORROTOMAN RIVER","PIANKATANK RIVER","YORK RIVER",
                                         "MOBJACK BAY","JAMES RIVER","ST MARY'S RIVER")
-write.table(Regional_PrevalenceYear_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Regional_PrevalenceYear_Results.csv", sep=",", row.names=FALSE)
+write.table(Regional_PrevalenceYear_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Regional_PrevalenceYear_Results.csv", sep=",", row.names=FALSE)
 
 ### Pearson's correlation
 ### Pearson's Correlation- Temperature and Salinity ### https://www.r-bloggers.com/2021/10/pearson-correlation-in-r/

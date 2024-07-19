@@ -80,7 +80,7 @@ colnames(mindists)=c("perksite", "distance", "envsites")
 
 mindists
 
-write.csv(mindists, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/DistanceMatrix_PerkEnv.csv")
+write.csv(mindists, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/DistanceMatrix_PerkEnv.csv")
 
 #Loading required package: ggplot2
 require(ggplot2)
