@@ -1,0 +1,49 @@
+month,fixed_effect,estimate,random_effects,variance,d,variable
+January,WTEMP,0.002897,Site,0.07698,0.006741403476,Prevalence
+January,SALINITY,0.084963,Monitoring Location,0.10769,0.1977113785,Prevalence
+February,WTEMP,0.1328,Site,0.08007,0.3043039478,Prevalence
+February,SALINITY,0.0809,Monitoring Location,0.11038,0.185377932,Prevalence
+March,WTEMP,0.085904,Site,0.08439,0.1834400123,Prevalence
+March,SALINITY,0.103777,Monitoring Location,0.13491,0.2216061435,Prevalence
+April,WTEMP,-0.003908,Site,0.07917,-0.01040009261,Prevalence
+April,SALINITY,0.104472,Monitoring Location,0.06203,0.2780241749,Prevalence
+May,WTEMP,0.0419,Site,0.07658,0.1087853085,Prevalence
+May,SALINITY,0.15308,Monitoring Location,0.07177,0.3974428407,Prevalence
+June,WTEMP,0.00233,Site,0.07672,0.005474100657,Prevalence
+June,SALINITY,0.16783,Monitoring Location,0.10445,0.3942997052,Prevalence
+July,WTEMP,-0.1016,Site,0.09189,-0.2276059678,Prevalence
+July,SALINITY,0.17242,Monitoring Location,0.10737,0.3862580803,Prevalence
+August,WTEMP,-0.01125,Site,0.06747,-0.02291294637,Prevalence
+August,SALINITY,0.182759,Monitoring Location,0.1736,0.3722264146,Prevalence
+September,WTEMP,-0.03452,Site,0.06337,-0.07723348861,Prevalence
+September,SALINITY,0.10848,Monitoring Location,0.1364,0.2427082516,Prevalence
+October,WTEMP,-0.04224,Site,0.055,-0.08700498135,Prevalence
+October,SALINITY,0.1025,Monitoring Location,0.1807,0.2111271446,Prevalence
+November,WTEMP,0.003053,Site,0.04776,0.006080274062,Prevalence
+November,SALINITY,0.114507,Monitoring Location,0.20436,0.228049113,Prevalence
+December,WTEMP,-0.013737,Site,0.04724,-0.02821268624,Prevalence
+December,SALINITY,0.090314,Monitoring Location,0.18984,0.1854844977,Prevalence
+January,WTEMP,-0.015213,Site,0.0672,-0.0391754681,Intensity
+January,SALINITY,0.035504,Monitoring Location,0.0836,0.09142745149,Intensity
+February,WTEMP,0.033239,Site,0.06509,0.08323808298,Intensity
+February,SALINITY,0.043075,Monitoring Location,0.09437,0.1078696839,Intensity
+March,WTEMP,0.050585,Site,0.06409,0.1161294332,Intensity
+March,SALINITY,0.043104,Monitoring Location,0.12565,0.09895508722,Intensity
+April,WTEMP,0.045757,Site,0.05937,0.1169265731,Intensity
+April,SALINITY,0.047252,Monitoring Location,0.09377,0.1207468678,Intensity
+May,WTEMP,0.029664,Site,0.069294,0.1112353943,Intensity
+May,SALINITY,0.074505,Monitoring Location,0.001823,0.2793821821,Intensity
+June,WTEMP,0.036013,Site,0.06116,0.09154105424,Intensity
+June,SALINITY,0.070296,Monitoring Location,0.09361,0.1786846402,Intensity
+July,WTEMP,-0.017963,Site,0.06686,-0.04457718106,Intensity
+July,SALINITY,0.084201,Monitoring Location,0.09552,0.2089541403,Intensity
+August,WTEMP,0.030899,Site,0.05888,0.0768047487,Intensity
+August,SALINITY,0.072021,Monitoring Location,0.10297,0.1790205122,Intensity
+September,WTEMP,-0.0549669,Site,0.06243,-0.1284708257,Intensity
+September,SALINITY,0.0431386,Monitoring Location,0.12063,0.1008252523,Intensity
+October,WTEMP,-0.031257,Site,0.05923,-0.07132473011,Intensity
+October,SALINITY,0.032667,Monitoring Location,0.13282,0.07454218123,Intensity
+November,WTEMP,-0.004836,Site,0.07052,-0.01128287804,Intensity
+November,SALINITY,0.030191,day,0.11319,0.08973739707,Intensity
+December,WTEMP,-1.35E-02,Site,0.05097,-3.29E-02,Intensity
+December,SALINITY,2.82E-02,day,0.1185,8.2E-02,Intensity

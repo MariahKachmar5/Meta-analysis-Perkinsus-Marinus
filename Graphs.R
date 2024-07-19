@@ -265,7 +265,7 @@ mean_prev_reg$Region2<- factor(mean_prev_reg$Region, levels = c("NANTICOKE RIVER
 View(mean_prev_reg)
 region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region2)) + 
   facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
-  theme(strip.text = element_text(size = 8), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
+  theme(strip.text = element_text(size = 15), axis.text=element_text(size=15),axis.title=element_text(size=15), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
  #+scale_color_manual(values = custom_palette)
 
 region_p

@@ -1,15 +1,16 @@
 
 #Created by: Mariah L. Kachmar
 #Date:
-#Last updated: 1/25/24
-#Description: Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis 
+#Last updated: 7/19/24
+#Description: Generalized Linear Mixed Effects Model Perkinsus marinus Meta-analysis ; This analysis is looking at 
+#spatio-temporal environmental impacts on Perkinsus marinus infection intensity and prevalence in the Chesapeake Bay
 
-#NOTES: receiving error for glmm() for prevalence data
+#NOTES: 
 
 #####################################################################################################
 
 #Set working directory
-setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/")
+setwd("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/code")
 
 #Load all packaged
 library(lme4)
