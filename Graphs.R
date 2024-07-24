@@ -1,4 +1,4 @@
-setwd("~/Documents/UMBC/Meta-Analysis")
+setwd("~/Documents/UMBC/Github/Meta-analysis-Perkinsus-Marinus/code")
 
 ####################################### yearly means of all sites Chesapeake Bay ###################################
 Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Disease_data_converted.csv",)
@@ -179,16 +179,14 @@ SalinityTrend2
 library(readxl)
 library(tidyverse)
 
-effectsize<- read_xlsx("~/Documents/UMBC/Meta-Analysis/Intensity Effect Size.xlsx",)
-View(effectsize)
+effectsize<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/raw_data/MonthlyEffectSizes.csv",)
 
 Intefplot<- ggplot(effectsize, aes(fct_inorder(Month), d, color=FixedEffect))+geom_point(size=3) + theme(axis.text.x = element_text(angle=45, size = 15), axis.text.y = element_text(size=15))+
   labs(title= "B", y="",x="")+theme(legend.position = "none", panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                                                     panel.background = element_blank(), axis.line = element_line(colour = "black"))
 Intefplot
 
-Peffectsize<- read_xlsx("~/Documents/UMBC/Meta-Analysis/Prev Effect Size.xlsx",)
-View(Peffectsize)
+
 
 Pefplot<- ggplot(Peffectsize, aes(fct_inorder(Month), d, color=FixedEffect))+geom_point(size=3) + theme(axis.text.x = element_text(angle=45,size = 15), axis.text.y = element_text(size=15),legend.position = "bottom",legend.text=element_text(size=15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                                                                                           panel.background = element_blank(), axis.line = element_line(colour = "black"))+
