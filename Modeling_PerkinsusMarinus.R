@@ -999,124 +999,124 @@ str(Nanticoke)
 
 ##### Intensity #####
 
-model88<- glm(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+(1|MonitoringLocation), Nanticoke)
+model88<- glm(Mean.Intensity~ WTEMP * SALINITY, data = Nanticoke)
 results88<-tidy(Anova(model88))
 summary(model88)
 
-model89<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), UpperBay)
+model89<-glm(Mean.Intensity~ WTEMP * SALINITY, data = UpperBay)
 results89<-tidy(Anova(model89))
 summary(model89)
 
-model90<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Chester)
+model90<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), data = Chester)
 results90<-tidy(Anova(model90))
 summary(model90)
 
-model91<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), EasternBay)
+model91<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), EasternBay)
 results91<-tidy(Anova(model91))
 summary(model91)
 
-model92<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Wye)
+model92<- glm(Mean.Intensity~ WTEMP * SALINITY, data = Wye)
 results92<-tidy(Anova(model92))
 summary(model92)
 
-model93<- lmer(Mean.Intensity~ WTEMP * SALINITY+ (1|Site)+ (1|MonitoringLocation), Miles)
+model93<- lmer(Mean.Intensity~ WTEMP * SALINITY+ (1|Site), Miles)
 results93<-tidy(Anova(model93))
 summary(model93)
 
-model94<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), BroadCreek)
+model94<- glm(Mean.Intensity~ WTEMP * SALINITY, data = BroadCreek)
 results94<-tidy(Anova(model94))
 summary(model94)
 
-model95<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), HarrisCreek)
+model95<- glm(Mean.Intensity~ WTEMP * SALINITY, data = HarrisCreek)
 results95<-tidy(Anova(model95))
 summary(model95)
 
-model96<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Choptank)
+model96<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site),Choptank)
 results96<-tidy(Anova(model96))
 summary(model96)
 
-model97<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), LittleChoptank)
+model97<- glm(Mean.Intensity~ WTEMP * SALINITY ,data =  LittleChoptank)
 results97<-tidy(Anova(model97))
 summary(model97)
 
-model98<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Patuxent)
+model98<- glm(Mean.Intensity~ WTEMP * SALINITY ,data =  Patuxent)
 results98<-tidy(Anova(model98))
 summary(model98)
 
-model99<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), MiddleBay)
+model99<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), MiddleBay)
 results99<-tidy(Anova(model99))
 summary(model99)
 
-model100<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Manokin)
+model100<- glm(Mean.Intensity~ WTEMP * SALINITY , data = Manokin)
 results100<-tidy(Anova(model100))
 summary(model100)
 
-model101<- lmer(Mean.Intensity~ WTEMP * SALINITY+ (1|Site)+ (1|MonitoringLocation), Potomac)
+model101<- glm(Mean.Intensity~ WTEMP * SALINITY, data = Potomac)
 results101<-tidy(Anova(model101))
 summary(model101)
 
 
-model102<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), LowerBay)
+model102<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), LowerBay)
 results102<-tidy(Anova(model102))
 summary(model102)
 
-model103<- lmer(Mean.Intensity~ WTEMP*SALINITY + (1|Site)+ (1|MonitoringLocation), FishingBay)
+model103<- glm(Mean.Intensity~ WTEMP*SALINITY , data = FishingBay)
 results103<-tidy(Anova(model103))
 summary(model103)
 
 
-model104<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Honga)
+model104<- glm(Mean.Intensity~ WTEMP * SALINITY, data = Honga)
 results104<-tidy(Anova(model104))
 summary(model104)
 
-model105<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), TangierS)
+model105<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), TangierS)
 results105<-tidy(Anova(model105))
 summary(model105)
 
-model106<- lmer(Mean.Intensity~ WTEMP * SALINITY+ (1|Site)+ (1|MonitoringLocation), HollandS)
+model106<- glm(Mean.Intensity~ WTEMP * SALINITY, data =HollandS)
 results106<-tidy(Anova(model106))
 summary(model106)
 
-model107<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), PocomokeS)
+model107<- glm(Mean.Intensity~ WTEMP * SALINITY, data =PocomokeS)
 results107<-tidy(Anova(model107))
 summary(model107)
 
-model108<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Rappahannock)
+model108<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), Rappahannock)
 results108<-tidy(Anova(model108))
 summary(model108)
 
-model109<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), GWicomico)
+model109<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), GWicomico)
 results109<-tidy(Anova(model109))
 summary(model109)
 
-model110<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Corrotoman)
+model110<- glm(Mean.Intensity~ WTEMP * SALINITY , data = Corrotoman)
 results110<-tidy(Anova(model110))
 summary(model110)
 
-model111<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Piankatank)
+model111<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), Piankatank)
 results111<-tidy(Anova(model111))
 summary(model111)
 
-model112<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), York)
+model112<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), York)
 results112<-tidy(Anova(model112))
 summary(model112)
 
-model113<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation),Mobjack)
+model113<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site),Mobjack)
 results113<-tidy(Anova(model113))
 summary(model113)
 
-model114<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), James)
+model114<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site), James)
 results114<-tidy(Anova(model114))
 summary(model114)
 
-model115<- lmer(Mean.Intensity~ WTEMP * SALINITY + (1|Site)+ (1|MonitoringLocation), Stmary)
+model115<- glm(Mean.Intensity~ WTEMP * SALINITY,data = Stmary)
 results115<-tidy(Anova(model115))
 summary(model115)
 ## Combining Anova () chi sq stats into a table 
-Regional_Intensity_Results <-rbind(results32, results33, results34, results35, results36, results37, results38, results39, results40, results41, results42, results43,
-                                    results44, results45, results46, results47, results48, results49, results50, results51, results52, results53, results54, results55, results56,
-                                    results57, results58, results59)
-View(Regional_Prevalence_Results)
+Regional_Intensity_Results <-rbind(results88, results89, results90, results91, results92, results93, results94, results95, results96, results97, results98, results99,
+                                    results100, results101, results102, results103, results104, results105, results106, results107, results108, results109, results110, results110, results112,
+                                    results113, results114, results115)
+View(Regional_Intensity_Results)
 
 ### ADJUSTING P VALUE PREVALENCE & MONTH ###
 
@@ -1132,7 +1132,7 @@ Regional_Intensity_Results$Region <- c("NANTICOKE RIVER","NANTICOKE RIVER", "NAN
                                         "RAPPAHANNOCK RIVER","RAPPAHANNOCK RIVER","RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","GREAT WICOMICO RIVER","GREAT WICOMICO RIVER",
                                         "CORROTOMAN RIVER","CORROTOMAN RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","PIANKATANK RIVER","PIANKATANK RIVER","YORK RIVER","YORK RIVER","YORK RIVER",
                                         "MOBJACK BAY","MOBJACK BAY","MOBJACK BAY","JAMES RIVER","JAMES RIVER","JAMES RIVER","ST MARY'S RIVER", "ST MARY'S RIVER","ST MARY'S RIVER")
-write.table(Regional_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Regional_Intensity_Results_Interactions.csv", sep=",", row.names=FALSE)
+write.table(Regional_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Regional_Intensity_Results_Interactions.csv", sep=",", row.names=FALSE)
 
 ##### YEAR & Intensity & region
 
