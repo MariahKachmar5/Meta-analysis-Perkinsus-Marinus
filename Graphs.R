@@ -199,6 +199,7 @@ MeanAnnual<- Merged.data %>%
 View(MeanAnnual)
 
 View(MasterENV_filtered)
+View(Merged.data)
 
 T_sum<- summarySE(Merged.data, "WTEMP", groupvars= c("Year", "Region"))
 View(T_sum)
@@ -213,13 +214,29 @@ View(S_sum)
 
 AnnualTemp_plot <- ggplot(T_sum, aes(Year, WTEMP)) + geom_col(color= "grey", fill= "grey") + 
   labs(title= "Annual Mean Temperature in Chesapeake Bay", y = "Mean Temperature") +
-  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=WTEMP-se, ymax=WTEMP+se),width=.2, position=position_dodge(.9))
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + 
+  geom_errorbar(aes(ymin=WTEMP-se, ymax=WTEMP+se),width=.2, position=position_dodge(.9)) + theme_minimal() + theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  )
 
 AnnualTemp_plot
 
 AnnualSAL_plot <- ggplot(S_sum, aes(Year, SALINITY)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "Annual Mean Salinity in Chesapeake Bay", y = "Mean Salinity") +
-  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=SALINITY-se, ymax=SALINITY+se),width=.2, position=position_dodge(.9))
+  labs(title= "Annual Mean Salinity in Chesapeake Bay", y = "Mean Salinity") + theme(axis.text.x = element_text(angle= 45)) + 
+  geom_smooth(method=lm, se = FALSE, col= "red") + 
+  geom_errorbar(aes(ymin=SALINITY-se, ymax=SALINITY+se),width=.2, position=position_dodge(.9))+ 
+  theme_minimal() + theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"))
 AnnualSAL_plot
 
 ##################################################################################################################
