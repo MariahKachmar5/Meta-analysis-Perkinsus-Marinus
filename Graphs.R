@@ -34,13 +34,30 @@ View(I_sum)
 ### Plotting Annual Mean infection intensity in Chesapeake Bay ###
 Intensity_plot <- ggplot(I_sum, aes(Year, Mean.Intensity)) + geom_col(color= "grey", fill= "grey") + 
   labs(title= "Annual mean P. marinus Mean Infection Intensity in Chesapeake Bay", y = "Mean Infection intensity") +
-  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=Mean.Intensity-se, ymax=Mean.Intensity+se),width=.2, position=position_dodge(.9))
+  theme(axis.text.x = element_text(angle= 45)) + theme_minimal() + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=Mean.Intensity-se, ymax=Mean.Intensity+se),width=.2, position=position_dodge(.9))+
+theme(
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  axis.title.x = element_text(size = 16),
+  axis.title.y = element_text(size = 16),
+  axis.line.x.bottom  = element_line(color = "black"),
+  axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+) +ylab("Mean Annual Infection Intensity")
 Intensity_plot
 
 ### Plotting Annual Mean prevalence in Chesapeake Bay ###
 Prev_plot <- ggplot(P_sum, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
   labs(title= "Annual mean P. marinus Mean Prevalence % in Chesapeake Bay", y = "Mean Prevalence %") +
-  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=Prevalence-se, ymax=Prevalence+se),width=.2, position=position_dodge(.9))
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") +
+  geom_errorbar(aes(ymin=Prevalence-se, ymax=Prevalence+se),width=.2, position=position_dodge(.9))+
+  theme_minimal() +theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  ) +ylab("Mean Annual Prevalence (%)")
 Prev_plot
 
 ############################################ perkinsus and intensity ALL by latitude ################################
@@ -197,6 +214,7 @@ View(S_sum)
 AnnualTemp_plot <- ggplot(T_sum, aes(Year, WTEMP)) + geom_col(color= "grey", fill= "grey") + 
   labs(title= "Annual Mean Temperature in Chesapeake Bay", y = "Mean Temperature") +
   theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=WTEMP-se, ymax=WTEMP+se),width=.2, position=position_dodge(.9))
+
 AnnualTemp_plot
 
 AnnualSAL_plot <- ggplot(S_sum, aes(Year, SALINITY)) + geom_col(color= "grey", fill= "grey") + 
@@ -219,19 +237,28 @@ I_effect<- effectsize %>% filter(variable == "Intensity")
 
 Intefplot<- ggplot(I_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) + theme(axis.text.x = element_text( size = 15), axis.text.y = element_text(size=15))+
   labs(title= "B", y="",x="")+theme(legend.position = "none", panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                                                    panel.background = element_blank(), axis.line = element_line(colour = "black")) 
+                                                                    panel.background = element_blank(), axis.line = element_line(colour = "black"),
+                                    )
 Intefplot
 
 
-Pefplot<- ggplot(P_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) + theme(axis.text.x = element_text(size = 15), axis.text.y = element_text(size=15),legend.position = "bottom",legend.text=element_text(size=15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                                                                                          panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-  labs(title= "A", y="",x="")
+Pefplot<- ggplot(P_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) +
+  theme(axis.text.x = element_text(size = 15), 
+        axis.text.y = element_text(size=15),
+        legend.position = "bottom",
+        legend.text=element_text(size=15),
+        legend.title = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.title.y = element_text(angle = 90, hjust = 0.5, size = 14),                                                                                     panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+  labs(title= "A", y="",x="") + scale_color_discrete(labels= c('Salinity', 'Temperature'))
 Pefplot
 
 library(grid)
 library(gridExtra)
+library(ggpubr)
 
-efplot<- grid.arrange(Pefplot, Intefplot,left= textGrob("d", gp=gpar(fontsize=20)), bottom = textGrob("month", gp=gpar(fontsize=20)))
+# Add a common y-axis label using textGrob()
+
+efplot<- grid.arrange(Pefplot, Intefplot,left= textGrob("Effect Size (Cohen's d)", rot = 90, gp=gpar(fontsize=20)), bottom = textGrob("Month", gp=gpar(fontsize=20)))
 
 ##################################################################################
 ###### QC Environmental Data ####
