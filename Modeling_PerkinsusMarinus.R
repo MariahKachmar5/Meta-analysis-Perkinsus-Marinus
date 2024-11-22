@@ -382,10 +382,10 @@ Merged.data$Lat<- scale(Merged.data$Lat)
 
 Merged.data
 
-model5<- lmer(WTEMP ~  Year + Region + (1|Site), data = Merged.data)
+model5<- lmer(Mean_Temp ~  Year + Region + (1|Site), data = MeanAnnual)
 Anova(model5)
   
-model6<- lmer(SALINITY ~ Year + Region + (1|Site), data = Merged.data)
+model6<- lmer(Mean_Sal ~ Year + Region + (1|Site), data = MeanAnnual)
 Anova(model6)
 
 
@@ -488,7 +488,7 @@ Dec$Prevalence<- as.numeric(Dec$Prevalence)
 #mod.names<- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', "Sept", 'Oct', 'Nov', "Dec")
 #aictab(cand.set = MonthlyPrev, modnames = mod.names)
 
-
+View(Jan)
 ####### PREVALENCE #########
 model8<- glmmTMB(Prev_ep~ WTEMP + SALINITY+ Region + (1|Site)+ (1|MonitoringLocation), Jan, family = beta_family())
 results8<-tidy(Anova(model8))
@@ -620,7 +620,10 @@ write.table(Monthly_Intensity_Results, file="~/Documents/UMBC/GitHub/Meta-analys
 
 ################################## Regional Models ########################################################
 
-Merged.data$Region
+MeanAnnual<- Merged.data %>%
+  dplyr::group_by(Region, Year, Site, MonitoringLocation, Prev_ep, Mean.Intensity) %>%
+  dplyr::summarize(Mean_Temp = mean(WTEMP), Mean_Sal = mean(SALINITY))
+View(MeanAnnual)
 
 #Subetting data by Region to create individual spreadsheets
 Nanticoke <- Merged.data[Merged.data$Region == "NANTICOKE RIVER",]
@@ -651,6 +654,8 @@ York<- Merged.data[Merged.data$Region == "YORK RIVER",]
 Mobjack<- Merged.data[Merged.data$Region == "MOBJACK BAY" | Merged.data$Region == "MOBJACK RIVER",]
 James<- Merged.data[Merged.data$Region == "JAMES RIVER",]
 Stmary<- Merged.data[Merged.data$Region == "ST. MARY'S RIVER",]
+
+View(Nanticoke)
 
 #Removed EASTERN SHORE & YEOCOMICO RIVER
 
@@ -965,6 +970,10 @@ BroadCreekTvS<- cor(BroadCreek$WTEMP, BroadCreek$SALINITY, method= 'pearson')
 BroadCreekTvS
 #-0.2011958
 
+# Running pearson's cor for all sites that had salinity significant for regional models
+
+# Running pearson's cor for all sites that had just temperature significant for regional models - James River had S & T & T:S significant 
+
 #Temperature vs Year
 ManokinRiverTvY<- cor(Manokin$WTEMP, Manokin$Year, method= 'pearson')
 ManokinRiverTvY
@@ -992,10 +1001,53 @@ JamesRiverYvS
 BroadCreekYvS<- cor(BroadCreek$Year, BroadCreek$SALINITY, method= 'pearson')
 BroadCreekYvS
 #-0.06011818 
+NanticokeTvS <- cor(Nanticoke$Year, Nanticoke$SALINITY, method= 'pearson')
+NanticokeTvS
+UpperBayTvS <- cor(UpperBay$Year, UpperBay$SALINITY, method= 'pearson')
+UpperBayTvS
+ChesterTvS <- cor(Chester$Year, Chester$SALINITY, method= 'pearson')
+ChesterTvS
+EasternBayTvS <- cor(EasternBay$Year, EasternBay$SALINITY, method= 'pearson')
+EasternBayTvS
+WyeTvS <- cor(Wye$Year, Wye$SALINITY, method= 'pearson')
+WyeTvS
+MilesTvS <- cor(Miles$Year, Miles$SALINITY, method= 'pearson')
+MilesTvS
+HarrisTvS <- cor(HarrisCreek$Year, HarrisCreek$SALINITY, method= 'pearson')
+HarrisTvS
+ChoptankTvS <- cor(Choptank$Year, Choptank$SALINITY, method= 'pearson')
+ChoptankTvS
+LChopTvS <- cor(LittleChoptank$Year, LittleChoptank$SALINITY, method= 'pearson')
+LChopTvS
+PatuxentTvS <- cor(Patuxent$Year, Patuxent$SALINITY, method= 'pearson')
+PatuxentTvS
+MiddleBayTvS <- cor(MiddleBay$Year, MiddleBay$SALINITY, method= 'pearson')
+MiddleBayTvS
+PotomacTvS <- cor(Potomac$Year, Potomac$SALINITY, method= 'pearson')
+PotomacTvS
+LowerBayTvS <- cor(LowerBay$Year, LowerBay$SALINITY, method= 'pearson')
+LowerBayTvS
+FishingBayTvS <- cor(FishingBay$Year, FishingBay$SALINITY, method= 'pearson')
+FishingBayTvS
+TangierTvS <- cor(TangierS$Year, TangierS$SALINITY, method= 'pearson')
+TangierTvS
+HollandsTvS <- cor(HollandS$Year, HollandS$SALINITY, method= 'pearson')
+HollandsTvS
+PocomokeTvS <- cor(PocomokeS$Year, PocomokeS$SALINITY, method= 'pearson')
+PocomokeTvS
+RappahTvS <- cor(Rappahannock$Year, Rappahannock$SALINITY, method= 'pearson')
+RappahTvS
+GWicTvS <- cor(GWicomico$Year, GWicomico$SALINITY, method= 'pearson')
+GWicTvS
+PiankatankTvS <- cor(Piankatank$Year, Piankatank$SALINITY, method= 'pearson')
+PiankatankTvS
+MobjackTvS <- cor(Mobjack$Year, Mobjack$SALINITY, method= 'pearson')
+MobjackTvS
+StMTvS <- cor(Stmary$Year, Stmary$SALINITY, method= 'pearson')
+StMTvS
+CorrotTvS <- cor(Corrotoman$Year, Corrotoman$SALINITY, method= 'pearson')
+CorrotTvS
 
-View(Nanticoke)
-
-str(Nanticoke)
 
 ##### Intensity #####
 

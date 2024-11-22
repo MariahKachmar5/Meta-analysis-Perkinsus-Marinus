@@ -1,7 +1,7 @@
 setwd("~/Documents/UMBC/Github/Meta-analysis-Perkinsus-Marinus/code")
 
 ####################################### yearly means of all sites Chesapeake Bay ###################################
-Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/Data Files/Disease_data_converted.csv",)
+Perkinsus <- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/outputs/Perkinsus_data_converted.csv",)
 View(Perkinsus)
 
 Perkinsus<-na.omit(Perkinsus)
@@ -172,6 +172,38 @@ SalinityTrend2 <-ggplot(Means2, aes(Month,mean_SALINITY, color = Year))+geom_poi
 SalinityTrend2
 
 
+
+
+### Yearly Mean Temp and Salinity ###
+
+MeanAnnual<- Merged.data %>%
+  dplyr::group_by(Region, Year, Site, MonitoringLocation, Prev_ep, Mean.Intensity) %>%
+  dplyr::summarize(Mean_Temp = mean(WTEMP), Mean_Sal = mean(SALINITY))
+View(MeanAnnual)
+
+View(MasterENV_filtered)
+
+T_sum<- summarySE(Merged.data, "WTEMP", groupvars= c("Year", "Region"))
+View(T_sum)
+
+S_sum <- summarySE(Merged.data, "SALINITY", groupvars = c("Year", "Region"))
+View(S_sum)
+
+#AnnualTemp<- MasterENV_filtered %>%
+#  dplyr::group_by(Year) %>%
+#  dplyr::summarize(Mean_Temp = mean(WTEMP))
+#View(AnnualTemp)
+
+AnnualTemp_plot <- ggplot(T_sum, aes(Year, WTEMP)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "Annual Mean Temperature in Chesapeake Bay", y = "Mean Temperature") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=WTEMP-se, ymax=WTEMP+se),width=.2, position=position_dodge(.9))
+AnnualTemp_plot
+
+AnnualSAL_plot <- ggplot(S_sum, aes(Year, SALINITY)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "Annual Mean Salinity in Chesapeake Bay", y = "Mean Salinity") +
+  theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=SALINITY-se, ymax=SALINITY+se),width=.2, position=position_dodge(.9))
+AnnualSAL_plot
+
 ##################################################################################################################
 
 #### Effect size ####
@@ -179,16 +211,19 @@ SalinityTrend2
 library(readxl)
 library(tidyverse)
 
-effectsize<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/raw_data/MonthlyEffectSizes.csv",)
+effectsize<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/data_raw/MonthlyEffectSizes.csv",)
 
-Intefplot<- ggplot(effectsize, aes(fct_inorder(Month), d, color=FixedEffect))+geom_point(size=3) + theme(axis.text.x = element_text(angle=45, size = 15), axis.text.y = element_text(size=15))+
+
+P_effect<- effectsize %>% filter(variable == "Prevalence")
+I_effect<- effectsize %>% filter(variable == "Intensity")
+
+Intefplot<- ggplot(I_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) + theme(axis.text.x = element_text( size = 15), axis.text.y = element_text(size=15))+
   labs(title= "B", y="",x="")+theme(legend.position = "none", panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                                                    panel.background = element_blank(), axis.line = element_line(colour = "black"))
+                                                                    panel.background = element_blank(), axis.line = element_line(colour = "black")) 
 Intefplot
 
 
-
-Pefplot<- ggplot(Peffectsize, aes(fct_inorder(Month), d, color=FixedEffect))+geom_point(size=3) + theme(axis.text.x = element_text(angle=45,size = 15), axis.text.y = element_text(size=15),legend.position = "bottom",legend.text=element_text(size=15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+Pefplot<- ggplot(P_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) + theme(axis.text.x = element_text(size = 15), axis.text.y = element_text(size=15),legend.position = "bottom",legend.text=element_text(size=15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                                                                                           panel.background = element_blank(), axis.line = element_line(colour = "black"))+
   labs(title= "A", y="",x="")
 Pefplot
@@ -196,9 +231,9 @@ Pefplot
 library(grid)
 library(gridExtra)
 
-efplot<- grid.arrange(Pefplot, Intefplot,left= textGrob("d", gp=gpar(fontsize=20)), bottom = textGrob("Month", gp=gpar(fontsize=20)))
+efplot<- grid.arrange(Pefplot, Intefplot,left= textGrob("d", gp=gpar(fontsize=20)), bottom = textGrob("month", gp=gpar(fontsize=20)))
 
-
+##################################################################################
 ###### QC Environmental Data ####
 View(EnvALL)
 ## When is sampling occurring for each site?###     
@@ -218,13 +253,14 @@ SampleDatePlot
 View(E1990)
 
 
-
+#################################################################################
 
 ###### Regions most impacted by disease ###############
 View(Perkinsus)
 Perkinsus$oysteryear=ifelse(Perkinsus$Month== "Nov"| Perkinsus$Month=="Dec", Perkinsus$Year+1, Perkinsus$Year)
 head(Perkinsus)
 
+#Prevalence 
 Merged.data$Prevalence<- as.numeric(Merged.data$Prevalence)
 View(Merged.data)
 
@@ -235,6 +271,15 @@ mean_prev_reg <- Merged.data %>%
 View(mean_prev_reg)
 
 mean_prev_reg <- filter(mean_prev_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
+
+#Mean Intensity
+mean_int_reg <- Merged.data %>%
+  dplyr::group_by(Region, oysteryear, State, Lat, Long) %>%
+  dplyr::summarise(mean_intensity = mean(Mean.Intensity))
+
+View(mean_int_reg)
+
+mean_int_reg <- filter(mean_int_reg, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 library(RColorBrewer)
 n <- 40
@@ -260,6 +305,12 @@ mean_prev_reg$Region2<- factor(mean_prev_reg$Region, levels = c("NANTICOKE RIVER
                                     "POTOMAC RIVER", "LOWER BAY","FISHING BAY", "HONGA RIVER", "TANGIER SOUND", "HOLLAND STRAITS","POCOMOKE SOUND",
                                     "RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","YORK RIVER","MOBJACK BAY","JAMES RIVER"))
 
+mean_int_reg$Region2 <- factor(mean_int_reg$Region, levels = c("NANTICOKE RIVER", "UPPER BAY", "CHESTER RIVER", "EASTERN BAY", "WYE RIVER", "MILES RIVER", "BROAD CREEK",
+                                                                "HARRIS CREEK", "CHOPTANK RIVER", "LITTLE CHOPTANK RIVER", "ST. MARY'S RIVER", "PATUXENT RIVER", "MIDDLE BAY", "MANOKIN RIVER",
+                                                                "POTOMAC RIVER", "LOWER BAY","FISHING BAY", "HONGA RIVER", "TANGIER SOUND", "HOLLAND STRAITS","POCOMOKE SOUND",
+                                                                "RAPPAHANNOCK RIVER","GREAT WICOMICO RIVER","CORROTOMAN RIVER","PIANKATANK RIVER","YORK RIVER","MOBJACK BAY","JAMES RIVER"))
+
+
 View(mean_prev_reg)
 region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region2)) + 
   facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
@@ -267,6 +318,14 @@ region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point
  #+scale_color_manual(values = custom_palette)
 
 region_p
+
+mean_int_reg<-na.omit(mean_int_reg)
+region_i<-  ggplot(mean_int_reg, aes(oysteryear, mean_intensity)) + geom_point(aes(color=Region2)) + 
+  facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
+  theme(strip.text = element_text(size = 15), axis.text=element_text(size=15),axis.title=element_text(size=15), legend.position = "none")+ylab("Mean Intensity") + xlab("Year")
+#+scale_color_manual(values = custom_palette)
+
+region_i
 
 ################# GIS map Perkinsus sites  ########################################
 
@@ -553,28 +612,121 @@ map
 
 
 
+####### Deep diving into James River ##############
+
+# James river is weird. Both prevalence and intensity is decreasing but both temperature and salinity
+# have a significant effect. Salinity and year are also positively correlated. 
+
+# Lets look at the james river sites individually 
 
 
+View(James)
+
+James<- filter(James, Site != 'LONG ROCK')
+
+TemperatureJames <- ggplot(James, aes(Year, WTEMP), fill= Site) + 
+  geom_point()+geom_smooth(method=lm, se=FALSE)+ facet_wrap( ~Site, nrow=5) +theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  ) +ylab("Temperature (Celsisus)")
+TemperatureJames
 
 
+#Salinity mean 
+
+Salinity_James <- ggplot(James, aes(Year, SALINITY), fill= Site) + geom_point()+geom_smooth(method=lm, se=FALSE)
+Salinity_James
+
+SalinityJames <- ggplot(James, aes(Year, SALINITY), fill= Site) + geom_point()+geom_smooth(method=lm, se=FALSE)+ facet_wrap( ~Site, nrow=5) +theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  ) +ylab("Salinity")
+SalinityJames
+
+#Salinity is not increasing at all sites 
+
+#what is happening with perkinsus at each site?
+PrevJames <- ggplot(James, aes(Year, Prev_ep), fill= Site) + geom_point()+geom_smooth(method=lm, se=FALSE)+ facet_wrap( ~Site, nrow=5) +theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  ) +ylab("Prevalence")
+PrevJames
+
+IntJames <- ggplot(James, aes(Year, Mean.Intensity), fill= Site) + geom_point()+geom_smooth(method=lm, se=FALSE)+ facet_wrap( ~Site, nrow=5) +theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  ) +ylab("Intensity")
+IntJames
 
 
+View(Feb)
+View(PocomokeS)
+View(York)
+
+Feb_filter<- Feb[Feb$Region == "MANOKIN RIVER" | Feb$Region =="YORK RIVER"
+| Feb$Region =="POCOMOKE SOUND",]
+Feb_filter
+
+Temp_Feb <- ggplot(Feb_filter, aes(Year, WTEMP)) + geom_point()+geom_smooth(method=lm, se=FALSE)+
+  facet_wrap(~Region)
+Temp_Feb
+
+#What is going on with the POCOMOKE SOUND ?
+
+May_filter<- May[May$Region == "MANOKIN RIVER" | May$Region =="YORK RIVER"
+                 | May$Region =="POCOMOKE SOUND",]
+May_filter
+
+Sal_May <- ggplot(May_filter, aes(Year, SALINITY)) + geom_point()+geom_smooth(method=lm, se=FALSE)+
+  facet_wrap(~Region)
+Sal_May
 
 
+June_filter<- Jun[Jun$Region == "MANOKIN RIVER" | Jun$Region =="YORK RIVER"
+                 | Jun$Region =="POCOMOKE SOUND",]
+June_filter
+
+Sal_June <- ggplot(June_filter, aes(Year, SALINITY)) + geom_point()+geom_smooth(method=lm, se=FALSE)+
+  facet_wrap(~Region)
+Sal_June
 
 
+Jul_filter<- Jul[Jul$Region == "MANOKIN RIVER" | Jul$Region =="YORK RIVER"
+                  | Jul$Region =="POCOMOKE SOUND",]
+Jul_filter
+
+Sal_Jul <- ggplot(Jul_filter, aes(Year, SALINITY)) + geom_point()+geom_smooth(method=lm, se=FALSE)+
+  facet_wrap(~Region)
+Sal_Jul
 
 
+Aug_filter<- Aug[Aug$Region == "MANOKIN RIVER" | Aug$Region =="YORK RIVER"
+                 | Aug$Region =="POCOMOKE SOUND",]
+Aug_filter
 
-
-
-
-
-
-
-
-
-
+Sal_Aug <- ggplot(Aug_filter, aes(Year, SALINITY)) + geom_point()+geom_smooth(method=lm, se=FALSE)+
+  facet_wrap(~Region) 
+Sal_Aug
 
 
 
