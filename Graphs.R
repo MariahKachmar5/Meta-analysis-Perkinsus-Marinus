@@ -60,6 +60,82 @@ Prev_plot <- ggplot(P_sum, aes(Year, Prevalence)) + geom_col(color= "grey", fill
   ) +ylab("Mean Annual Prevalence (%)")
 Prev_plot
 
+
+#grid
+
+# double axis
+Plot <- ggplot(data=P_sum, aes(x=Year, y= Prevalence),color =Prevalence) +
+  geom_point()+ geom_line()+
+  theme(axis.text.x = element_text(angle= 45)) +
+  geom_errorbar(aes(ymin=Prevalence-se, ymax=Prevalence+se),width=.2, position=position_dodge(.9))+
+  theme_minimal() +theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom  = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  ) +ylab("Mean Annual Prevalence (%)")
+Plot
+
+p <- Plot +
+  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
+             color = "red", size = 1) + # Points for Mean.Intensity
+  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
+            color = "red") +           # Line for Mean.Intensity
+  geom_errorbar(data = I_sum, aes(x = Year, 
+                                  ymin = (Mean.Intensity - se) * 25, 
+                                  ymax = (Mean.Intensity + se) * 25), 
+                width = 0.2, color = "red") + # Error bars for Mean.Intensity
+  scale_y_continuous(
+    name = "Mean Annual Prevalence (%)",
+    sec.axis = sec_axis(~./25, name = "Intensity") # Secondary axis
+  )
+p
+
+Plot <- ggplot(data = P_sum, aes(x = Year, y = Prevalence)) +
+  geom_point(color = "blue") + # Points for Prevalence
+  geom_line(color = "blue") +  # Line for Prevalence
+  geom_errorbar(
+    data = P_sum, 
+    aes(ymin = Prevalence - se, ymax = Prevalence + se), # Error bars for Prevalence
+    width = 0.2, 
+    color = "blue"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"),
+    panel.spacing = unit(1, "lines")
+  ) +
+  ylab("Mean Annual Prevalence (%)")
+
+# Add Mean.Intensity with secondary axis
+Plot2 <- Plot +
+  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
+             color = "red", size = 1) + # Points for Mean.Intensity
+  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
+            color = "red") +           # Line for Mean.Intensity
+  geom_errorbar(
+    data = I_sum, 
+    aes(x = Year, 
+        ymin = (Mean.Intensity - se) * 25, 
+        ymax = (Mean.Intensity + se) * 25), # Error bars for Mean.Intensity
+    width = 0.2, 
+    color = "red"
+  ) +
+  scale_y_continuous(
+    name = "Mean Annual Prevalence (%)",
+    sec.axis = sec_axis(~./25, name = "Intensity") # Secondary axis
+  )
+
+# Display the plot
+Plot2
 ############################################ perkinsus and intensity ALL by latitude ################################
 
 library(ggplot2)
@@ -226,7 +302,7 @@ View(AnnualSal)
 test<- ggplot(MeanAnnual, aes (Year, Mean_Temp)) +geom_col()
 
 AnnualTemp_plot <- ggplot(AnnualTemp, aes(Year, Mean_Temp)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "", y = bquote("Mean Temperature ("* degree * "C)"), x= "") +
+  labs(title= "A", y = bquote("Mean Temperature ("* degree * "C)"), x= "") +
   theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + 
   geom_errorbar(aes(ymin=Mean_Temp-SE_T, ymax=Mean_Temp+SE_T),width=.2, position=position_dodge(.9)) + theme_minimal() + theme(
     panel.grid.major = element_blank(),
@@ -234,13 +310,13 @@ AnnualTemp_plot <- ggplot(AnnualTemp, aes(Year, Mean_Temp)) + geom_col(color= "g
     axis.title.x = element_text(size = 16),
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom  = element_line(color = "black"),
-    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"), title = element_text(size = 20)
   )
 
 AnnualTemp_plot
 
 AnnualSAL_plot <- ggplot(AnnualSal, aes(Year, Mean_Salinity)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "", y = "Mean Salinity", x="") + theme(axis.text.x = element_text(angle= 45)) + 
+  labs(title= "B", y = "Mean Salinity", x="") + theme(axis.text.x = element_text(angle= 45)) + 
   geom_smooth(method=lm, se = FALSE, col= "red") + 
   geom_errorbar(aes(ymin=Mean_Salinity-SE_S, ymax=Mean_Salinity+ SE_S),width=.2, position=position_dodge(.9))+ 
   theme_minimal() + theme(
@@ -249,7 +325,8 @@ AnnualSAL_plot <- ggplot(AnnualSal, aes(Year, Mean_Salinity)) + geom_col(color= 
     axis.title.x = element_text(size = 16),
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom  = element_line(color = "black"),
-    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"))
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"), title = element_text(size = 20))
+
 AnnualSAL_plot
 
 
