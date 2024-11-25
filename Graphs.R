@@ -33,7 +33,7 @@ View(I_sum)
 
 ### Plotting Annual Mean infection intensity in Chesapeake Bay ###
 Intensity_plot <- ggplot(I_sum, aes(Year, Mean.Intensity)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "Annual mean P. marinus Mean Infection Intensity in Chesapeake Bay", y = "Mean Infection intensity") +
+  labs(title= "B", y = "Mean Infection intensity", x="") +
   theme(axis.text.x = element_text(angle= 45)) + theme_minimal() + geom_smooth(method=lm, se = FALSE, col= "red") + geom_errorbar(aes(ymin=Mean.Intensity-se, ymax=Mean.Intensity+se),width=.2, position=position_dodge(.9))+
 theme(
   panel.grid.major = element_blank(),
@@ -41,13 +41,14 @@ theme(
   axis.title.x = element_text(size = 16),
   axis.title.y = element_text(size = 16),
   axis.line.x.bottom  = element_line(color = "black"),
-  axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+  axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"),
+  title = element_text(size = 16)
 ) +ylab("Mean Annual Infection Intensity")
 Intensity_plot
 
 ### Plotting Annual Mean prevalence in Chesapeake Bay ###
 Prev_plot <- ggplot(P_sum, aes(Year, Prevalence)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "Annual mean P. marinus Mean Prevalence % in Chesapeake Bay", y = "Mean Prevalence %") +
+  labs(title= "A", y = "Mean Prevalence %", x="") +
   theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") +
   geom_errorbar(aes(ymin=Prevalence-se, ymax=Prevalence+se),width=.2, position=position_dodge(.9))+
   theme_minimal() +theme(
@@ -56,52 +57,47 @@ Prev_plot <- ggplot(P_sum, aes(Year, Prevalence)) + geom_col(color= "grey", fill
     axis.title.x = element_text(size = 16),
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom  = element_line(color = "black"),
-    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
+    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"),
+    title = element_text(size = 16)
   ) +ylab("Mean Annual Prevalence (%)")
 Prev_plot
 
 
 #grid
 
-# double axis
-Plot <- ggplot(data=P_sum, aes(x=Year, y= Prevalence),color =Prevalence) +
-  geom_point()+ geom_line()+
-  theme(axis.text.x = element_text(angle= 45)) +
-  geom_errorbar(aes(ymin=Prevalence-se, ymax=Prevalence+se),width=.2, position=position_dodge(.9))+
-  theme_minimal() +theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    axis.title.x = element_text(size = 16),
-    axis.title.y = element_text(size = 16),
-    axis.line.x.bottom  = element_line(color = "black"),
-    axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines")
-  ) +ylab("Mean Annual Prevalence (%)")
-Plot
+perkinsus_grid <- grid.arrange(Prev_plot, Intensity_plot, bottom = textGrob("Year", gp=gpar(fontsize=16)))
 
-p <- Plot +
-  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
-             color = "red", size = 1) + # Points for Mean.Intensity
-  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
-            color = "red") +           # Line for Mean.Intensity
-  geom_errorbar(data = I_sum, aes(x = Year, 
-                                  ymin = (Mean.Intensity - se) * 25, 
-                                  ymax = (Mean.Intensity + se) * 25), 
-                width = 0.2, color = "red") + # Error bars for Mean.Intensity
-  scale_y_continuous(
-    name = "Mean Annual Prevalence (%)",
-    sec.axis = sec_axis(~./25, name = "Intensity") # Secondary axis
-  )
-p
 
-Plot <- ggplot(data = P_sum, aes(x = Year, y = Prevalence)) +
-  geom_point(color = "blue") + # Points for Prevalence
-  geom_line(color = "blue") +  # Line for Prevalence
+# Secondary axis
+#Line graph
+Plot <- ggplot() +
+  # Prevalence (blue points, line, and error bars)
+  geom_point(data = P_sum, aes(x = Year, y = Prevalence), color = "blue") +
+  geom_line(data = P_sum, aes(x = Year, y = Prevalence), color = "blue") +
   geom_errorbar(
     data = P_sum, 
-    aes(ymin = Prevalence - se, ymax = Prevalence + se), # Error bars for Prevalence
+    aes(x = Year, ymin = Prevalence - se, ymax = Prevalence + se), 
     width = 0.2, 
     color = "blue"
   ) +
+  
+  # Mean Intensity (red points, line, and error bars)
+  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), color = "red") +
+  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), color = "red") +
+  geom_errorbar(
+    data = I_sum, 
+    aes(x = Year, ymin = (Mean.Intensity - se) * 25, ymax = (Mean.Intensity + se) * 25), 
+    width = 0.2, 
+    color = "red"
+  ) +
+  
+  # Add y-axis scaling and labels
+  scale_y_continuous(
+    name = "Mean Annual Prevalence (%)",
+    sec.axis = sec_axis(~./25, name = "Annual Mean Intensity")
+  ) +
+  
+  # Custom theme for formatting
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
@@ -113,29 +109,61 @@ Plot <- ggplot(data = P_sum, aes(x = Year, y = Prevalence)) +
     axis.line.y = element_line(color = "black"),
     panel.spacing = unit(1, "lines")
   ) +
+  
+  # Primary y-axis label
   ylab("Mean Annual Prevalence (%)")
 
-# Add Mean.Intensity with secondary axis
-Plot2 <- Plot +
-  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
-             color = "red", size = 1) + # Points for Mean.Intensity
-  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), 
-            color = "red") +           # Line for Mean.Intensity
+# Display the plot
+Plot
+
+
+#Bar graph
+Plot <- ggplot() +
+  # Prevalence (blue points, line, and error bars)
+  geom_col(data = P_sum, aes(x = Year, y = Prevalence), color = "grey", fill = "grey") +
+  geom_smooth(data = P_sum, aes(x = Year, y = Prevalence), method=lm, se = FALSE, col= "blue") +
+  geom_errorbar(
+    data = P_sum, 
+    aes(x = Year, ymin = Prevalence - se, ymax = Prevalence + se), 
+    width = 0.2, 
+    color = "black"
+  ) +
+  
+  # Mean Intensity (red points, line, and error bars)
+  geom_col(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), color = "dark grey") +
+  geom_smooth(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), method=lm, se = FALSE,col = "red") +
   geom_errorbar(
     data = I_sum, 
-    aes(x = Year, 
-        ymin = (Mean.Intensity - se) * 25, 
-        ymax = (Mean.Intensity + se) * 25), # Error bars for Mean.Intensity
+    aes(x = Year, ymin = (Mean.Intensity - se) * 25, ymax = (Mean.Intensity + se) * 25), 
     width = 0.2, 
-    color = "red"
+    color = "black"
   ) +
+  
+  # Add y-axis scaling and labels
   scale_y_continuous(
     name = "Mean Annual Prevalence (%)",
-    sec.axis = sec_axis(~./25, name = "Intensity") # Secondary axis
-  )
+    sec.axis = sec_axis(~./25, name = "Annual Mean Intensity")
+  ) +
+  
+  # Custom theme for formatting
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"),
+    panel.spacing = unit(1, "lines")
+  ) +
+  
+  # Primary y-axis label
+  ylab("Mean Annual Prevalence (%)")
 
 # Display the plot
-Plot2
+Plot
+
 ############################################ perkinsus and intensity ALL by latitude ################################
 
 library(ggplot2)
