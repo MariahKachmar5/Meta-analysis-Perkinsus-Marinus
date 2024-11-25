@@ -195,27 +195,40 @@ SalinityTrend2
 
 MeanAnnual<- Merged.data %>%
   dplyr::group_by(Region, Year, Site, MonitoringLocation, Prev_ep, Mean.Intensity) %>%
-  dplyr::summarize(Mean_Temp = mean(WTEMP), Mean_Sal = mean(SALINITY))
+  dplyr::summarize(Mean_Temp = mean(WTEMP, na.rm = TRUE),
+SE_T = sd(WTEMP, na.rm = TRUE) / sqrt(n()),
+Mean_Sal = mean(SALINITY, na.rm = TRUE),
+SE_S = sd(SALINITY, na.rm = TRUE) / sqrt(n()),
+.groups = "drop" # Ungroup after summarizing
+)
 View(MeanAnnual)
 
 View(MasterENV_filtered)
 View(Merged.data)
 
-T_sum<- summarySE(Merged.data, "WTEMP", groupvars= c("Year", "Region"))
+T_sum<- summarySE(Merged.data, "WTEMP", groupvars= c("Year"))
 View(T_sum)
 
-S_sum <- summarySE(Merged.data, "SALINITY", groupvars = c("Year", "Region"))
+S_sum <- summarySE(Merged.data, "SALINITY", groupvars = c("Year"))
 View(S_sum)
 
-#AnnualTemp<- MasterENV_filtered %>%
-#  dplyr::group_by(Year) %>%
-#  dplyr::summarize(Mean_Temp = mean(WTEMP))
+AnnualTemp<- MasterENV_filtered %>%
+  dplyr::group_by(Year) %>%
+  dplyr::summarize(Mean_Temp = mean(WTEMP),SE_T = sd(WTEMP, na.rm = TRUE) / sqrt(n()))
 #View(AnnualTemp)
 
-AnnualTemp_plot <- ggplot(T_sum, aes(Year, WTEMP)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "Annual Mean Temperature in Chesapeake Bay", y = "Mean Temperature") +
+AnnualSal<- MasterENV_filtered %>%
+  dplyr::group_by(Year) %>%
+  dplyr::summarize(Mean_Salinity = mean(SALINITY, na.rm = TRUE),
+                   SE_S = sd(SALINITY, na.rm = TRUE) / sqrt(n()))
+View(AnnualSal)
+
+test<- ggplot(MeanAnnual, aes (Year, Mean_Temp)) +geom_col()
+
+AnnualTemp_plot <- ggplot(AnnualTemp, aes(Year, Mean_Temp)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "", y = bquote("Mean Temperature ("* degree * "C)"), x= "") +
   theme(axis.text.x = element_text(angle= 45)) + geom_smooth(method=lm, se = FALSE, col= "red") + 
-  geom_errorbar(aes(ymin=WTEMP-se, ymax=WTEMP+se),width=.2, position=position_dodge(.9)) + theme_minimal() + theme(
+  geom_errorbar(aes(ymin=Mean_Temp-SE_T, ymax=Mean_Temp+SE_T),width=.2, position=position_dodge(.9)) + theme_minimal() + theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     axis.title.x = element_text(size = 16),
@@ -226,10 +239,10 @@ AnnualTemp_plot <- ggplot(T_sum, aes(Year, WTEMP)) + geom_col(color= "grey", fil
 
 AnnualTemp_plot
 
-AnnualSAL_plot <- ggplot(S_sum, aes(Year, SALINITY)) + geom_col(color= "grey", fill= "grey") + 
-  labs(title= "Annual Mean Salinity in Chesapeake Bay", y = "Mean Salinity") + theme(axis.text.x = element_text(angle= 45)) + 
+AnnualSAL_plot <- ggplot(AnnualSal, aes(Year, Mean_Salinity)) + geom_col(color= "grey", fill= "grey") + 
+  labs(title= "", y = "Mean Salinity", x="") + theme(axis.text.x = element_text(angle= 45)) + 
   geom_smooth(method=lm, se = FALSE, col= "red") + 
-  geom_errorbar(aes(ymin=SALINITY-se, ymax=SALINITY+se),width=.2, position=position_dodge(.9))+ 
+  geom_errorbar(aes(ymin=Mean_Salinity-SE_S, ymax=Mean_Salinity+ SE_S),width=.2, position=position_dodge(.9))+ 
   theme_minimal() + theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -239,6 +252,8 @@ AnnualSAL_plot <- ggplot(S_sum, aes(Year, SALINITY)) + geom_col(color= "grey", f
     axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"))
 AnnualSAL_plot
 
+
+environment_grid <- grid.arrange(AnnualTemp_plot, AnnualSAL_plot, bottom = textGrob("Year", gp=gpar(fontsize=16)))
 ##################################################################################################################
 
 #### Effect size ####
