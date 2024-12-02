@@ -107,6 +107,8 @@ Plot <- ggplot() +
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom = element_line(color = "black"),
     axis.line.y = element_line(color = "black"),
+    axis.title.y.left = element_text(color= "blue"),
+    axis.title.y.right = element_text(color= "red"),
     panel.spacing = unit(1, "lines")
   ) +
   
@@ -155,6 +157,7 @@ Plot <- ggplot() +
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom = element_line(color = "black"),
     axis.line.y = element_line(color = "black"),
+    
     panel.spacing = unit(1, "lines")
   ) +
   
@@ -359,6 +362,57 @@ AnnualSAL_plot
 
 
 environment_grid <- grid.arrange(AnnualTemp_plot, AnnualSAL_plot, bottom = textGrob("Year", gp=gpar(fontsize=16)))
+
+
+# Secondary axis
+#Line graph
+Plot1 <- ggplot() +
+  # Prevalence (blue points, line, and error bars)
+  geom_point(data = AnnualTemp, aes(x = Year, y = Mean_Temp), color = "black") +
+  geom_line(data = AnnualTemp, aes(x = Year, y = Mean_Temp), color = "black") +
+  geom_errorbar(
+    data = AnnualTemp, 
+    aes(x = Year, ymin = Mean_Temp - SE_T, ymax = Mean_Temp + SE_T), 
+    width = 0.2, 
+    color = "black"
+  ) +
+  
+  # Mean Intensity (red points, line, and error bars)
+  geom_point(data = AnnualSal, aes(x = Year, y = Mean_Salinity ), color = "grey") +
+  geom_line(data = AnnualSal, aes(x = Year, y = Mean_Salinity ), color = "grey") +
+  geom_errorbar(
+    data = AnnualSal, 
+    aes(x = Year, ymin = (Mean_Salinity - SE_S) , ymax = (Mean_Salinity + SE_S)), 
+    width = 0.2, 
+    color = "grey"
+  ) +
+  
+  # Add y-axis scaling and labels
+  scale_y_continuous(
+    name = bquote("Mean Temperature ("* degree * "C)"),
+    sec.axis = sec_axis(~., name = "Annual Mean Salinity")
+  ) +
+  
+  # Custom theme for formatting
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_text(size = 16),
+    axis.line.x.bottom = element_line(color = "black"),
+    axis.line.y = element_line(color = "black"),
+    axis.title.y.left = element_text(color= "black"),
+    axis.title.y.right = element_text(color= "grey"),
+    panel.spacing = unit(1, "lines")
+  ) +
+  
+  # Primary y-axis label
+  ylab(bquote("Mean Temperature ("* degree * "C)"))
+
+# Display the plot
+Plot1
 ##################################################################################################################
 
 #### Effect size ####
@@ -372,20 +426,21 @@ effectsize<- read.csv("~/Documents/UMBC/GitHub/Meta-analysis-Perkinsus-Marinus/d
 P_effect<- effectsize %>% filter(variable == "Prevalence")
 I_effect<- effectsize %>% filter(variable == "Intensity")
 
-Intefplot<- ggplot(I_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) + theme(axis.text.x = element_text( size = 15), axis.text.y = element_text(size=15))+
+Intefplot<- ggplot(I_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=4) + theme(axis.text.x = element_text( size = 15), axis.text.y = element_text(size=15))+
   labs(title= "B", y="",x="")+theme(legend.position = "none", panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                                                    panel.background = element_blank(), axis.line = element_line(colour = "black"),
-                                    )
+                                                                    panel.background = element_blank(), axis.line = element_line(colour = "black"), title = element_text(size=16))
+                                    
 Intefplot
 
 
-Pefplot<- ggplot(P_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=3) +
+Pefplot<- ggplot(P_effect, aes(fct_inorder(month), d, color=fixed_effect))+geom_point(size=4) +
   theme(axis.text.x = element_text(size = 15), 
         axis.text.y = element_text(size=15),
         legend.position = "bottom",
         legend.text=element_text(size=15),
         legend.title = element_blank(),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.title.y = element_text(angle = 90, hjust = 0.5, size = 14),                                                                                     panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.title.y = element_text(angle = 90, hjust = 0.5, size = 14),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"), title = element_text(size=16))+
   labs(title= "A", y="",x="") + scale_color_discrete(labels= c('Salinity', 'Temperature'))
 Pefplot
 
