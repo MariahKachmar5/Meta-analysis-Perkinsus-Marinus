@@ -533,7 +533,7 @@ mean_int_reg$Region2 <- factor(mean_int_reg$Region, levels = c("NANTICOKE RIVER"
 View(mean_prev_reg)
 region_p<-  ggplot(mean_prev_reg, aes(oysteryear, mean_prevalence)) + geom_point(aes(color=Region2)) + 
   facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
-  theme(strip.text = element_text(size = 15), axis.text=element_text(size=15),axis.title=element_text(size=15), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
+  theme(panel.spacing = unit(1.5, "lines"),strip.text = element_text(size = 15), axis.text.y =element_text(size=20), axis.text.x = element_text(size=15), axis.title=element_text(size=15), legend.position = "none")+ylab("Mean Prevalence") + xlab("Year")
  #+scale_color_manual(values = custom_palette)
 
 region_p
@@ -541,7 +541,7 @@ region_p
 mean_int_reg<-na.omit(mean_int_reg)
 region_i<-  ggplot(mean_int_reg, aes(oysteryear, mean_intensity)) + geom_point(aes(color=Region2)) + 
   facet_wrap(Region2~.) + theme_classic()+ geom_smooth(method= lm, se=FALSE) +scale_color_manual(values = colors) +
-  theme(strip.text = element_text(size = 15), axis.text=element_text(size=15),axis.title=element_text(size=15), legend.position = "none")+ylab("Mean Intensity") + xlab("Year")
+  theme(panel.spacing = unit(1.5, "lines"),strip.text = element_text(size = 15), axis.text=element_text(size=15),axis.text.y =element_text(size=20), axis.text.x = element_text(size=15), legend.position = "none")+ylab("Mean Intensity") + xlab("Year")
 #+scale_color_manual(values = custom_palette)
 
 region_i
@@ -587,7 +587,8 @@ Perk2 <- filter(Perk2, Region != 'YEOCOMICO RIVER', Region != 'EASTERN SHORE')
 
 
 OySite_area <-ggplot() + geom_sf(data = map)+theme(panel.grid.minor = element_blank(),panel.background = element_blank())+
-  geom_point(data = mean_prev_reg,aes(Long, Lat, color= Region2), size = 3) +theme(legend.position="none") + scale_color_manual(values = colors)
+  geom_point(data = mean_prev_reg,aes(Long, Lat, color= Region2), size = 3) +theme(legend.position="none") + scale_color_manual(values = colors)+
+  ylab("Latitude")+xlab("Longitude") + theme(axis.text = element_text(size = 20, color = "black"), axis.title = element_text(size = 15))
 
 OySite_area
 
