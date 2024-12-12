@@ -952,7 +952,10 @@ Sal_Aug
 
 
 
-
+Regional_annual_means_temp <- Merged.data %>%
+  dplyr::group_by(Region, oysteryear)%>%
+  dplyr::summarise(mean = mean(WTEMP))
+Regional_annual_means_temp
 
 
 
