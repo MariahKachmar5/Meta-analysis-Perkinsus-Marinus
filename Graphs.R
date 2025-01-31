@@ -81,6 +81,7 @@ Plot <- ggplot() +
     color = "blue"
   ) +
   
+  scale_x_continuous(breaks = seq(1990,2021, by = 5)) +
   
   # Mean Intensity (red points, line, and error bars)
   geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "red") +
@@ -110,7 +111,7 @@ Plot <- ggplot() +
     axis.line.y = element_line(color = "black"),
     axis.title.y.left = element_text(color= "blue"),
     axis.title.y.right = element_text(color= "red"),
-    panel.spacing = unit(1, "lines")
+    panel.spacing = unit(1, "lines"), axis.text = element_text(size = 12)
   ) +
   
   # Primary y-axis label
@@ -377,6 +378,7 @@ Plot1 <- ggplot() +
     width = 0.2, 
     color = "black"
   ) +
+  scale_x_continuous(breaks = seq(1990,2021, by = 5)) +
   
   # Mean Intensity (red points, line, and error bars)
   geom_point(data = AnnualSal, aes(x = Year, y = Mean_Salinity ), color = "grey") +
@@ -406,7 +408,7 @@ Plot1 <- ggplot() +
     axis.line.y = element_line(color = "black"),
     axis.title.y.left = element_text(color= "black"),
     axis.title.y.right = element_text(color= "grey"),
-    panel.spacing = unit(1, "lines")
+    panel.spacing = unit(1, "lines"), axis.text = element_text(size=12)
   ) +
   
   # Primary y-axis label
