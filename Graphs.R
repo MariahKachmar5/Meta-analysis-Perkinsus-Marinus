@@ -81,20 +81,21 @@ Plot <- ggplot() +
     color = "blue"
   ) +
   
+  
   # Mean Intensity (red points, line, and error bars)
-  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), color = "red") +
-  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 25), color = "red") +
+  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "red") +
+  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "red") +
   geom_errorbar(
     data = I_sum, 
-    aes(x = Year, ymin = (Mean.Intensity - se) * 25, ymax = (Mean.Intensity + se) * 25), 
+    aes(x = Year, ymin = (Mean.Intensity - se) * 20, ymax = (Mean.Intensity + se) * 25), 
     width = 0.2, 
     color = "red"
   ) +
   
   # Add y-axis scaling and labels
-  scale_y_continuous(
+  scale_y_continuous(limits = c(0,100),
     name = "Mean Annual Prevalence (%)",
-    sec.axis = sec_axis(~./25, name = "Annual Mean Intensity")
+    sec.axis = sec_axis(~./20, name = "Annual Mean Intensity")
   ) +
   
   # Custom theme for formatting
