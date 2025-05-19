@@ -42,7 +42,8 @@ theme(
   axis.title.y = element_text(size = 16),
   axis.line.x.bottom  = element_line(color = "black"),
   axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"),
-  title = element_text(size = 16)
+  title = element_text(size = 16),
+  axis.ticks = element_line()
 ) +ylab("Mean Annual Infection Intensity")
 Intensity_plot
 
@@ -58,7 +59,8 @@ Prev_plot <- ggplot(P_sum, aes(Year, Prevalence)) + geom_col(color= "grey", fill
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom  = element_line(color = "black"),
     axis.line.y = element_line(color = "black"), panel.spacing = unit(1, "lines"),
-    title = element_text(size = 16)
+    title = element_text(size = 16),
+    axis.ticks = element_line()
   ) +ylab("Mean Annual Prevalence (%)")
 Prev_plot
 
@@ -72,25 +74,25 @@ perkinsus_grid <- grid.arrange(Prev_plot, Intensity_plot, bottom = textGrob("Yea
 #Line graph
 Plot <- ggplot() +
   # Prevalence (blue points, line, and error bars)
-  geom_point(data = P_sum, aes(x = Year, y = Prevalence), color = "blue") +
-  geom_line(data = P_sum, aes(x = Year, y = Prevalence), color = "blue") +
+  geom_point(data = P_sum, aes(x = Year, y = Prevalence), color = "black") +
+  geom_line(data = P_sum, aes(x = Year, y = Prevalence), color = "black") +
   geom_errorbar(
     data = P_sum, 
     aes(x = Year, ymin = Prevalence - se, ymax = Prevalence + se), 
     width = 0.2, 
-    color = "blue"
+    color = "black"
   ) +
   
   scale_x_continuous(breaks = seq(1990,2021, by = 5)) +
   
   # Mean Intensity (red points, line, and error bars)
-  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "red") +
-  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "red") +
+  geom_point(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "grey") +
+  geom_line(data = I_sum, aes(x = Year, y = Mean.Intensity * 20), color = "grey") +
   geom_errorbar(
     data = I_sum, 
     aes(x = Year, ymin = (Mean.Intensity - se) * 20, ymax = (Mean.Intensity + se) * 25), 
     width = 0.2, 
-    color = "red"
+    color = "grey"
   ) +
   
   # Add y-axis scaling and labels
@@ -109,9 +111,10 @@ Plot <- ggplot() +
     axis.title.y = element_text(size = 16),
     axis.line.x.bottom = element_line(color = "black"),
     axis.line.y = element_line(color = "black"),
-    axis.title.y.left = element_text(color= "blue"),
-    axis.title.y.right = element_text(color= "red"),
-    panel.spacing = unit(1, "lines"), axis.text = element_text(size = 12)
+    axis.title.y.left = element_text(color= "black"),
+    axis.title.y.right = element_text(color= "grey"),
+    panel.spacing = unit(1, "lines"), axis.text = element_text(size = 12),
+    axis.ticks = element_line(size = 1)
   ) +
   
   # Primary y-axis label
@@ -160,7 +163,8 @@ Plot <- ggplot() +
     axis.line.x.bottom = element_line(color = "black"),
     axis.line.y = element_line(color = "black"),
     
-    panel.spacing = unit(1, "lines")
+    panel.spacing = unit(1, "lines"),
+    axis.ticks = element_line(size = 1)
   ) +
   
   # Primary y-axis label
@@ -408,7 +412,8 @@ Plot1 <- ggplot() +
     axis.line.y = element_line(color = "black"),
     axis.title.y.left = element_text(color= "black"),
     axis.title.y.right = element_text(color= "grey"),
-    panel.spacing = unit(1, "lines"), axis.text = element_text(size=12)
+    panel.spacing = unit(1, "lines"), axis.text = element_text(size=12),
+    axis.ticks = element_line(size = 1)
   ) +
   
   # Primary y-axis label
@@ -768,8 +773,7 @@ all_int_temp
 ############### How far away are the environmental sites from the disease bar sites? ##############
 
 
-Locations<- Merged.data %>%
-  subset(select= c(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env))
+Locations<- Merged.data %>% subset(select= c(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env))
 View(Locations)  
 
 filtered_locations<- Locations %>% distinct(MonitoringLocation, Region, Site, State, Lat, Long, Lat_Env, Long_Env, .keep_all = TRUE)
@@ -781,9 +785,7 @@ filtered_locations$Site
 
 Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank())
 
-Locations_map +geom_point(data = filtered_locations,aes(Long, Lat), color="red", size = 4) + 
-  geom_point(data=filtered_locations, aes(Long_Env, Lat_Env), color="black",size = 4) +
-  theme(legend.position="none") #+ scale_color_discrete(name = "Site")
+Locations_map +geom_point(data = filtered_locations,aes(Long, Lat), color="red", size = 4) + geom_point(data=filtered_locations, aes(Long_Env, Lat_Env), color="black",size = 4) +theme(legend.position="none") #+ scale_color_discrete(name = "Site")
 
 library(mapview)
 library(leaflet)
@@ -816,17 +818,69 @@ library(dplyr)
 MD <- monitoringlocations %>%
   filter(State == "MD")
 
+
 VA<- monitoringlocations %>%
   filter(State == "VA")
 
 
+library(ggspatial)
 
-
-Locations_map <-ggplot() + geom_sf(data = map)+ theme(panel.grid.minor = element_blank(),panel.background = element_blank()) + 
-  geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 3) + 
-  geom_point(data=monitoringlocations, aes(Long, Lat, color=type),size = 3)  +
-  theme(legend.position= "") + labs(title =element_text("Locations of disease & environmental monitoring"))
+Locations_map <-ggplot() + geom_sf(data = map, fill = "white")+ theme( panel.grid.major = element_line(color = "grey80", linetype = "dashed"),panel.background = element_rect(fill = "grey80", color = NA),axis.line = element_line(color = "black")) + geom_point(data = filtered_locations ,aes(Long, Lat), color="red", size = 3) + geom_point(data=monitoringlocations, aes(Long, Lat, color=type),size = 3)  +theme(legend.position= c(.75, 0.15),
+    legend.justification = c(0, 1), panel.border = element_rect(color = "black", fill = NA, size = 1),legend.background = element_rect(color = "black", fill = "white", size = 0.5),legend.key.size = unit(1.5, "cm"),  # Increase the size of the legend keys
+    legend.key.height = unit(1, "cm"),  # Increase the height of the legend keys
+    legend.key.width = unit(1, "cm"), legend.box.margin = margin(10, 10, 10, 10)) + ylab("Latitude") + xlab("Longitude")+annotation_scale(location = "bl", width_hint = 0.25) +annotation_north_arrow(location = "bl", which_north = "true", 
+                         style = north_arrow_fancy_orienteering())+coord_sf(expand = TRUE)+annotate(geom = "text",x = -76.15,y = 37.6,label = "Chesapeake Bay",color = "grey",size = 4, angle=90, fontface = "italic")
 Locations_map
+
+
+
+library(sf)
+library(ggplot2)
+
+# Read shapefile for US states
+states <- st_read("~/Documents/UMBC//GitHub/Meta-analysis-Perkinsus-Marinus/data_raw/EastCoast/ne_110m_admin_1_states_provinces.shp")
+head(states)
+st_crs(states)
+# Filter to get the East Coast states (simplified version)
+east_coast_states <- states[states$name %in% c("Maine", "New Hampshire", "Vermont","Massachusetts", "Rhode Island", 
+                                               "Connecticut", "New York","Pennsylvania", "New Jersey", "Delaware", 
+                                               "Maryland", "Virginia", "West Virginia", "North Carolina", "South Carolina", 
+                                               "Georgia", "Florida"),]
+
+# Plot the map using ggplot2
+ggplot() +
+  geom_sf(data = east_coast_states, fill = "lightblue", color = "black") +  # Fill East Coast states
+  theme_minimal() +
+  ggtitle("East Coast of the United States") +
+  theme(
+    axis.text = element_text(size = 10),  # Adjust axis text size if needed
+    axis.title = element_text(size = 12)  # Adjust axis title size if needed
+  )
+
+# Create the inset map of the East Coast
+East_Coast_map <- ggplot() +
+  geom_sf(data = east_coast_states, fill = "grey80", color = "black") +  # Your map layer
+  coord_sf(
+    xlim = c(-85.5, -65),   # Longitude bounds for East Coast
+    ylim = c(25, 45),     # Latitude bounds for East Coast
+    expand = TRUE
+  ) +
+  theme_void() +theme(
+    legend.position = "none", 
+    plot.margin = margin(0, 0, 0, 0),  # Reduce margins for inset plot
+    panel.background = element_rect(fill = "white", color = "black"),  # White background with black border
+    axis.text = element_blank(),  # Remove axis text for cleaner look
+    axis.title = element_blank(),  # Remove axis titles
+    panel.grid = element_blank()   # Remove gridlines
+  )  # Remove axes and other elements from the inset map
+East_Coast_map
+# Extract the inset map as a grob (graphical object) to add to the main plot
+library(grid)
+inset_grob <- ggplotGrob(East_Coast_map)
+
+# Add the inset map to the main plot
+Locations_map + 
+  annotation_custom(grob = inset_grob, xmin = -77.5, xmax = -76.8, ymin = 38.9, ymax = 39.9)  # Position the inset map
 
 
 
@@ -959,7 +1013,6 @@ Regional_annual_means_temp <- Merged.data %>%
   dplyr::group_by(Region, oysteryear)%>%
   dplyr::summarise(mean = mean(WTEMP))
 Regional_annual_means_temp
-
 
 
 
